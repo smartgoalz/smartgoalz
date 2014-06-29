@@ -20,7 +20,7 @@ $cakeDescription = __d('cake_dev', 'CakePHP: the rapid development php framework
 $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 ?>
 <!DOCTYPE html>
-<html>
+<html ng-app>
 <head>
 	<?php echo $this->Html->charset(); ?>
 	<title>
@@ -29,6 +29,8 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 	</title>
 	<?php
 		echo $this->Html->meta('icon');
+
+		echo $this->Html->script('angular.min.js');
 
 		echo $this->Html->css('cake.generic');
 
