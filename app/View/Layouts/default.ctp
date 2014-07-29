@@ -20,7 +20,7 @@ $cakeDescription = __d('cake_dev', 'CakePHP: the rapid development php framework
 $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 ?>
 <!DOCTYPE html>
-<html ng-app>
+<html ng-app="goalApp">
 <head>
 	<?php echo $this->Html->charset(); ?>
 	<title>
@@ -30,9 +30,20 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 	<?php
 		echo $this->Html->meta('icon');
 
+		/* Angular JS version 1.2.10 */
 		echo $this->Html->script('angular.min.js');
+		echo $this->Html->script('angular-route.min.js');
+		echo $this->Html->script('angular-resource.min.js');
 
-		echo $this->Html->css('cake.generic');
+		/* Angular UI version 0.11.0 */
+		echo $this->Html->script('ui-bootstrap-tpls-0.11.0.min.js');
+
+		/* Bootstrap version 3.1.1 */
+		echo $this->Html->css('bootstrap.min.css?'.time());
+		echo $this->Html->css('bootstrap-theme.min.css?'.time());
+
+		echo $this->Html->script('goal.js?'.time());
+		echo $this->Html->css('style.css?'.time());
 
 		echo $this->fetch('meta');
 		echo $this->fetch('css');
@@ -42,7 +53,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 <body>
 	<div id="container">
 		<div id="header">
-			<h1><?php echo $this->Html->link($cakeDescription, 'http://cakephp.org'); ?></h1>
+			<?php echo $this->element('navbar'); ?>
 		</div>
 		<div id="content">
 
