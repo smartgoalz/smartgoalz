@@ -27,13 +27,6 @@
 ?>
 
 <div ng-controller="GoalCtrl">
-	<button class='btn btn-default' ng-click='addGoal()' href=''>Add Goal</button>
-	<ul>
-		<li ng-repeat="goal in goals">
-			{{ goal.Goal.title }}
-			<a ng-click='editGoal(goal.Goal.id)' href=''><i class='glyphicon glyphicon-pencil'></i></a>
-			<a ng-click='deleteGoal(goal.Goal.id)' href=''><i class='glyphicon glyphicon-trash'></i></a>
-		</li>
-	</ul>
+	<div ng-view></div>
 </div>
 

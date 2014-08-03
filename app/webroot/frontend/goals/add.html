@@ -1,0 +1,90 @@
+<div class="row">
+<div class="col-md-6">
+	<div>
+		<a href="#/show" class="btn btn-info">Back</a>
+	</div>
+	<div>
+		<h3>Add a new goal</h3>
+	</div>
+	<div>
+		<form method="POST" role="form">
+
+			<div class="row">
+				<div class="col-xs-8">
+					<div class="form-group">
+						<label for="inputEmail">Goal title</label>
+						<input type="text" class="form-control" id="inputTitle" placeholder="Goal title" ng-model="formInfo.Title">
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-xs-4">
+					<div class="form-group">
+						<label for="inputStartdate">Start date</label>
+						<input type="text" class="form-control" id="inputStartdate" placeholder="Start date" ng-model="formInfo.Startdate">
+					</div>
+				</div>
+				<div class="col-xs-4">
+					<div class="form-group">
+						<label for="inputEnddate">End date</label>
+						<input type="text" class="form-control" id="inputEnddate" placeholder="End date" ng-model="formInfo.Enddate">
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-xs-4">
+					<div class="form-group">
+						<label for="inputCategory">Category</label>
+						<select class="form-control" id="inputCategory" ng-model="formInfo.Category">
+							<option>General</option>
+							<option>Personal</option>
+							<option>Health</option>
+							<option>Learning</option>
+							<option>Recreation</option>
+						</select>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-xs-4">
+					<div class="form-group">
+						<label for="inputDifficulty">Difficulty</label>
+						<select class="form-control" id="inputDifficulty" ng-model="formInfo.Difficulty">
+							<option>Very hard</option>
+							<option>Hard</option>
+							<option>Normal</option>
+							<option>Easy</option>
+							<option>Very Easy</option>
+						</select>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-xs-4">
+					<div class="form-group">
+						<label for="inputPriority">Priority</label>
+						<select class="form-control" id="inputPriority" ng-model="formInfo.Priority">
+							<option>1 (Highest)</option>
+							<option>2</option>
+							<option>3</option>
+							<option>4</option>
+							<option>5</option>
+							<option>6</option>
+							<option>7</option>
+							<option>8</option>
+							<option>9</option>
+							<option>10 (Lowest)</option>
+						</select>
+					</div>
+				</div>
+			</div>
+
+			<div><button type="submit" class="btn btn-primary">Submit</button></div>
+		</form>
+	</div>
+</div><!-- END col-md-6 -->
+</div><!-- END row -->

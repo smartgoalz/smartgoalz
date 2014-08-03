@@ -43,6 +43,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 		echo $this->Html->css('bootstrap-theme.min.css?'.time());
 
 		echo $this->Html->script('goal.js?'.time());
+
 		echo $this->Html->css('style.css?'.time());
 
 		echo $this->fetch('meta');
