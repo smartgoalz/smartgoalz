@@ -1,19 +1,52 @@
-<a href="#/add" class="btn btn-info">Add Goal</a>
-<br /><br />
-<table class="table table-hover">
-	<thead>
-		<tr>
-			<th>Goal</th>
-			<th>Action</th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr ng-repeat="goal in goals">
-			<td>{{ goal.Goal.title }}</td>
-			<td>
-				<a href='#/edit/{{goal.Goal.id}}'><i class='glyphicon glyphicon-pencil'></i></a>
-				<a href='#/delete/{{goal.Goal.id}}'><i class='glyphicon glyphicon-trash'></i></a>
-			</td>
-		</tr>
-	</tbody>
-</table>
+<div class="row" ng-controller="GoalShowCtrl">
+<div class="col-md-6">
+	<div class="row">
+		<div class="col-xs-8">
+			<div><a href="#/add" class="btn btn-info">Add Goal</a></div>
+		</div>
+	</div>
+	<br />
+	<div class="row">
+		<div class="col-xs-8">
+			<alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+		</div>
+	</div>
+	<table class="table table-hover">
+		<thead>
+			<tr>
+				<th>Goal</th>
+				<th>Completion</th>
+				<th>Priority</th>
+				<th>Difficulty</th>
+				<th>Due date</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="goal in goals">
+				<td>{{ goal.Goal.title }}</td>
+				<td>{{ goal.Goal.completion_percent }}</td>
+				<td>{{ goal.Goal.priority }}</td>
+				<td>{{ goal.Goal.difficulty }}</td>
+				<td>{{ goal.Goal.end_date }}</td>
+				<td>
+					<div class="btn-group" dropdown>
+						<button type="button" class="btn btn-danger">Actions</button>
+						<button type="button" class="btn btn-danger dropdown-toggle">
+						<span class="caret"></span>
+						<span class="sr-only">Split button!</span>
+						</button>
+						<ul class="dropdown-menu" role="menu">
+						<li><a href="#">Add Tasks</a></li>
+						<li><a href="#">Dashboard</a></li>
+						<li class="divider"></li>
+						<li><a href='#/edit/{{goal.Goal.id}}'>Edit Goal</a></li>
+						<li><a href='#' ng-click="deleteGoal(goal.Goal.id)">Delete Goal</a></li>
+						</ul>
+					</div>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div><!-- END col-md-6 -->
+</div><!-- END row -->

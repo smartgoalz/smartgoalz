@@ -46,4 +46,56 @@ class Goal extends AppModel {
 			'className' => 'Task',
 		),
 	);
+
+	/* Validation rules for the Group table */
+	public $validate = array(
+		'title' => array(
+			'rule1' => array(
+				'rule' => 'notEmpty',
+				'message' => 'Goal title cannot be empty',
+				'required'   => true,
+				'allowEmpty' => false,
+			),
+			'rule2' => array(
+				'rule' => 'isUnique',
+				'message' => 'Goal title is already in use',
+				'required'   => true,
+				'allowEmpty' => false,
+			),
+			'rule3' => array(
+				'rule' => array('maxLength', 255),
+				'message' => 'Goal title cannot be more than 255 characters',
+				'required'   => true,
+				'allowEmpty' => false,
+			),
+		),
+		'difficulty' => array(
+			'rule1' => array(
+				'rule' => 'notEmpty',
+				'message' => 'Difficulty cannot be empty',
+				'required' => true,
+				'allowEmpty' => false,
+			),
+			'rule2' => array(
+				'rule' => array('inList', array('1', '2', '3', '4', '5')),
+				'message' => 'Difficulty is not valid',
+				'required' => true,
+				'allowEmpty' => false,
+			),
+		),
+		'priority' => array(
+			'rule1' => array(
+				'rule' => 'notEmpty',
+				'message' => 'Priority cannot be empty',
+				'required' => true,
+				'allowEmpty' => false,
+			),
+			'rule2' => array(
+				'rule' => array('inList', array('1', '2', '3', '4', '5', '6', '7', '8', '9', '10')),
+				'message' => 'Priority is not valid',
+				'required' => true,
+				'allowEmpty' => false,
+			),
+		),
+	);
 }

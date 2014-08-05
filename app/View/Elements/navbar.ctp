@@ -26,7 +26,7 @@
  */
 ?>
 <!-- Static navbar -->
-<div class="navbar navbar-default" role="navigation">
+<div class="navbar navbar-inverse" role="navigation">
 	<div class="container-fluid">
 		<div class="navbar-header">
 			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -35,7 +35,7 @@
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
-			<?php echo $this->Html->link('smartgoalz', 'http://smartgoalz.org', array('class' => 'navbar-brand', 'target' => '_blank')); ?>
+			<?php echo $this->Html->link('SMART Goalz', 'http://smartgoalz.org', array('class' => 'navbar-brand', 'target' => '_blank')); ?>
 		</div>
 		<div class="navbar-collapse collapse">
 			<ul class="nav navbar-nav">

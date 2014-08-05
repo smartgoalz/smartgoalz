@@ -49,29 +49,45 @@ class GoalsController extends AppController {
 
 
 	public function add() {
-	if ($this->Goal->save($this->request->data)) {
-		$message = array(
-			'text' => __('Saved'),
-			'type' => 'success'
-		);
-	} else {
-		$message = array(
-			'text' => __('Error'),
-			'type' => 'error'
-		);
-	}
-	$this->set(array(
-		'message' => $message,
-		'_serialize' => array('message'),
-	));
+		if ($this->Goal->save($this->request->data)) {
+			$message = array(
+				'text' => __('Saved'),
+				'type' => 'success'
+			);
+		} else {
+			$errmsg = '';
+			foreach ($this->Goal->validationErrors as $field => $msg) {
+				$errmsg = $msg[0];
+				break;
+			}
+			$message = array(
+				'text' => $errmsg,
+				'type' => 'error'
+			);
+		}
+		$this->set(array(
+			'message' => $message,
+			'_serialize' => array('message'),
+		));
 	}
 
 	public function edit($id) {
 		$this->Goal->id = $id;
 		if ($this->Goal->save($this->request->data)) {
-			$message = __('Saved');
+			$message = array(
+				'text' => __('Saved'),
+				'type' => 'success'
+			);
 		} else {
-			$message = __('Error');
+			$errmsg = '';
+			foreach ($this->Goal->validationErrors as $field => $msg) {
+				$errmsg = $msg[0];
+				break;
+			}
+			$message = array(
+				'text' => $errmsg,
+				'type' => 'error'
+			);
 		}
 		$this->set(array(
 			'message' => $message,
@@ -81,9 +97,15 @@ class GoalsController extends AppController {
 
 	public function delete($id) {
 		if ($this->Goal->delete($id)) {
-			$message = __('Deleted');
+			$message = array(
+				'text' => __('Goal deleted'),
+				'type' => 'success'
+			);
 		} else {
-			$message = __('Error');
+			$message = array(
+				'text' => __('Error deleting goal'),
+				'type' => 'error'
+			);
 		}
 		$this->set(array(
 			'message' => $message,
