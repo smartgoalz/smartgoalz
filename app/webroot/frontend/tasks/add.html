@@ -1,0 +1,84 @@
+<div>
+	<div class="modal-header">
+		<h3 class="modal-title">{{modalOptions.headerText}}</h3>
+	</div>
+        <div class="modal-body">
+		<div class="row">
+			<div class="col-xs-8">
+				<alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+			</div>
+		</div>
+		<div>
+			<form method="POST" role="form">
+				<div class="row">
+					<div class="col-xs-12">
+						<div class="form-group">
+							<label for="inputTitle">Task</label>
+							<input type="text" class="form-control" id="inputTitle" placeholder="Task" ng-model="formdata.Title">
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-xs-6">
+						<div class="form-group">
+							<label for="inputStartdate">Start date</label>
+							<input type="text" class="form-control" id="inputStartdate" placeholder="Start date" ng-model="formdata.Startdate">
+						</div>
+					</div>
+					<div class="col-xs-6">
+						<div class="form-group">
+							<label for="inputEnddate">End date</label>
+							<input type="text" class="form-control" id="inputEnddate" placeholder="End date" ng-model="formdata.Enddate">
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-xs-6">
+						<div class="form-group">
+							<label for="inputReminder">Send Reminder</label>
+							<select class="form-control" id="inputReminder" ng-model="formdata.Reminder">
+								<option value="1">Very hard</option>
+								<option value="2">Hard</option>
+								<option value="3">Normal</option>
+								<option value="4">Easy</option>
+								<option value="5">Very Easy</option>
+							</select>
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-xs-6">
+						<div class="form-group">
+							 <label for="inputCompleted" class="checkbox"><input type="checkbox" class="form-control" id="inputCompleted" placeholder="Completed" ng-model="formdata.Completed"> Completed</label>
+						</div>
+					</div>
+				</div>
+
+				<div class="row" ng-show="formdata.Completed">
+					<div class="col-xs-6">
+						<div class="form-group">
+							<label for="inputCompletiondate">Completion date</label>
+							<input type="text" class="form-control" id="inputCompletiondate" placeholder="Completion date" ng-model="formdata.Completiondate">
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-xs-12">
+						<div class="form-group">
+							<label for="inputNotes">Notes</label>
+							<textarea class="form-control" id="inputNotes" ng-model="formdata.Notes"></textarea>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-primary" data-ng-click="modalOptions.ok();">{{modalOptions.actionButtonText}}</button>
+		<button class="btn btn-info" data-ng-click="modalOptions.close()">{{modalOptions.closeButtonText}}</button>
+	</div>
+</div>

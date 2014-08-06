@@ -1,0 +1,63 @@
+<div class="row" ng-controller="GoalManageCtrl">
+<div class="col-md-6">
+
+<div>
+	<span class="goal-title">{{ goaldata.Goal.title }}</span>
+	<span class="goal-title-edit"><button class="btn-mini btn-default btn-xmini" ng-click="editGoal(goaldata.Goal.id)">Edit Goal</button></span>
+</div>
+<br />
+<div class="row">
+	<div class="col-xs-4">Start date : {{ goaldata.Goal.start_date }}</div>
+	<div class="col-xs-4">Due date : {{ goaldata.Goal.end_date }}</div>
+</div>
+
+<div>Priority : {{ goaldata.Goal.priority }}</div>
+<div>Difficulty : {{ goaldata.Goal.difficulty }}</div>
+
+<br />
+
+<div class="row">
+	<div class="col-xs-5">
+		<div><progressbar value="55" max="100" type="warning"><span class="progress-pad"></span><span class="progress-text">Completed 55%</span></progressbar></div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-8">
+		<alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+	</div>
+</div>
+
+<div>
+	<button class="btn btn-primary" ng-click="addTask()">Add Task</button>&nbsp;&nbsp;
+	<a href="#/show" class="btn btn-info">Cancel</a>
+</div>
+<br />
+	<table class="table table-hover" ng-show="goaldata.Task.length">
+		<thead>
+			<tr>
+				<th>Task</th>
+				<th>Start date</th>
+				<th>Due date</th>
+				<th>Completed</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="task in goaldata.Task" ui:sortable ng:model="goaldata.Task">
+				<td>{{ task.title }}</td>
+				<td>{{ task.start_date }}</td>
+				<td>{{ task.end_date }}</td>
+				<td ng-if="task.is_completed == true">&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-ok"></span></td>
+				<td ng-if="task.is_completed == false">
+					<button class="btn-mini btn-xmini btn-default" ng-click="doneTask(task.id)">Done</button>
+				</td>
+				<td>
+					<a href="" ng-click="editTask(task.id)"><span class="glyphicon glyphicon-pencil"></span></a>&nbsp;&nbsp;
+					<a href="" ng-click="deleteTask(task.id)"><span class="glyphicon glyphicon-trash"></span></a>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div><!-- END col-md-6 -->
+</div><!-- END row -->

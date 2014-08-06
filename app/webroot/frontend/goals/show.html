@@ -24,11 +24,11 @@
 		</thead>
 		<tbody>
 			<tr ng-repeat="goal in goals">
-				<td>{{ goal.Goal.title }}</td>
-				<td>{{ goal.Goal.completion_percent }}</td>
-				<td>{{ goal.Goal.priority }}</td>
-				<td>{{ goal.Goal.difficulty }}</td>
-				<td>{{ goal.Goal.end_date }}</td>
+				<td class="clickable" ng-click="manageGoal(goal.Goal.id)">{{ goal.Goal.title }}</td>
+				<td class="clickable" ng-click="manageGoal(goal.Goal.id)">{{ goal.Goal.completion_percent }}</td>
+				<td class="clickable" ng-click="manageGoal(goal.Goal.id)">{{ goal.Goal.priority }}</td>
+				<td class="clickable" ng-click="manageGoal(goal.Goal.id)">{{ goal.Goal.difficulty }}</td>
+				<td class="clickable" ng-click="manageGoal(goal.Goal.id)">{{ goal.Goal.end_date }}</td>
 				<td>
 					<div class="btn-group" dropdown>
 						<button type="button" class="btn btn-danger">Actions</button>
@@ -37,8 +37,7 @@
 						<span class="sr-only">Split button!</span>
 						</button>
 						<ul class="dropdown-menu" role="menu">
-						<li><a href="#">Add Tasks</a></li>
-						<li><a href="#">Dashboard</a></li>
+						<li><a href='#/manage/{{goal.Goal.id}}'>Manage Goal</a></li>
 						<li class="divider"></li>
 						<li><a href='#/edit/{{goal.Goal.id}}'>Edit Goal</a></li>
 						<li><a href='#' ng-click="deleteGoal(goal.Goal.id)">Delete Goal</a></li>
