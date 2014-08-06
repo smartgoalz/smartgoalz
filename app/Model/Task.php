@@ -37,4 +37,27 @@ class Task extends AppModel {
 		),
 	);
 
+	/* Validation rules for the Group table */
+	public $validate = array(
+		'title' => array(
+			'rule1' => array(
+				'rule' => 'notEmpty',
+				'message' => 'Task cannot be empty',
+				'required'   => true,
+				'allowEmpty' => false,
+			),
+			'rule2' => array(
+				'rule' => 'isUnique',
+				'message' => 'Task is already in use',
+				'required'   => true,
+				'allowEmpty' => false,
+			),
+			'rule3' => array(
+				'rule' => array('maxLength', 255),
+				'message' => 'Task cannot be more than 255 characters',
+				'required'   => true,
+				'allowEmpty' => false,
+			),
+		),
+	);
 }

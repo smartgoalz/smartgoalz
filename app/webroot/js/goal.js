@@ -257,70 +257,24 @@ goalApp.controller('GoalManageCtrl', function ($scope, $http, $modal, $routePara
 
 	/* Edit task action */
 	$scope.editTask = function() {
-		/* Open modal window */
-		var modalDefaults = {
-			backdrop: true,
-			keyboard: true,
-			modalFade: true,
-			templateUrl: 'frontend/tasks/add.html'
-		};
-
-		var modalOptions = {
-			closeButtonText: 'Cancel',
-			actionButtonText: 'Submit',
-			headerText: 'Edit a Task',
-			bodyText: ''
-		};
-
-		modalService.showModal(modalDefaults, modalOptions).then(function (result) {
-			// todo
-		});
 	};
 
 	/* Add task action */
 	$scope.addTask = function() {
 		/* Open modal window */
-		var modalDefaults = {
-			backdrop: true,
-			keyboard: true,
-			modalFade: true,
-			templateUrl: 'frontend/tasks/add.html'
-		};
-
-		var modalOptions = {
-			closeButtonText: 'Cancel',
-			actionButtonText: 'Submit',
-			headerText: 'Add Task',
-			bodyText: ''
-		};
-
-		modalService.showModal(modalDefaults, modalOptions).then(function (result) { console.log($scope.formdata); return;
-			var data = {
-				goal_id: $scope.goaldata.Goal.id,
-				parent_id: 1,
-				title: $scope.formdata.Title,
-				start_date: $scope.formdata.Startdate,
-				end_date: $scope.formdata.Enddate,
-				reminder_time: $scope.formdata.Reminder,
-				is_completed: $scope.formdata.Completed,
-				completion_date: $scope.formdata.Completiondate,
-				notes: $scope.formdata.Notes,
-			};
-
-			$http.post("tasks/add.json", data).
-			success(function (data, status, headers) {
-				if (data['message']['type'] == 'error') {
-					AlertService.alerts.push({type: 'danger', msg: data['message']['text']});
+		var modalInstance = $modal.open({
+			templateUrl: 'frontend/tasks/add.html',
+			controller: ModalInstanceCtrl,
+			resolve: {
+				goaldata: function () {
+					return $scope.goaldata;
 				}
-				if (data['message']['type'] == 'success') {
-					AlertService.alerts.push({type: 'success', msg: data['message']['text']});
-				}
-				$route.reload();
-			}).
-			error(function (data, status, headers) {
-				AlertService.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
-				$route.reload();
-			});
+			}
+		});
+
+		modalInstance.result.then(function (result) {
+			$route.reload();
+		}, function () {
 		});
 	};
 
@@ -360,4 +314,44 @@ goalApp.controller('GoalManageCtrl', function ($scope, $http, $modal, $routePara
 		});
 	};
 });
+
+var ModalInstanceCtrl = function ($scope, $modalInstance, $http, AlertService, goaldata) {
+	$scope.alerts = [];
+	$scope.formdata = [];
+
+	$scope.submit = function () {
+		$scope.alerts = [];
+
+		var data = {
+			goal_id: goaldata.Goal.id,
+			prev_id: 1,
+			title: $scope.formdata.Title,
+			start_date: $scope.formdata.Startdate,
+			end_date: $scope.formdata.Enddate,
+			reminder_time: $scope.formdata.Reminder,
+			is_completed: $scope.formdata.Completed,
+			completion_date: $scope.formdata.Completiondate,
+			notes: $scope.formdata.Notes,
+		};
+
+		$http.post("tasks/add.json", data).
+		success(function (data, status, headers) {
+			if (data['message']['type'] == 'error') {
+				$scope.alerts.push({type: 'danger', msg: data['message']['text']});
+			}
+			if (data['message']['type'] == 'success') {
+				AlertService.alerts.push({type: 'success', msg: data['message']['text']});
+				$modalInstance.close();
+			}
+		}).
+		error(function (data, status, headers) {
+			$scope.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
+		});
+	};
+
+	$scope.cancel = function () {
+		$modalInstance.dismiss();
+	};
+};
+
 
