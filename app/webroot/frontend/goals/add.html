@@ -39,11 +39,7 @@
 					<div class="form-group">
 						<label for="inputCategory">Category</label>
 						<select class="form-control" id="inputCategory" ng-model="formdata.Category">
-							<option value="1">General</option>
-							<option value="2">Personal</option>
-							<option value="3">Health</option>
-							<option value="4">Learning</option>
-							<option value="5">Recreation</option>
+							<option ng-repeat="category in categories" value="{{category.id}}">{{category.value}}</option>
 						</select>
 					</div>
 				</div>

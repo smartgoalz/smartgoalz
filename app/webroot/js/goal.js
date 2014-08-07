@@ -33,22 +33,44 @@ goalApp.factory('AlertService', function() {
 	};
 });
 
-goalApp.factory('SelectService', function() {
-	return {
-		priorities : [
+goalApp.factory('SelectService', function($http, $q) {
+
+	var categories = function() {
+		var deferred = $q.defer();
+		$http({method : "GET", url: "categories/index.json"}).
+		success(function(result) {
+		    deferred.resolve(result);
+		}).
+		error(function(result) {
+			/* TODO */
+		});
+		return deferred.promise;
+        };
+
+	var priorities = function() {
+		return [
 			{'id': 1, 'value': 'Highest'},
 			{'id': 2, 'value': 'High'},
 			{'id': 3, 'value': 'Medium'},
 			{'id': 4, 'value': 'Low'},
 			{'id': 5, 'value': 'Lowest'}
-		],
-		difficulties : [
+		];
+	};
+
+	var difficulties = function() {
+		return [
 			{'id': 1, 'value': 'Very Hard'},
 			{'id': 2, 'value': 'Hard'},
 			{'id': 3, 'value': 'Normal'},
 			{'id': 4, 'value': 'Easy'},
 			{'id': 5, 'value': 'Very Easy'}
-		]
+		];
+	}
+
+	return {
+		priorities : priorities(),
+		difficulties : difficulties(),
+		categories: categories,
 	};
 });
 
@@ -172,6 +194,12 @@ goalApp.controller('GoalAddCtrl', function ($scope, $http, $location, AlertServi
 
 	$scope.priorities = SelectService.priorities;
 	$scope.difficulties = SelectService.difficulties;
+	$scope.categories = [];
+
+	var categoryPromise = SelectService.categories();
+	categoryPromise.then(function(result) {
+		$scope.categories = result['categories'];
+	});
 
 	$scope.formdata = [];
 
@@ -215,6 +243,12 @@ goalApp.controller('GoalEditCtrl', function ($scope, $http, $routeParams, $locat
 
 	$scope.priorities = SelectService.priorities;
 	$scope.difficulties = SelectService.difficulties;
+	$scope.categories = [];
+
+	var categoryPromise = SelectService.categories();
+	categoryPromise.then(function(result) {
+		$scope.categories = result['categories'];
+	});
 
 	$http.get('goals/' + $routeParams['id'] + '.json').
 	success(function(data, status, headers, config) {
