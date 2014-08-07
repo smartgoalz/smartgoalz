@@ -33,6 +33,25 @@ goalApp.factory('AlertService', function() {
 	};
 });
 
+goalApp.factory('SelectService', function() {
+	return {
+		priorities : [
+			{'id': 1, 'value': 'Highest'},
+			{'id': 2, 'value': 'High'},
+			{'id': 3, 'value': 'Medium'},
+			{'id': 4, 'value': 'Low'},
+			{'id': 5, 'value': 'Lowest'}
+		],
+		difficulties : [
+			{'id': 1, 'value': 'Very Hard'},
+			{'id': 2, 'value': 'Hard'},
+			{'id': 3, 'value': 'Normal'},
+			{'id': 4, 'value': 'Easy'},
+			{'id': 5, 'value': 'Very Easy'}
+		]
+	};
+});
+
 angular.module('goalApp').service('modalService', ['$modal', function ($modal) {
 	var modalDefaults = {
 		backdrop: true,
@@ -145,11 +164,14 @@ goalApp.controller('GoalShowCtrl', function ($scope, $http, $location, $modal, $
 });
 
 /* Add goal */
-goalApp.controller('GoalAddCtrl', function ($scope, $http, $location, AlertService) {
+goalApp.controller('GoalAddCtrl', function ($scope, $http, $location, AlertService, SelectService) {
 	AlertService.alerts = [];
 	$scope.closeAlert = function(index) {
 		$scope.alerts.splice(index, 1);
 	};
+
+	$scope.priorities = SelectService.priorities;
+	$scope.difficulties = SelectService.difficulties;
 
 	$scope.formdata = [];
 
@@ -183,13 +205,16 @@ goalApp.controller('GoalAddCtrl', function ($scope, $http, $location, AlertServi
 });
 
 /* Edit goal */
-goalApp.controller('GoalEditCtrl', function ($scope, $http, $routeParams, $location, AlertService) {
+goalApp.controller('GoalEditCtrl', function ($scope, $http, $routeParams, $location, AlertService, SelectService) {
 	AlertService.alerts = [];
 	$scope.closeAlert = function(index) {
 		$scope.alerts.splice(index, 1);
 	};
 
 	$scope.formdata = [];
+
+	$scope.priorities = SelectService.priorities;
+	$scope.difficulties = SelectService.difficulties;
 
 	$http.get('goals/' + $routeParams['id'] + '.json').
 	success(function(data, status, headers, config) {
