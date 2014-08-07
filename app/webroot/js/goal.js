@@ -255,16 +255,12 @@ goalApp.controller('GoalManageCtrl', function ($scope, $http, $modal, $routePara
 		$location.path('/edit/' + id);
 	}
 
-	/* Edit task action */
-	$scope.editTask = function() {
-	};
-
 	/* Add task action */
 	$scope.addTask = function() {
 		/* Open modal window */
-		var modalInstance = $modal.open({
+		var addModalInstance = $modal.open({
 			templateUrl: 'frontend/tasks/add.html',
-			controller: ModalInstanceCtrl,
+			controller: AddModalInstanceCtrl,
 			resolve: {
 				goaldata: function () {
 					return $scope.goaldata;
@@ -272,7 +268,30 @@ goalApp.controller('GoalManageCtrl', function ($scope, $http, $modal, $routePara
 			}
 		});
 
-		modalInstance.result.then(function (result) {
+		addModalInstance.result.then(function (result) {
+			$route.reload();
+		}, function () {
+		});
+	};
+
+
+	/* Edit task action */
+	$scope.editTask = function(id) {
+		/* Open modal window */
+		var editModalInstance = $modal.open({
+			templateUrl: 'frontend/tasks/edit.html',
+			controller: EditModalInstanceCtrl,
+			resolve: {
+				goaldata: function () {
+					return $scope.goaldata;
+				},
+				id : function () {
+					return id;
+				}
+			}
+		});
+
+		editModalInstance.result.then(function (result) {
 			$route.reload();
 		}, function () {
 		});
@@ -313,9 +332,29 @@ goalApp.controller('GoalManageCtrl', function ($scope, $http, $modal, $routePara
 			});
 		});
 	};
+
+	/* Mark task completed action */
+	$scope.doneTask = function(id) {
+		$http.post("tasks/done/" + id + ".json").
+		success(function (data, status, headers) {
+			if (data['message']['type'] == 'error') {
+				AlertService.alerts.push({type: 'success', msg: data['message']['text']});
+				$scope.alerts.push({type: 'danger', msg: data['message']['text']});
+			}
+			if (data['message']['type'] == 'success') {
+				AlertService.alerts.push({type: 'success', msg: data['message']['text']});
+				$modalInstance.close();
+			}
+		}).
+		error(function (data, status, headers) {
+			$scope.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
+		});
+		$route.reload();
+	};
 });
 
-var ModalInstanceCtrl = function ($scope, $modalInstance, $http, AlertService, goaldata) {
+/* Task add modal */
+var AddModalInstanceCtrl = function ($scope, $modalInstance, $http, AlertService, goaldata) {
 	$scope.alerts = [];
 	$scope.formdata = [];
 
@@ -334,7 +373,71 @@ var ModalInstanceCtrl = function ($scope, $modalInstance, $http, AlertService, g
 			notes: $scope.formdata.Notes,
 		};
 
-		$http.post("tasks/add.json", data).
+		$http.post("tasks/add/.json", data).
+		success(function (data, status, headers) {
+			if (data['message']['type'] == 'error') {
+				$scope.alerts.push({type: 'danger', msg: data['message']['text']});
+			}
+			if (data['message']['type'] == 'success') {
+				AlertService.alerts.push({type: 'success', msg: data['message']['text']});
+				$modalInstance.close();
+			}
+		}).
+		error(function (data, status, headers) {
+			$scope.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
+		});
+	};
+
+	$scope.cancel = function () {
+		$modalInstance.dismiss();
+	};
+};
+
+/* Task edit modal */
+var EditModalInstanceCtrl = function ($scope, $modalInstance, $http, AlertService, goaldata, id) {
+	$scope.alerts = [];
+	$scope.formdata = [];
+	AlertService.alerts = [];
+
+	var found = false;
+	var task = [];
+	for(var c = 0, len = goaldata.Task.length; c < len; c++) {
+		if (goaldata.Task[c].id == id) {
+			found = true;
+			var task = goaldata.Task[c];
+			break;
+		}
+	}
+
+	if (found) {
+			prev_id: 1,
+			$scope.formdata.Title = task.title;
+			$scope.formdata.Startdate = task.start_date;
+			$scope.formdata.Enddate = task.end_data;
+			$scope.formdata.Reminder = task.reminder_time;
+			$scope.formdata.Completed = task.is_completed;
+			$scope.formdata.Completiondate = task.completion_date;
+			$scope.formdata.Notes = task.notes;
+	} else {
+		AlertService.alerts.push({type: 'danger', msg: 'Task not found'});
+		$modalInstance.dismiss();
+	}
+
+	$scope.submit = function () {
+		$scope.alerts = [];
+
+		var data = {
+			prev_id: 1,
+			title: $scope.formdata.Title,
+			start_date: $scope.formdata.Startdate,
+			end_date: $scope.formdata.Enddate,
+			reminder_time: $scope.formdata.Reminder,
+			is_completed: $scope.formdata.Completed,
+			completion_date: $scope.formdata.Completiondate,
+			notes: $scope.formdata.Notes,
+		};
+
+		$http.post("tasks/edit/" + id + ".json", data).
 		success(function (data, status, headers) {
 			if (data['message']['type'] == 'error') {
 				$scope.alerts.push({type: 'danger', msg: data['message']['text']});

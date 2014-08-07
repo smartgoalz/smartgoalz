@@ -41,7 +41,15 @@
 			<ul class="nav navbar-nav">
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
-				<li><a href="#">Settings</a></li>
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown">Profile <span class="caret"></span></a>
+					<ul class="dropdown-menu" role="menu">
+						<li><a href="#">Goal Categories</a></li>
+						<li class="divider"></li>
+						<li><a href="#">Settings</a></li>
+						<li><a href="#">Change Password</a></li>
+					</ul>
+				</li>
 				<li><a href="#">Logout</a></li>
 			</ul>
 		</div><!--/.nav-collapse -->

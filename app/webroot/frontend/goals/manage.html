@@ -33,6 +33,7 @@
 	<a href="#/show" class="btn btn-info">Cancel</a>
 </div>
 <br />
+	<div ng-hide="goaldata.Task.length">No tasks found. Please add a task to get started.</div>
 	<table class="table table-hover" ng-show="goaldata.Task.length">
 		<thead>
 			<tr>

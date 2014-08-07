@@ -112,4 +112,23 @@ class TasksController extends AppController {
 			'_serialize' => array('message')
 		));
 	}
+
+	public function done($id) {
+		$this->Task->id = $id;
+		if ($this->Task->saveField('is_completed', '1')) {
+			$message = array(
+				'text' => __('Task marked as completed'),
+				'type' => 'success'
+			);
+		} else {
+			$message = array(
+				'text' => __('Error in marking task as completed'),
+				'type' => 'error'
+			);
+		}
+		$this->set(array(
+			'message' => $message,
+			'_serialize' => array('message')
+		));
+	}
 }
