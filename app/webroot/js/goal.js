@@ -86,6 +86,7 @@ goalApp.controller('GoalCtrl', function ($scope) {
 	$scope.formdata = [];
 });
 
+/* Show goals */
 goalApp.controller('GoalShowCtrl', function ($scope, $http, $location, $modal, $window, $route, AlertService, modalService) {
 	$scope.alerts = AlertService.alerts;
 	$scope.closeAlert = function(index) {
@@ -143,6 +144,7 @@ goalApp.controller('GoalShowCtrl', function ($scope, $http, $location, $modal, $
 	}
 });
 
+/* Add goal */
 goalApp.controller('GoalAddCtrl', function ($scope, $http, $location, AlertService) {
 	AlertService.alerts = [];
 	$scope.closeAlert = function(index) {
@@ -180,6 +182,7 @@ goalApp.controller('GoalAddCtrl', function ($scope, $http, $location, AlertServi
 	}
 });
 
+/* Edit goal */
 goalApp.controller('GoalEditCtrl', function ($scope, $http, $routeParams, $location, AlertService) {
 	AlertService.alerts = [];
 	$scope.closeAlert = function(index) {
@@ -357,16 +360,17 @@ goalApp.controller('GoalManageCtrl', function ($scope, $http, $modal, $routePara
 var AddModalInstanceCtrl = function ($scope, $modalInstance, $http, AlertService, goaldata) {
 	$scope.alerts = [];
 	$scope.formdata = [];
+	$scope.goaldata = goaldata;
 
 	$scope.submit = function () {
 		$scope.alerts = [];
 
 		var data = {
 			goal_id: goaldata.Goal.id,
-			prev_id: 1,
 			title: $scope.formdata.Title,
 			start_date: $scope.formdata.Startdate,
 			end_date: $scope.formdata.Enddate,
+			prev_id: $scope.formdata.Prev,
 			reminder_time: $scope.formdata.Reminder,
 			is_completed: $scope.formdata.Completed,
 			completion_date: $scope.formdata.Completiondate,
@@ -397,6 +401,8 @@ var AddModalInstanceCtrl = function ($scope, $modalInstance, $http, AlertService
 var EditModalInstanceCtrl = function ($scope, $modalInstance, $http, AlertService, goaldata, id) {
 	$scope.alerts = [];
 	$scope.formdata = [];
+	$scope.goaldata = goaldata;
+	$scope.taskid = id;
 	AlertService.alerts = [];
 
 	var found = false;
@@ -410,10 +416,10 @@ var EditModalInstanceCtrl = function ($scope, $modalInstance, $http, AlertServic
 	}
 
 	if (found) {
-			prev_id: 1,
 			$scope.formdata.Title = task.title;
 			$scope.formdata.Startdate = task.start_date;
 			$scope.formdata.Enddate = task.end_data;
+			$scope.formdata.Prev = task.prev_id;
 			$scope.formdata.Reminder = task.reminder_time;
 			$scope.formdata.Completed = task.is_completed;
 			$scope.formdata.Completiondate = task.completion_date;
@@ -427,10 +433,10 @@ var EditModalInstanceCtrl = function ($scope, $modalInstance, $http, AlertServic
 		$scope.alerts = [];
 
 		var data = {
-			prev_id: 1,
 			title: $scope.formdata.Title,
 			start_date: $scope.formdata.Startdate,
 			end_date: $scope.formdata.Enddate,
+			prev_id: $scope.formdata.Prev,
 			reminder_time: $scope.formdata.Reminder,
 			is_completed: $scope.formdata.Completed,
 			completion_date: $scope.formdata.Completiondate,

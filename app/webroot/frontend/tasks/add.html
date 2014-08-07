@@ -37,6 +37,17 @@
 					</div>
 				</div>
 
+				<div class="row" ng-show="goaldata.Task">
+					<div class="col-xs-6">
+						<div class="form-group">
+							<label for="inputPrev">After</label>
+							<select class="form-control" id="inputPrev" ng-model="formdata.Prev">
+								<option ng-repeat="prevtask in goaldata.Task" value="{{prevtask.id}}" ng-if="prevtask.id != taskid" ng-selected="{{prevtask.id == formdata.Prev}}">{{prevtask.title}}</option>
+							</select>
+						</div>
+					</div>
+				</div>
+
 				<div class="row">
 					<div class="col-xs-6">
 						<div class="form-group">
