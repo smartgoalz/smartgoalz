@@ -49,6 +49,10 @@ class TasksController extends AppController {
 
 
 	public function add() {
+		$this->loadModel('Goal');
+
+		$goal_id = $this->request->data['goal_id'];
+
 		if ($this->Task->save($this->request->data)) {
 			$message = array(
 				'text' => __('Saved'),
@@ -65,6 +69,9 @@ class TasksController extends AppController {
 				'type' => 'error'
 			);
 		}
+
+		$this->Goal->recalCompletion($goal_id);
+
 		$this->set(array(
 			'message' => $message,
 			'_serialize' => array('message'),
@@ -72,7 +79,19 @@ class TasksController extends AppController {
 	}
 
 	public function edit($id) {
+		$this->loadModel('Goal');
+
 		$this->Task->id = $id;
+
+		if (!$this->Task->read()) {
+			$message = array(
+				'text' => __('No such task exists'),
+				'type' => 'error'
+			);
+		}
+
+		$goal_id = $this->Task->data['Task']['goal_id'];
+
 		if ($this->Task->save($this->request->data)) {
 			$message = array(
 				'text' => __('Saved'),
@@ -89,6 +108,9 @@ class TasksController extends AppController {
 				'type' => 'error'
 			);
 		}
+
+		$this->Goal->recalCompletion($goal_id);
+
 		$this->set(array(
 			'message' => $message,
 			'_serialize' => array('message')
@@ -96,6 +118,19 @@ class TasksController extends AppController {
 	}
 
 	public function delete($id) {
+		$this->loadModel('Goal');
+
+		$this->Task->id = $id;
+
+		if (!$this->Task->read()) {
+			$message = array(
+				'text' => __('No such task exists'),
+				'type' => 'error'
+			);
+		}
+
+		$goal_id = $this->Task->data['Task']['goal_id'];
+
 		if ($this->Task->delete($id)) {
 			$message = array(
 				'text' => __('Task deleted'),
@@ -107,6 +142,9 @@ class TasksController extends AppController {
 				'type' => 'error'
 			);
 		}
+
+		$this->Goal->recalCompletion($goal_id);
+
 		$this->set(array(
 			'message' => $message,
 			'_serialize' => array('message')
@@ -114,7 +152,19 @@ class TasksController extends AppController {
 	}
 
 	public function done($id) {
+		$this->loadModel('Goal');
+
 		$this->Task->id = $id;
+
+		if (!$this->Task->read()) {
+			$message = array(
+				'text' => __('No such task exists'),
+				'type' => 'error'
+			);
+		}
+
+		$goal_id = $this->Task->data['Task']['goal_id'];
+
 		if ($this->Task->saveField('is_completed', '1')) {
 			$message = array(
 				'text' => __('Task marked as completed'),
@@ -126,6 +176,9 @@ class TasksController extends AppController {
 				'type' => 'error'
 			);
 		}
+
+		$this->Goal->recalCompletion($goal_id);
+
 		$this->set(array(
 			'message' => $message,
 			'_serialize' => array('message')

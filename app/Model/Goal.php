@@ -98,4 +98,43 @@ class Goal extends AppModel {
 			),
 		),
 	);
+
+	public function recalCompletion($id) {
+		$goal = $this->findById($id);
+
+		if (empty($goal)) {
+			return false;
+		}
+
+		$total_count = 0;
+		$total_done = 0;
+		foreach ($goal['Task'] as $row => $task) {
+			if ($task['is_completed'] == true) {
+				$total_done++;
+			}
+			$total_count++;
+		}
+		if ($total_count != $total_done) {
+			$percent_done = ($total_done * 100) / $total_count;
+			$percent_done = (int)$percent_done;
+
+			$this->id = $goal['Goal']['id'];
+			if (!$this->saveField('completion_percent', $percent_done)) {
+				return false;
+			}
+			if (!$this->saveField('is_completed', 0)) {
+				return false;
+			}
+		} else {
+			/* Completed 100% */
+			$this->id = $goal['Goal']['id'];
+			if (!$this->saveField('completion_percent', 100)) {
+				return false;
+			}
+			if (!$this->saveField('is_completed', 1)) {
+				return false;
+			}
+		}
+		return true;
+	}
 }

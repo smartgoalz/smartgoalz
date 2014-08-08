@@ -402,16 +402,18 @@ goalApp.controller('GoalManageCtrl', function ($scope, $http, $modal, $routePara
 			if (data['message']['type'] == 'error') {
 				AlertService.alerts.push({type: 'success', msg: data['message']['text']});
 				$scope.alerts.push({type: 'danger', msg: data['message']['text']});
+				$route.reload();
 			}
 			if (data['message']['type'] == 'success') {
 				AlertService.alerts.push({type: 'success', msg: data['message']['text']});
+				$route.reload();
 				$modalInstance.close();
 			}
 		}).
 		error(function (data, status, headers) {
 			$scope.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
+			$route.reload();
 		});
-		$route.reload();
 	};
 });
 
@@ -436,7 +438,7 @@ var AddModalInstanceCtrl = function ($scope, $modalInstance, $http, AlertService
 			notes: $scope.formdata.Notes,
 		};
 
-		$http.post("tasks/add/.json", data).
+		$http.post("tasks/add.json", data).
 		success(function (data, status, headers) {
 			if (data['message']['type'] == 'error') {
 				$scope.alerts.push({type: 'danger', msg: data['message']['text']});
