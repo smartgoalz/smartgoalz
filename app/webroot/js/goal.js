@@ -214,6 +214,9 @@ goalApp.controller('GoalAddCtrl', function ($scope, $http, $location, AlertServi
 			difficulty: $scope.formdata.Difficulty,
 			priority: $scope.formdata.Priority,
 			reason: $scope.formdata.Reason,
+			is_completed: 0,
+			task_total: 0,
+			task_completed: 0,
 		};
 
 		$http.post("goals/add.json", data).

@@ -26,7 +26,7 @@
 		<tbody>
 			<tr ng-repeat="goal in goals">
 				<td class="clickable" ng-click="manageGoal(goal.Goal.id)">{{ goal.Goal.title }}</td>
-				<td class="clickable" ng-click="manageGoal(goal.Goal.id)" ng-if="goal.Goal.is_completed == false">{{ goal.Goal.completion_percent }}%</td>
+				<td class="clickable" ng-click="manageGoal(goal.Goal.id)" ng-if="goal.Goal.is_completed == false">{{ goal.Goal.task_total }} / {{ goal.Goal.task_completed }}</td>
 				<td class="clickable" ng-click="manageGoal(goal.Goal.id)" ng-if="goal.Goal.is_completed == true"><span class="glyphicon glyphicon-ok"></span></td>
 				<td class="clickable" ng-click="manageGoal(goal.Goal.id)">{{ goal.Goal.priority }}</td>
 				<td class="clickable" ng-click="manageGoal(goal.Goal.id)">{{ goal.Goal.difficulty }}</td>

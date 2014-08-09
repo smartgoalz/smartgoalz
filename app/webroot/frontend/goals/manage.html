@@ -13,14 +13,9 @@
 
 <div>Priority : {{ goaldata.Goal.priority }}</div>
 <div>Difficulty : {{ goaldata.Goal.difficulty }}</div>
+<div>Completed : {{goaldata.Goal.task_completed}} / {{goaldata.Goal.task_total}}</div>
 
 <br />
-
-<div class="row">
-	<div class="col-xs-5">
-		<div><progressbar value=goaldata.Goal.completion_percent max="100" type="warning"><span class="progress-pad"></span><span class="progress-text">Completed {{goaldata.Goal.completion_percent}}%</span></progressbar></div>
-	</div>
-</div>
 
 <div class="row">
 	<div class="col-xs-8">

@@ -106,32 +106,32 @@ class Goal extends AppModel {
 			return false;
 		}
 
-		$total_count = 0;
-		$total_done = 0;
+		$task_total = 0;
+		$task_completed = 0;
 		foreach ($goal['Task'] as $row => $task) {
 			if ($task['is_completed'] == true) {
-				$total_done++;
+				$task_completed++;
 			}
-			$total_count++;
+			$task_total++;
 		}
-		if ($total_count != $total_done) {
-			$percent_done = ($total_done * 100) / $total_count;
-			$percent_done = (int)$percent_done;
+		$this->id = $goal['Goal']['id'];
+		if (!$this->saveField('task_total', $task_total)) {
+			return false;
+		}
+		$this->id = $goal['Goal']['id'];
+		if (!$this->saveField('task_completed', $task_completed)) {
+			return false;
+		}
 
+		if ($task_total == $task_completed) {
 			$this->id = $goal['Goal']['id'];
-			if (!$this->saveField('completion_percent', $percent_done)) {
-				return false;
-			}
-			if (!$this->saveField('is_completed', 0)) {
+			if (!$this->saveField('is_completed', 1)) {
 				return false;
 			}
 		} else {
 			/* Completed 100% */
 			$this->id = $goal['Goal']['id'];
-			if (!$this->saveField('completion_percent', 100)) {
-				return false;
-			}
-			if (!$this->saveField('is_completed', 1)) {
+			if (!$this->saveField('is_completed', 0)) {
 				return false;
 			}
 		}
