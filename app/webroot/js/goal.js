@@ -506,6 +506,7 @@ var EditModalInstanceCtrl = function ($scope, $modalInstance, $http, AlertServic
 		$scope.alerts = [];
 
 		var data = {
+			goal_id: goaldata.Goal.id,
 			title: $scope.formdata.Title,
 			start_date: $scope.formdata.Startdate,
 			end_date: $scope.formdata.Enddate,

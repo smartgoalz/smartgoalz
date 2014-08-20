@@ -31,31 +31,34 @@ class TasksController extends AppController {
 
 	public $components = array('RequestHandler');
 
-	public function index() {
-		$tasks = $this->Task->find('all');
-		$this->set(array(
-			'tasks' => $tasks,
-			'_serialize' => array('tasks'),
-		));
-	}
-
-	public function view($id) {
-		$task = $this->Task->findById($id);
-		$this->set(array(
-			'task' => $task,
-			'_serialize' => array('task'),
-		));
-	}
-
-
 	public function add() {
 		$this->loadModel('Goal');
 
 		$goal_id = $this->request->data['goal_id'];
 
+		/* Check if valid goal */
+		$count = $this->Goal->find('count', array(
+			'conditions' => array(
+				'Goal.id' => $goal_id,
+				'Goal.user_id' => $this->Auth->user('id'),
+			),
+		));
+		if ($count != 1) {
+			$message = array(
+				'text' => __('Oops ! Goal is not valid. Please try again.'),
+				'type' => 'error'
+			);
+			$this->set(array(
+				'message' => $message,
+				'_serialize' => array('message')
+			));
+			return;
+		}
+
+		$this->request->data['goal_id'] = $goal_id;
 		if ($this->Task->save($this->request->data)) {
 			$message = array(
-				'text' => __('Saved'),
+				'text' => __('Great ! You have added a task to your goal.'),
 				'type' => 'success'
 			);
 		} else {
@@ -70,31 +73,63 @@ class TasksController extends AppController {
 			);
 		}
 
-		$this->Goal->recalCompletion($goal_id);
+		$this->Goal->recalculateCompletion($goal_id);
 
 		$this->set(array(
 			'message' => $message,
 			'_serialize' => array('message'),
 		));
+		return;
 	}
 
 	public function edit($id) {
 		$this->loadModel('Goal');
 
-		$this->Task->id = $id;
+		$goal_id = $this->request->data['goal_id'];
 
-		if (!$this->Task->read()) {
+		/* Check if valid goal */
+		$count = $this->Goal->find('count', array(
+			'conditions' => array(
+				'Goal.id' => $goal_id,
+				'Goal.user_id' => $this->Auth->user('id'),
+			),
+		));
+		if ($count != 1) {
 			$message = array(
-				'text' => __('No such task exists'),
+				'text' => __('Oops ! Goal is not valid. Please try again.'),
 				'type' => 'error'
 			);
+			$this->set(array(
+				'message' => $message,
+				'_serialize' => array('message')
+			));
+			return;
 		}
 
-		$goal_id = $this->Task->data['Task']['goal_id'];
+		/* Read the task */
+		$task = $this->Task->find('first', array('conditions' => array(
+			'Task.id' => $id,
+			'Task.goal_id' => $goal_id,
+		)));
+		if (!$task) {
+			$message = array(
+				'text' => __('Oops ! Task is not valid. Please try again.'),
+				'type' => 'error'
+			);
+			$this->set(array(
+				'message' => $message,
+				'_serialize' => array('message')
+			));
+			return;
+		}
+
+		$this->Task->id = $id;
+		$this->request->data['id'] = $id;
+		$this->request->data['goal_id'] = $goal_id;
 
 		if ($this->Task->save($this->request->data)) {
 			$message = array(
-				'text' => __('Saved'),
+				'text' => __('Cool ! Task has been updated.'),
 				'type' => 'success'
 			);
 		} else {
@@ -109,41 +144,70 @@ class TasksController extends AppController {
 			);
 		}
 
-		$this->Goal->recalCompletion($goal_id);
+		$this->Goal->recalculateCompletion($goal_id);
 
 		$this->set(array(
 			'message' => $message,
 			'_serialize' => array('message')
 		));
+		return;
 	}
 
 	public function delete($id) {
 		$this->loadModel('Goal');
 
-		$this->Task->id = $id;
-
-		if (!$this->Task->read()) {
+		/* Read the task */
+		$task = $this->Task->find('first', array('conditions' => array(
+			'Task.id' => $id
+		)));
+		if (!$task) {
 			$message = array(
-				'text' => __('No such task exists'),
+				'text' => __('Oops ! Task is not valid. Please try again.'),
 				'type' => 'error'
 			);
+			$this->set(array(
+				'message' => $message,
+				'_serialize' => array('message')
+			));
+			return;
 		}
 
-		$goal_id = $this->Task->data['Task']['goal_id'];
+		$goal_id = $task['Task']['goal_id'];
+
+		/* Check if valid goal */
+		$count = $this->Goal->find('count', array(
+			'conditions' => array(
+				'Goal.id' => $goal_id,
+				'Goal.user_id' => $this->Auth->user('id'),
+			),
+		));
+		if ($count != 1) {
+			$message = array(
+				'text' => __('Oops ! Goal is not valid. Please try again.'),
+				'type' => 'error'
+			);
+			$this->set(array(
+				'message' => $message,
+				'_serialize' => array('message')
+			));
+			return;
+		}
+
+		$this->Task->id = $id;
 
 		if ($this->Task->delete($id)) {
 			$message = array(
-				'text' => __('Task deleted'),
+				'text' => __('Task has been deleted.'),
 				'type' => 'success'
 			);
 		} else {
 			$message = array(
-				'text' => __('Error deleting task'),
+				'text' => __('Oops ! There was some error while deleting task. Please try again.'),
 				'type' => 'error'
 			);
 		}
 
-		$this->Goal->recalCompletion($goal_id);
+		$this->Goal->recalculateCompletion($goal_id);
 
 		$this->set(array(
 			'message' => $message,
@@ -154,30 +218,66 @@ class TasksController extends AppController {
 	public function done($id) {
 		$this->loadModel('Goal');
 
-		$this->Task->id = $id;
-
-		if (!$this->Task->read()) {
+		/* Read the task */
+		$task = $this->Task->find('first', array('conditions' => array(
+			'Task.id' => $id
+		)));
+		if (!$task) {
 			$message = array(
-				'text' => __('No such task exists'),
+				'text' => __('Oops ! Task is not valid. Please try again.'),
 				'type' => 'error'
 			);
+			$this->set(array(
+				'message' => $message,
+				'_serialize' => array('message')
+			));
+			return;
 		}
 
-		$goal_id = $this->Task->data['Task']['goal_id'];
+		$goal_id = $task['Task']['goal_id'];
 
-		if ($this->Task->saveField('is_completed', '1')) {
+		/* Check if valid goal */
+		$count = $this->Goal->find('count', array(
+			'conditions' => array(
+				'Goal.id' => $goal_id,
+				'Goal.user_id' => $this->Auth->user('id'),
+			),
+		));
+		if ($count != 1) {
 			$message = array(
-				'text' => __('Task marked as completed'),
+				'text' => __('Oops ! Goal is not valid. Please try again.'),
+				'type' => 'error'
+			);
+			$this->set(array(
+				'message' => $message,
+				'_serialize' => array('message')
+			));
+			return;
+		}
+
+		/* Mark task as completed */
+		$this->Task->id = $id;
+		$status = false;
+		if ($this->Task->saveField('is_completed', '1')) {
+			$status = true;
+			$message = array(
+				'text' => __('Congratulations ! You have completed a task. You are one step closer to achieving your goal !'),
 				'type' => 'success'
 			);
 		} else {
 			$message = array(
-				'text' => __('Error in marking task as completed'),
+				'text' => __('Sorry ! There was some problem is marking the task as completed.'),
 				'type' => 'error'
 			);
 		}
 
-		$this->Goal->recalCompletion($goal_id);
+		$this->Goal->recalculateCompletion($goal_id);
+
+		/* Check if goal is completed */
+		$update_goal = $this->Goal->findById($goal_id);
+		if ($status == true && $update_goal['Goal']['is_completed'] == true) {
+			$message['text'] = __('Awesome ! You have completed your task and even achieved your SMART Goal !');
+		}
 
 		$this->set(array(
 			'message' => $message,

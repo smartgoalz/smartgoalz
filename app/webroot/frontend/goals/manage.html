@@ -7,8 +7,8 @@
 </div>
 <br />
 <div class="row">
-	<div class="col-xs-4">Start date : {{ goaldata.Goal.start_date | fixTime | date:'medium' }}</div>
-	<div class="col-xs-4">Due date : {{ goaldata.Goal.end_date | fixTime | date:'medium' }}</div>
+	<div class="col-xs-4">Start date : {{ goaldata.Goal.start_date }}</div>
+	<div class="col-xs-4">Due date : {{ goaldata.Goal.end_date }}</div>
 </div>
 
 <div>Priority : {{ priorities[goaldata.Goal.priority] }}</div>

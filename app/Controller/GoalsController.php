@@ -32,26 +32,40 @@ class GoalsController extends AppController {
 	public $components = array('RequestHandler');
 
 	public function index() {
-		$goals = $this->Goal->find('all');
+		$goals = $this->Goal->find('all', array(
+			'conditions' => array('Goal.user_id' => $this->Auth->user('id')),
+		));
 		$this->set(array(
 			'goals' => $goals,
 			'_serialize' => array('goals'),
 		));
+		return;
 	}
 
 	public function view($id) {
-		$goal = $this->Goal->findById($id);
+		$goal = $this->Goal->find('first', array(
+			'conditions' => array(
+				'Goal.id' => $id,
+				'Goal.user_id' => $this->Auth->user('id'),
+			),
+		));
+
 		$this->set(array(
 			'goal' => $goal,
 			'_serialize' => array('goal'),
 		));
+		return;
 	}
 
-
 	public function add() {
+
+		$this->request->data['user_id'] = $this->Auth->user('id');
+
+		/* Add goal */
+		$this->Goal->create();
 		if ($this->Goal->save($this->request->data)) {
 			$message = array(
-				'text' => __('Saved'),
+				'text' => __('Congratulations ! You have added a new goal.'),
 				'type' => 'success'
 			);
 		} else {
@@ -65,17 +79,42 @@ class GoalsController extends AppController {
 				'type' => 'error'
 			);
 		}
+
 		$this->set(array(
 			'message' => $message,
 			'_serialize' => array('message'),
 		));
+		return;
 	}
 
 	public function edit($id) {
+		/* Check if goal is valid */
+		$count = $this->Goal->find('count', array(
+			'conditions' => array(
+				'Goal.id' => $id,
+				'Goal.user_id' => $this->Auth->user('id'),
+			),
+		));
+		if ($count != 1) {
+			$message = array(
+				'text' => __('Oops ! Goal is not valid. Please try again.'),
+				'type' => 'error'
+			);
+			$this->set(array(
+				'message' => $message,
+				'_serialize' => array('message')
+			));
+			return;
+		}
+
+		/* Update goal */
 		$this->Goal->id = $id;
+		$this->request->data['user_id'] = $this->Auth->user('id');
+		$this->request->data['id'] = $id;
+
 		if ($this->Goal->save($this->request->data)) {
 			$message = array(
-				'text' => __('Saved'),
+				'text' => __('Cool ! Goal has been updated.'),
 				'type' => 'success'
 			);
 		} else {
@@ -89,27 +128,51 @@ class GoalsController extends AppController {
 				'type' => 'error'
 			);
 		}
+
 		$this->set(array(
 			'message' => $message,
 			'_serialize' => array('message')
 		));
+		return;
 	}
 
 	public function delete($id) {
+		/* Check if goal is valid */
+		$count = $this->Goal->find('count', array(
+			'conditions' => array(
+				'Goal.id' => $id,
+				'Goal.user_id' => $this->Auth->user('id'),
+			),
+		));
+		if ($count != 1) {
+			$message = array(
+				'text' => __('Oops ! Goal is not valid. Please try again.'),
+				'type' => 'error'
+			);
+			$this->set(array(
+				'message' => $message,
+				'_serialize' => array('message')
+			));
+			return;
+		}
+
+		/* Delete goal */
 		if ($this->Goal->delete($id, true)) {
 			$message = array(
-				'text' => __('Goal deleted'),
+				'text' => __('Goal has been deleted.'),
 				'type' => 'success'
 			);
 		} else {
 			$message = array(
-				'text' => __('Error deleting goal'),
+				'text' => __('Oops ! There was some error while delete the goal. Please try again.'),
 				'type' => 'error'
 			);
 		}
+
 		$this->set(array(
 			'message' => $message,
 			'_serialize' => array('message')
 		));
+		return;
 	}
 }

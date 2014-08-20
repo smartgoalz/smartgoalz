@@ -47,7 +47,7 @@ class Task extends AppModel {
 				'allowEmpty' => false,
 			),
 			'rule2' => array(
-				'rule' => 'isUnique',
+				'rule' => 'checkUnique',
 				'message' => 'Task is already in use',
 				'required'   => true,
 				'allowEmpty' => false,
@@ -60,4 +60,27 @@ class Task extends AppModel {
 			),
 		),
 	);
+
+	/**
+	 * Checks if task title is unique for every goal
+	 */
+	public function checkUnique($title) {
+		if (empty($this->data[$this->alias]['id'])) {
+			$count = $this->find('count', array(
+				'conditions' => array(
+					'Task.title' => $title,
+					'Task.goal_id' => $this->data[$this->alias]['goal_id'],
+				)
+			));
+		} else {
+			$count = $this->find('count', array(
+				'conditions' => array(
+					'Task.id !=' => $this->data[$this->alias]['id'],
+					'Task.title' => $title,
+					'Task.goal_id' => $this->data[$this->alias]['goal_id'],
+				)
+			));
+		}
+		return $count == 0;
+	}
 }

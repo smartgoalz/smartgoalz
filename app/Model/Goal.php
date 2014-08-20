@@ -54,19 +54,33 @@ class Goal extends AppModel {
 		'title' => array(
 			'rule1' => array(
 				'rule' => 'notEmpty',
-				'message' => 'Goal title cannot be empty',
+				'message' => 'Oops ! Goal title cannot be empty.',
 				'required'   => true,
 				'allowEmpty' => false,
 			),
 			'rule2' => array(
-				'rule' => 'isUnique',
-				'message' => 'Goal title is already in use',
+				'rule' => 'checkUnique',
+				'message' => 'Arrg ! Goal title is already in use.',
 				'required'   => true,
 				'allowEmpty' => false,
 			),
 			'rule3' => array(
 				'rule' => array('maxLength', 255),
-				'message' => 'Goal title cannot be more than 255 characters',
+				'message' => 'Oh ! Goal title cannot be more than 255 characters.',
+				'required'   => true,
+				'allowEmpty' => false,
+			),
+		),
+		'category_id' => array(
+			'rule1' => array(
+				'rule' => 'notEmpty',
+				'message' => 'Oops ! Category cannot be empty',
+				'required' => true,
+				'allowEmpty' => false,
+			),
+			'rule2' => array(
+				'rule' => 'categoryExists',
+				'message' => 'Arrg ! You have selected a invalid category.',
 				'required'   => true,
 				'allowEmpty' => false,
 			),
@@ -74,13 +88,13 @@ class Goal extends AppModel {
 		'difficulty' => array(
 			'rule1' => array(
 				'rule' => 'notEmpty',
-				'message' => 'Difficulty cannot be empty',
+				'message' => 'Oops ! Difficulty cannot be empty',
 				'required' => true,
 				'allowEmpty' => false,
 			),
 			'rule2' => array(
 				'rule' => array('inList', array('1', '2', '3', '4', '5')),
-				'message' => 'Difficulty is not valid',
+				'message' => 'Arrg ! Difficulty is not valid',
 				'required' => true,
 				'allowEmpty' => false,
 			),
@@ -88,20 +102,59 @@ class Goal extends AppModel {
 		'priority' => array(
 			'rule1' => array(
 				'rule' => 'notEmpty',
-				'message' => 'Priority cannot be empty',
+				'message' => 'Oops ! Priority cannot be empty',
 				'required' => true,
 				'allowEmpty' => false,
 			),
 			'rule2' => array(
-				'rule' => array('inList', array('1', '2', '3', '4', '5', '6', '7', '8', '9', '10')),
-				'message' => 'Priority is not valid',
+				'rule' => array('inList', array('1', '2', '3', '4', '5')),
+				'message' => 'Arrg ! Priority is not valid',
 				'required' => true,
 				'allowEmpty' => false,
 			),
 		),
 	);
 
-	public function recalCompletion($id) {
+	/**
+	 * Checks if goal title is unique for every user
+	 */
+	public function checkUnique($title) {
+		if (empty($this->data[$this->alias]['id'])) {
+			$count = $this->find('count', array(
+				'conditions' => array(
+					'Goal.title' => $title,
+					'Goal.user_id' => $this->data[$this->alias]['user_id'],
+				)
+			));
+		} else {
+			$count = $this->find('count', array(
+				'conditions' => array(
+					'Goal.id !=' => $this->data[$this->alias]['id'],
+					'Goal.title' => $title,
+					'Goal.user_id' => $this->data[$this->alias]['user_id'],
+				)
+			));
+		}
+		return $count == 0;
+	}
+
+	/**
+	 * Checks if category exists for the user
+	 */
+	public function categoryExists($id) {
+		$count = $this->Category->find('count', array(
+			'conditions' => array(
+				'Category.id' => $this->data[$this->alias]['category_id'],
+				'Category.user_id' => $this->data[$this->alias]['user_id'],
+			)
+		));
+		return $count != 0;
+	}
+
+	/**
+	 * Recalculate the completion count, and check if goal is completed
+	 */
+	public function recalculateCompletion($id) {
 		$goal = $this->findById($id);
 
 		if (empty($goal)) {
@@ -125,7 +178,15 @@ class Goal extends AppModel {
 			return false;
 		}
 
+		$completed = false;
 		if ($task_total == $task_completed) {
+			$completed = true;
+		}
+		if ($task_total == 0) {
+			$completed = false;
+		}
+
+		if ($completed) {
 			$this->id = $goal['Goal']['id'];
 			if (!$this->saveField('is_completed', 1)) {
 				return false;
