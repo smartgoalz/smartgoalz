@@ -35,10 +35,7 @@ class CategoriesController extends AppController {
 		$categoriesData = $this->Category->find('all', array('conditions' => array('Category.user_id' => 1)));
 		$categories = array();
 		foreach ($categoriesData as $row => $category) {
-			$categories[] = array(
-				'id' => $category['Category']['id'],
-				'value' => $category['Category']['title']
-			);
+			$categories[$category['Category']['id']] = $category['Category']['title'];
 		}
 		$this->set(array(
 			'categories' => $categories,

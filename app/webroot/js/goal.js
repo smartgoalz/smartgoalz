@@ -133,6 +133,12 @@ goalApp.controller('GoalShowCtrl', function ($scope, $http, $location, $modal, $
 
 	$scope.priorities = SelectService.priorities;
 	$scope.difficulties = SelectService.difficulties;
+	$scope.categories = [];
+
+	var categoryPromise = SelectService.categories();
+	categoryPromise.then(function(result) {
+		$scope.categories = result['categories'];
+	});
 
 	$http.get('goals.json').
 	success(function(data, status, headers, config) {
