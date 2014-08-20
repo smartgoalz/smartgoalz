@@ -96,7 +96,7 @@ class GoalsController extends AppController {
 	}
 
 	public function delete($id) {
-		if ($this->Goal->delete($id)) {
+		if ($this->Goal->delete($id, true)) {
 			$message = array(
 				'text' => __('Goal deleted'),
 				'type' => 'success'

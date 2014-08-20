@@ -44,6 +44,8 @@ class Goal extends AppModel {
 	public $hasMany = array(
 		'Task' => array(
 			'className' => 'Task',
+			'dependent' => true,
+			'exclusive' => true,
 		),
 	);
 

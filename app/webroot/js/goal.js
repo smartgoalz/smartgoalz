@@ -48,23 +48,11 @@ goalApp.factory('SelectService', function($http, $q) {
         };
 
 	var priorities = function() {
-		return [
-			{'id': 1, 'value': 'Highest'},
-			{'id': 2, 'value': 'High'},
-			{'id': 3, 'value': 'Medium'},
-			{'id': 4, 'value': 'Low'},
-			{'id': 5, 'value': 'Lowest'}
-		];
+		return {1: 'Highest', 2: 'High', 3: 'Medium', 4: 'Low', 5: 'Lowest'};
 	};
 
 	var difficulties = function() {
-		return [
-			{'id': 1, 'value': 'Very Hard'},
-			{'id': 2, 'value': 'Hard'},
-			{'id': 3, 'value': 'Normal'},
-			{'id': 4, 'value': 'Easy'},
-			{'id': 5, 'value': 'Very Easy'}
-		];
+		return {1: 'Very Hard', 2: 'Hard', 3: 'Normal', 4: 'Easy', 5: 'Very Easy'};
 	}
 
 	return {
@@ -121,6 +109,15 @@ angular.module('goalApp').service('modalService', ['$modal', function ($modal) {
 	};
 }]);
 
+/******************* FILTERS *******************/
+
+goalApp.filter('fixTime', function() {
+	return function(input) {
+		var goodTime = input.replace(/(.+) (.+)/, "$1T$2Z");
+		return goodTime;
+	};
+});
+
 /******************* CONTROLLERS *******************/
 
 goalApp.controller('GoalCtrl', function ($scope) {
@@ -128,11 +125,14 @@ goalApp.controller('GoalCtrl', function ($scope) {
 });
 
 /* Show goals */
-goalApp.controller('GoalShowCtrl', function ($scope, $http, $location, $modal, $window, $route, AlertService, modalService) {
+goalApp.controller('GoalShowCtrl', function ($scope, $http, $location, $modal, $window, $route, AlertService, modalService, SelectService) {
 	$scope.alerts = AlertService.alerts;
 	$scope.closeAlert = function(index) {
 		$scope.alerts.splice(index, 1);
 	};
+
+	$scope.priorities = SelectService.priorities;
+	$scope.difficulties = SelectService.difficulties;
 
 	$http.get('goals.json').
 	success(function(data, status, headers, config) {
@@ -297,7 +297,7 @@ goalApp.controller('GoalEditCtrl', function ($scope, $http, $routeParams, $locat
 	}
 });
 
-goalApp.controller('GoalManageCtrl', function ($scope, $http, $modal, $routeParams, $location, $route, AlertService, modalService) {
+goalApp.controller('GoalManageCtrl', function ($scope, $http, $modal, $routeParams, $location, $route, AlertService, modalService, SelectService) {
 	$scope.alerts = AlertService.alerts;
 	$scope.closeAlert = function(index) {
 		$scope.alerts.splice(index, 1);
@@ -305,6 +305,9 @@ goalApp.controller('GoalManageCtrl', function ($scope, $http, $modal, $routePara
 
 	$scope.formdata = [];
 	$scope.goaldata = [];
+
+	$scope.priorities = SelectService.priorities;
+	$scope.difficulties = SelectService.difficulties;
 
 	$http.get('goals/' + $routeParams['id'] + '.json').
 	success(function(data, status, headers, config) {

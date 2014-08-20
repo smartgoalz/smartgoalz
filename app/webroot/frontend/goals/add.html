@@ -50,7 +50,7 @@
 					<div class="form-group">
 						<label for="inputDifficulty">Difficulty</label>
 						<select class="form-control" id="inputDifficulty" ng-model="formdata.Difficulty">
-							<option ng-repeat="difficulty in difficulties" value="{{difficulty.id}}">{{difficulty.value}}</option>
+							<option ng-repeat="(id, difficulty) in difficulties" value="{{id}}">{{difficulty}}</option>
 						</select>
 					</div>
 				</div>
@@ -61,7 +61,7 @@
 					<div class="form-group">
 						<label for="inputPriority">Priority</label>
 						<select class="form-control" id="inputPriority" ng-model="formdata.Priority">
-							<option ng-repeat="priority in priorities" value="{{priority.id}}">{{priority.value}}</option>
+							<option ng-repeat="(id, priority) in priorities" value="{{id}}">{{priority}}</option>
 						</select>
 					</div>
 				</div>

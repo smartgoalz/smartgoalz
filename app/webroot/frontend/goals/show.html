@@ -26,11 +26,11 @@
 		<tbody>
 			<tr ng-repeat="goal in goals">
 				<td class="clickable" ng-click="manageGoal(goal.Goal.id)">{{ goal.Goal.title }}</td>
-				<td class="clickable" ng-click="manageGoal(goal.Goal.id)" ng-if="goal.Goal.is_completed == false">{{ goal.Goal.task_total }} / {{ goal.Goal.task_completed }}</td>
+				<td class="clickable" ng-click="manageGoal(goal.Goal.id)" ng-if="goal.Goal.is_completed == false">{{ goal.Goal.task_completed }} / {{ goal.Goal.task_total }}</td>
 				<td class="clickable" ng-click="manageGoal(goal.Goal.id)" ng-if="goal.Goal.is_completed == true"><span class="glyphicon glyphicon-ok"></span></td>
-				<td class="clickable" ng-click="manageGoal(goal.Goal.id)">{{ goal.Goal.priority }}</td>
-				<td class="clickable" ng-click="manageGoal(goal.Goal.id)">{{ goal.Goal.difficulty }}</td>
-				<td class="clickable" ng-click="manageGoal(goal.Goal.id)">{{ goal.Goal.end_date }}</td>
+				<td class="clickable" ng-click="manageGoal(goal.Goal.id)">{{ priorities[goal.Goal.priority] }}</td>
+				<td class="clickable" ng-click="manageGoal(goal.Goal.id)">{{ difficulties[goal.Goal.difficulty] }}</td>
+				<td class="clickable" ng-click="manageGoal(goal.Goal.id)">{{ goal.Goal.end_date | fixTime | date:'medium'}}</td>
 				<td>
 					<div class="btn-group" dropdown>
 						<button type="button" class="btn btn-danger">Actions</button>
