@@ -213,16 +213,18 @@ goalApp.controller('GoalAddCtrl', function ($scope, $http, $location, AlertServi
 		$scope.alerts = [];
 
 		var data = {
-			title: $scope.formdata.Title,
-			start_date: $scope.formdata.Startdate,
-			end_date: $scope.formdata.Enddate,
-			category_id: $scope.formdata.Category,
-			difficulty: $scope.formdata.Difficulty,
-			priority: $scope.formdata.Priority,
-			reason: $scope.formdata.Reason,
-			is_completed: 0,
-			task_total: 0,
-			task_completed: 0,
+			'Goal' : {
+				title: $scope.formdata.Title,
+				start_date: $scope.formdata.Startdate,
+				end_date: $scope.formdata.Enddate,
+				category_id: $scope.formdata.Category,
+				difficulty: $scope.formdata.Difficulty,
+				priority: $scope.formdata.Priority,
+				reason: $scope.formdata.Reason,
+				is_completed: 0,
+				task_total: 0,
+				task_completed: 0,
+			}
 		};
 
 		$http.post("goals/add.json", data).
@@ -278,13 +280,15 @@ goalApp.controller('GoalEditCtrl', function ($scope, $http, $routeParams, $locat
 		$scope.alerts = [];
 
 		var data = {
-			title: $scope.formdata.Title,
-			start_date: $scope.formdata.Startdate,
-			end_date: $scope.formdata.Enddate,
-			category_id: $scope.formdata.Category,
-			difficulty: $scope.formdata.Difficulty,
-			priority: $scope.formdata.Priority,
-			reason: $scope.formdata.Reason,
+			'Goal' : {
+				title: $scope.formdata.Title,
+				start_date: $scope.formdata.Startdate,
+				end_date: $scope.formdata.Enddate,
+				category_id: $scope.formdata.Category,
+				difficulty: $scope.formdata.Difficulty,
+				priority: $scope.formdata.Priority,
+				reason: $scope.formdata.Reason,
+			}
 		};
 
 		$http.post("goals/edit/" +  + $routeParams['id'] + ".json", data).
@@ -347,7 +351,6 @@ goalApp.controller('GoalManageCtrl', function ($scope, $http, $modal, $routePara
 		}, function () {
 		});
 	};
-
 
 	/* Edit task action */
 	$scope.editTask = function(id) {
@@ -439,15 +442,17 @@ var AddModalInstanceCtrl = function ($scope, $modalInstance, $http, AlertService
 		$scope.alerts = [];
 
 		var data = {
-			goal_id: goaldata.Goal.id,
-			title: $scope.formdata.Title,
-			start_date: $scope.formdata.Startdate,
-			end_date: $scope.formdata.Enddate,
-			prev_id: $scope.formdata.Prev,
-			reminder_time: $scope.formdata.Reminder,
-			is_completed: $scope.formdata.Completed,
-			completion_date: $scope.formdata.Completiondate,
-			notes: $scope.formdata.Notes,
+			'Task' : {
+				goal_id: goaldata.Goal.id,
+				title: $scope.formdata.Title,
+				start_date: $scope.formdata.Startdate,
+				end_date: $scope.formdata.Enddate,
+				prev_id: $scope.formdata.Prev,
+				reminder_time: $scope.formdata.Reminder,
+				is_completed: $scope.formdata.Completed,
+				completion_date: $scope.formdata.Completiondate,
+				notes: $scope.formdata.Notes,
+			}
 		};
 
 		$http.post("tasks/add.json", data).
@@ -506,15 +511,17 @@ var EditModalInstanceCtrl = function ($scope, $modalInstance, $http, AlertServic
 		$scope.alerts = [];
 
 		var data = {
-			goal_id: goaldata.Goal.id,
-			title: $scope.formdata.Title,
-			start_date: $scope.formdata.Startdate,
-			end_date: $scope.formdata.Enddate,
-			prev_id: $scope.formdata.Prev,
-			reminder_time: $scope.formdata.Reminder,
-			is_completed: $scope.formdata.Completed,
-			completion_date: $scope.formdata.Completiondate,
-			notes: $scope.formdata.Notes,
+			'Task' : {
+				goal_id: goaldata.Goal.id,
+				title: $scope.formdata.Title,
+				start_date: $scope.formdata.Startdate,
+				end_date: $scope.formdata.Enddate,
+				prev_id: $scope.formdata.Prev,
+				reminder_time: $scope.formdata.Reminder,
+				is_completed: $scope.formdata.Completed,
+				completion_date: $scope.formdata.Completiondate,
+				notes: $scope.formdata.Notes,
+			}
 		};
 
 		$http.post("tasks/edit/" + id + ".json", data).
@@ -536,5 +543,4 @@ var EditModalInstanceCtrl = function ($scope, $modalInstance, $http, AlertServic
 		$modalInstance.dismiss();
 	};
 };
-
 

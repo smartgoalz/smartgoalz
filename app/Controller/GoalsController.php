@@ -59,7 +59,7 @@ class GoalsController extends AppController {
 
 	public function add() {
 
-		$this->request->data['user_id'] = $this->Auth->user('id');
+		$this->request->data['Goal']['user_id'] = $this->Auth->user('id');
 
 		/* Add goal */
 		$this->Goal->create();
@@ -108,9 +108,8 @@ class GoalsController extends AppController {
 		}
 
 		/* Update goal */
-		$this->Goal->id = $id;
-		$this->request->data['user_id'] = $this->Auth->user('id');
-		$this->request->data['id'] = $id;
+		$this->request->data['Goal']['user_id'] = $this->Auth->user('id');
+		$this->request->data['Goal']['id'] = $id;
 
 		if ($this->Goal->save($this->request->data)) {
 			$message = array(

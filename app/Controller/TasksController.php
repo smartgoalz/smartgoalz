@@ -34,7 +34,7 @@ class TasksController extends AppController {
 	public function add() {
 		$this->loadModel('Goal');
 
-		$goal_id = $this->request->data['goal_id'];
+		$goal_id = $this->request->data['Task']['goal_id'];
 
 		/* Check if valid goal */
 		$count = $this->Goal->find('count', array(
@@ -55,7 +55,6 @@ class TasksController extends AppController {
 			return;
 		}
 
-		$this->request->data['goal_id'] = $goal_id;
 		if ($this->Task->save($this->request->data)) {
 			$message = array(
 				'text' => __('Great ! You have added a task to your goal.'),
@@ -85,7 +84,7 @@ class TasksController extends AppController {
 	public function edit($id) {
 		$this->loadModel('Goal');
 
-		$goal_id = $this->request->data['goal_id'];
+		$goal_id = $this->request->data['Task']['goal_id'];
 
 		/* Check if valid goal */
 		$count = $this->Goal->find('count', array(
@@ -123,9 +122,7 @@ class TasksController extends AppController {
 			return;
 		}
 
-		$this->Task->id = $id;
-		$this->request->data['id'] = $id;
-		$this->request->data['goal_id'] = $goal_id;
+		$this->request->data['Task']['id'] = $id;
 
 		if ($this->Task->save($this->request->data)) {
 			$message = array(
@@ -193,8 +190,6 @@ class TasksController extends AppController {
 			return;
 		}
 
-		$this->Task->id = $id;
-
 		if ($this->Task->delete($id)) {
 			$message = array(
 				'text' => __('Task has been deleted.'),
@@ -256,8 +251,8 @@ class TasksController extends AppController {
 		}
 
 		/* Mark task as completed */
-		$this->Task->id = $id;
 		$status = false;
+		$this->Task->id = $id;
 		if ($this->Task->saveField('is_completed', '1')) {
 			$status = true;
 			$message = array(
