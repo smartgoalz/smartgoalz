@@ -8,7 +8,7 @@
 <br />
 <div class="row">
 	<div class="col-xs-4">Start date : {{ goaldata.Goal.start_date }}</div>
-	<div class="col-xs-4">Due date : {{ goaldata.Goal.end_date }}</div>
+	<div class="col-xs-4">Due date : {{ goaldata.Goal.due_date }}</div>
 </div>
 
 <div>Priority : {{ priorities[goaldata.Goal.priority] }}</div>
@@ -43,7 +43,7 @@
 			<tr ng-repeat="task in goaldata.Task" ui:sortable ng:model="goaldata.Task">
 				<td>{{ task.title }}</td>
 				<td>{{ task.start_date }}</td>
-				<td>{{ task.end_date }}</td>
+				<td>{{ task.due_date }}</td>
 				<td ng-if="task.is_completed == true">&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-ok"></span></td>
 				<td ng-if="task.is_completed == false">
 					<button class="btn-mini btn-xmini btn-default" ng-click="doneTask(task.id)">Done</button>

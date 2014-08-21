@@ -216,7 +216,7 @@ goalApp.controller('GoalAddCtrl', function ($scope, $http, $location, AlertServi
 			'Goal' : {
 				title: $scope.formdata.Title,
 				start_date: $scope.formdata.Startdate,
-				end_date: $scope.formdata.Enddate,
+				due_date: $scope.formdata.Duedate,
 				category_id: $scope.formdata.Category,
 				difficulty: $scope.formdata.Difficulty,
 				priority: $scope.formdata.Priority,
@@ -265,7 +265,7 @@ goalApp.controller('GoalEditCtrl', function ($scope, $http, $routeParams, $locat
 	success(function(data, status, headers, config) {
 		$scope.formdata.Title = data['goal']['Goal']['title'];
 		$scope.formdata.Startdate = data['goal']['Goal']['start_date'];
-		$scope.formdata.Enddate = data['goal']['Goal']['end_date'];
+		$scope.formdata.Duedate = data['goal']['Goal']['due_date'];
 		$scope.formdata.Category = data['goal']['Goal']['category_id'];
 		$scope.formdata.Difficulty = data['goal']['Goal']['difficulty'];
 		$scope.formdata.Priority = data['goal']['Goal']['priority'];
@@ -283,7 +283,7 @@ goalApp.controller('GoalEditCtrl', function ($scope, $http, $routeParams, $locat
 			'Goal' : {
 				title: $scope.formdata.Title,
 				start_date: $scope.formdata.Startdate,
-				end_date: $scope.formdata.Enddate,
+				due_date: $scope.formdata.Duedate,
 				category_id: $scope.formdata.Category,
 				difficulty: $scope.formdata.Difficulty,
 				priority: $scope.formdata.Priority,
@@ -446,7 +446,7 @@ var AddModalInstanceCtrl = function ($scope, $modalInstance, $http, AlertService
 				goal_id: goaldata.Goal.id,
 				title: $scope.formdata.Title,
 				start_date: $scope.formdata.Startdate,
-				end_date: $scope.formdata.Enddate,
+				due_date: $scope.formdata.Duedate,
 				prev_id: $scope.formdata.Prev,
 				reminder_time: $scope.formdata.Reminder,
 				is_completed: $scope.formdata.Completed,
@@ -496,7 +496,7 @@ var EditModalInstanceCtrl = function ($scope, $modalInstance, $http, AlertServic
 	if (found) {
 			$scope.formdata.Title = task.title;
 			$scope.formdata.Startdate = task.start_date;
-			$scope.formdata.Enddate = task.end_data;
+			$scope.formdata.Duedate = task.due_data;
 			$scope.formdata.Prev = task.prev_id;
 			$scope.formdata.Reminder = task.reminder_time;
 			$scope.formdata.Completed = task.is_completed;
@@ -515,7 +515,7 @@ var EditModalInstanceCtrl = function ($scope, $modalInstance, $http, AlertServic
 				goal_id: goaldata.Goal.id,
 				title: $scope.formdata.Title,
 				start_date: $scope.formdata.Startdate,
-				end_date: $scope.formdata.Enddate,
+				due_date: $scope.formdata.Duedate,
 				prev_id: $scope.formdata.Prev,
 				reminder_time: $scope.formdata.Reminder,
 				is_completed: $scope.formdata.Completed,

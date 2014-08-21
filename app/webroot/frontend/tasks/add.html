@@ -31,8 +31,8 @@
 					</div>
 					<div class="col-xs-6">
 						<div class="form-group">
-							<label for="inputEnddate">End date</label>
-							<input type="text" class="form-control" id="inputEnddate" placeholder="End date" ng-model="formdata.Enddate">
+							<label for="inputDuedate">Due date</label>
+							<input type="text" class="form-control" id="inputDuedate" placeholder="Due date" ng-model="formdata.Duedate">
 						</div>
 					</div>
 				</div>
@@ -53,11 +53,10 @@
 						<div class="form-group">
 							<label for="inputReminder">Send Reminder</label>
 							<select class="form-control" id="inputReminder" ng-model="formdata.Reminder">
-								<option value="1">Very hard</option>
-								<option value="2">Hard</option>
-								<option value="3">Normal</option>
-								<option value="4">Easy</option>
-								<option value="5">Very Easy</option>
+								<option value="1">Never</option>
+								<option value="2">Daily</option>
+								<option value="3">Weekly</option>
+								<option value="3">Before due date</option>
 							</select>
 						</div>
 					</div>
