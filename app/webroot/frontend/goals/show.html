@@ -12,7 +12,7 @@
 		</div>
 	</div>
 	<div ng-hide="goals.length">No goals found. Please add a goal to get started.</div>
-	<table class="table table-hover" ng-show="goals.length">
+	<table class="table" ng-show="goals.length">
 		<thead>
 			<tr>
 				<th>Goal</th>
@@ -27,12 +27,12 @@
 		<tbody>
 			<tr ng-repeat="goal in goals">
 				<td class="clickable" ng-click="manageGoal(goal.Goal.id)">{{ goal.Goal.title }}</td>
-				<td class="clickable" ng-click="manageGoal(goal.Goal.id)" ng-if="goal.Goal.is_completed == false">{{ goal.Goal.task_completed }} / {{ goal.Goal.task_total }}</td>
-				<td class="clickable" ng-click="manageGoal(goal.Goal.id)" ng-if="goal.Goal.is_completed == true"><span class="glyphicon glyphicon-ok"></span></td>
-				<td class="clickable" ng-click="manageGoal(goal.Goal.id)">{{ categories[goal.Goal.category_id] }}</td>
-				<td class="clickable" ng-click="manageGoal(goal.Goal.id)">{{ difficulties[goal.Goal.difficulty] }}</td>
-				<td class="clickable" ng-click="manageGoal(goal.Goal.id)">{{ priorities[goal.Goal.priority] }}</td>
-				<td class="clickable" ng-click="manageGoal(goal.Goal.id)">{{ goal.Goal.due_date | fixTime | date:'medium'}}</td>
+				<td ng-if="goal.Goal.is_completed == false">{{ goal.Goal.task_completed }} / {{ goal.Goal.task_total }}</td>
+				<td ng-if="goal.Goal.is_completed == true"><span class="glyphicon glyphicon-ok"></span></td>
+				<td>{{ categories[goal.Goal.category_id] }}</td>
+				<td>{{ difficulties[goal.Goal.difficulty] }}</td>
+				<td>{{ priorities[goal.Goal.priority] }}</td>
+				<td>{{ goal.Goal.due_date | fixTime | date:'medium'}}</td>
 				<td>
 					<div class="btn-group" dropdown>
 						<button type="button" class="btn btn-danger">Actions</button>
@@ -41,7 +41,7 @@
 						<span class="sr-only">Split button!</span>
 						</button>
 						<ul class="dropdown-menu" role="menu">
-						<li><a href='#/manage/{{goal.Goal.id}}'>Manage Goal</a></li>
+						<li><a href='#/manage/{{goal.Goal.id}}' ng-click="clearAlerts()">Manage Goal</a></li>
 						<li class="divider"></li>
 						<li><a href='#/edit/{{goal.Goal.id}}'>Edit Goal</a></li>
 						<li><a href='#' ng-click="deleteGoal(goal.Goal.id)">Delete Goal</a></li>

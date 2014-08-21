@@ -6,19 +6,15 @@ goalApp.config(['$routeProvider', function($routeProvider) {
 	$routeProvider.
 	when('/show', {
 		templateUrl: 'frontend/goals/show.html',
-		controller: 'GoalShowCtrl'
 	}).
 	when('/add', {
 		templateUrl: 'frontend/goals/add.html',
-		controller: 'GoalAddCtrl'
 	}).
 	when('/edit/:id', {
 		templateUrl: 'frontend/goals/edit.html',
-		controller: 'GoalEditCtrl'
 	}).
 	when('/manage/:id', {
 		templateUrl: 'frontend/goals/manage.html',
-		controller: 'GoalManageCtrl'
 	}).
 	otherwise({
 		redirectTo: '/show'
@@ -84,14 +80,14 @@ angular.module('goalApp').service('modalService', ['$modal', function ($modal) {
 	};
 
 	this.show = function (customModalDefaults, customModalOptions) {
-		//Create temp objects to work with since we're in a singleton service
+		/* Create temp objects to work with since we're in a singleton service */
 		var tempModalDefaults = {};
 		var tempModalOptions = {};
 
-		//Map angular-ui modal custom defaults to modal defaults defined in service
+		/* Map angular-ui modal custom defaults to modal defaults defined in service */
 		angular.extend(tempModalDefaults, modalDefaults, customModalDefaults);
 
-		//Map modal.html $scope custom properties to defaults defined in service
+		/* Map modal.html $scope custom properties to defaults defined in service */
 		angular.extend(tempModalOptions, modalOptions, customModalOptions);
 
 		if (!tempModalDefaults.controller) {
@@ -185,9 +181,9 @@ goalApp.controller('GoalShowCtrl', function ($scope, $http, $location, $modal, $
 		});
 	};
 
-	/* Manage goal action */
-	$scope.manageGoal = function(id) {
-		$location.path('/manage/' + id);
+	$scope.clearAlerts = function() {
+		AlertService.alerts = [];
+		$scope.alerts = [];
 	}
 });
 
@@ -335,6 +331,8 @@ goalApp.controller('GoalManageCtrl', function ($scope, $http, $modal, $routePara
 
 	/* Add task action */
 	$scope.addTask = function() {
+		AlertService.alerts = [];
+
 		/* Open modal window */
 		var addModalInstance = $modal.open({
 			templateUrl: 'frontend/tasks/add.html',
@@ -354,6 +352,8 @@ goalApp.controller('GoalManageCtrl', function ($scope, $http, $modal, $routePara
 
 	/* Edit task action */
 	$scope.editTask = function(id) {
+		AlertService.alerts = [];
+
 		/* Open modal window */
 		var editModalInstance = $modal.open({
 			templateUrl: 'frontend/tasks/edit.html',
@@ -376,6 +376,8 @@ goalApp.controller('GoalManageCtrl', function ($scope, $http, $modal, $routePara
 
 	/* Delete task action */
 	$scope.deleteTask = function(id) {
+		AlertService.alerts = [];
+
 		/* Open modal window */
 		var modalDefaults = {
 			backdrop: true,
@@ -392,7 +394,6 @@ goalApp.controller('GoalManageCtrl', function ($scope, $http, $modal, $routePara
 		};
 
 		modalService.showModal(modalDefaults, modalOptions).then(function (result) {
-			AlertService.alerts = [];
 			$http.delete('tasks/delete/' + id + '.json').
 			success(function(data, status, headers, config) {
 				if (data['message']['type'] == 'error') {
@@ -412,21 +413,20 @@ goalApp.controller('GoalManageCtrl', function ($scope, $http, $modal, $routePara
 
 	/* Mark task completed action */
 	$scope.doneTask = function(id) {
+		AlertService.alerts = [];
+
 		$http.post("tasks/done/" + id + ".json").
 		success(function (data, status, headers) {
 			if (data['message']['type'] == 'error') {
-				AlertService.alerts.push({type: 'success', msg: data['message']['text']});
-				$scope.alerts.push({type: 'danger', msg: data['message']['text']});
-				$route.reload();
+				AlertService.alerts.push({type: 'danger', msg: data['message']['text']});
 			}
 			if (data['message']['type'] == 'success') {
 				AlertService.alerts.push({type: 'success', msg: data['message']['text']});
-				$route.reload();
-				$modalInstance.close();
 			}
+			$route.reload();
 		}).
 		error(function (data, status, headers) {
-			$scope.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
+			AlertService.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
 			$route.reload();
 		});
 	};
