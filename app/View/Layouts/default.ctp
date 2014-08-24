@@ -59,7 +59,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 	?>
 </head>
 
-<body ng-controller="MainGoalCtrl">
+<body ng-controller="BodyCtrl">
 
 <div id="page-wrapper" ng-class="{'active': toggle}" ng-cloak>
 
@@ -71,10 +71,10 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 			</li>
 			<li class="sidebar-title"><span>NAVIGATION</span></li>
 			<li class="sidebar-list">
-				<a href="#">Dashboard <span class="menu-icon fa fa-tachometer"></span></a>
+				<a href="#/dashboard">Dashboard <span class="menu-icon fa fa-tachometer"></span></a>
 			</li>
 			<li class="sidebar-list">
-				<a href="#/tables">Goals <span class="menu-icon fa fa-table"></span></a>
+				<a href="#/show">Goals <span class="menu-icon fa fa-table"></span></a>
 			</li>
 			<li class="sidebar-list">
 				<a href="#">Categories <span class="menu-icon fa fa-tasks"></span></a>

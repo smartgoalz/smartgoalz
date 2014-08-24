@@ -4,6 +4,9 @@ var goalApp = angular.module('goalApp', ['ngResource', 'ngRoute', 'ui.bootstrap'
 
 goalApp.config(['$routeProvider', function($routeProvider) {
 	$routeProvider.
+	when('/dashboard', {
+		templateUrl: 'frontend/dashboard/dashboard.html',
+	}).
 	when('/show', {
 		templateUrl: 'frontend/goals/show.html',
 	}).
@@ -17,7 +20,7 @@ goalApp.config(['$routeProvider', function($routeProvider) {
 		templateUrl: 'frontend/goals/manage.html',
 	}).
 	otherwise({
-		redirectTo: '/show'
+		redirectTo: '/dashboard'
 	});
 }]);
 
@@ -116,7 +119,7 @@ goalApp.filter('fixTime', function() {
 
 /******************* CONTROLLERS *******************/
 
-goalApp.controller('MainGoalCtrl', function ($scope, $rootScope, $cookieStore) {
+goalApp.controller('BodyCtrl', function ($scope, $rootScope, $cookieStore) {
 	$scope.formdata = [];
 
 	$rootScope.pageTitle = "";
@@ -150,7 +153,7 @@ goalApp.controller('MainGoalCtrl', function ($scope, $rootScope, $cookieStore) {
 	};
 });
 
-goalApp.controller('GoalCtrl', function ($scope, $rootScope, $cookieStore) {
+goalApp.controller('ContentCtrl', function ($scope, $rootScope, $cookieStore) {
 	$scope.formdata = [];
 
 	$rootScope.pageTitle = "";
@@ -172,7 +175,7 @@ goalApp.controller('GoalShowCtrl', function ($scope, $rootScope, $http, $locatio
 		$scope.categories = result['categories'];
 	});
 
-	$rootScope.pageTitle = "Dashboard";
+	$rootScope.pageTitle = "Goals";
 
 	$http.get('goals.json').
 	success(function(data, status, headers, config) {
@@ -586,3 +589,13 @@ var EditModalInstanceCtrl = function ($scope, $modalInstance, $http, AlertServic
 	};
 };
 
+
+/********************************************************************/
+/***************************** DASHBOARD ****************************/
+/********************************************************************/
+
+goalApp.controller('DashboardCtrl', function ($scope, $rootScope, $cookieStore) {
+	$scope.formdata = [];
+
+	$rootScope.pageTitle = "Dashboard";
+});

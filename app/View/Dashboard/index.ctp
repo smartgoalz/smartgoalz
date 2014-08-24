@@ -26,7 +26,7 @@
  */
 ?>
 
-<div ng-controller="GoalCtrl">
+<div ng-controller="ContentCtrl">
 	<div ng-view></div>
 </div>
 
