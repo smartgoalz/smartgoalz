@@ -1,4 +1,4 @@
-var goalApp = angular.module('goalApp', ['ngResource', 'ngRoute', 'ui.bootstrap']);
+var goalApp = angular.module('goalApp', ['ngResource', 'ngRoute', 'ui.bootstrap', 'ui.router', 'ngCookies']);
 
 /******************* ROUTES *******************/
 
@@ -116,12 +116,48 @@ goalApp.filter('fixTime', function() {
 
 /******************* CONTROLLERS *******************/
 
-goalApp.controller('GoalCtrl', function ($scope) {
+goalApp.controller('MainGoalCtrl', function ($scope, $rootScope, $cookieStore) {
 	$scope.formdata = [];
+
+	$rootScope.pageTitle = "";
+
+	/* Template function */
+	var mobileView = 992;
+	$scope.getWidth = function() {
+		return window.innerWidth;
+	};
+	$scope.$watch($scope.getWidth, function(newValue, oldValue) {
+		if (newValue >= mobileView) {
+			if (angular.isDefined($cookieStore.get('toggle'))) {
+				if ($cookieStore.get('toggle') == false) {
+					$scope.toggle = false;
+				} else {
+					$scope.toggle = true;
+				}
+			} else {
+				$scope.toggle = true;
+			}
+		} else {
+		    $scope.toggle = false;
+		}
+	});
+	$scope.toggleSidebar = function() {
+		$scope.toggle = ! $scope.toggle;
+		$cookieStore.put('toggle', $scope.toggle);
+	};
+	window.onresize = function() {
+		$scope.$apply();
+	};
+});
+
+goalApp.controller('GoalCtrl', function ($scope, $rootScope, $cookieStore) {
+	$scope.formdata = [];
+
+	$rootScope.pageTitle = "";
 });
 
 /* Show goals */
-goalApp.controller('GoalShowCtrl', function ($scope, $http, $location, $modal, $window, $route, AlertService, modalService, SelectService) {
+goalApp.controller('GoalShowCtrl', function ($scope, $rootScope, $http, $location, $modal, $window, $route, AlertService, modalService, SelectService) {
 	$scope.alerts = AlertService.alerts;
 	$scope.closeAlert = function(index) {
 		$scope.alerts.splice(index, 1);
@@ -135,6 +171,8 @@ goalApp.controller('GoalShowCtrl', function ($scope, $http, $location, $modal, $
 	categoryPromise.then(function(result) {
 		$scope.categories = result['categories'];
 	});
+
+	$rootScope.pageTitle = "Dashboard";
 
 	$http.get('goals.json').
 	success(function(data, status, headers, config) {
@@ -188,7 +226,7 @@ goalApp.controller('GoalShowCtrl', function ($scope, $http, $location, $modal, $
 });
 
 /* Add goal */
-goalApp.controller('GoalAddCtrl', function ($scope, $http, $location, AlertService, SelectService) {
+goalApp.controller('GoalAddCtrl', function ($scope, $rootScope, $http, $location, AlertService, SelectService) {
 	AlertService.alerts = [];
 	$scope.closeAlert = function(index) {
 		$scope.alerts.splice(index, 1);
@@ -204,6 +242,8 @@ goalApp.controller('GoalAddCtrl', function ($scope, $http, $location, AlertServi
 	});
 
 	$scope.formdata = [];
+
+	$rootScope.pageTitle = "Add Goal";
 
 	$scope.addGoal = function() {
 		$scope.alerts = [];
@@ -240,11 +280,13 @@ goalApp.controller('GoalAddCtrl', function ($scope, $http, $location, AlertServi
 });
 
 /* Edit goal */
-goalApp.controller('GoalEditCtrl', function ($scope, $http, $routeParams, $location, AlertService, SelectService) {
+goalApp.controller('GoalEditCtrl', function ($scope, $rootScope, $http, $routeParams, $location, AlertService, SelectService) {
 	AlertService.alerts = [];
 	$scope.closeAlert = function(index) {
 		$scope.alerts.splice(index, 1);
 	};
+
+	$rootScope.pageTitle = "Edit Goal";
 
 	$scope.formdata = [];
 

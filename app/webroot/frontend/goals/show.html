@@ -1,55 +1,39 @@
 <div class="row" ng-controller="GoalShowCtrl">
-<div class="col-md-6">
-	<div class="row">
-		<div class="col-xs-8">
-			<div><a href="#/add" class="btn btn-info">Add Goal</a></div>
+	<div class="col-lg-12">
+		<div class="header-button">
+			<a href="#/add" class="btn btn-info">Add Goal</a>
 		</div>
-	</div>
-	<br />
-	<div class="row">
-		<div class="col-xs-8">
-			<alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+		<div ng-hide="goals.length">No goals found. Please add a goal to get started.</div>
+		<div class="table-responsive">
+			<table class="table" ng-show="goals.length">
+				<thead>
+					<tr>
+						<th>Goals</th>
+						<th class="text-center">Completed</th>
+						<th class="text-center">Category</th>
+						<th class="text-center">Difficulty</th>
+						<th class="text-center">Priority</th>
+						<th class="text-center">Due date</th>
+						<th class="text-left">Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="goal in goals">
+						<td class="clickable" ng-click="manageGoal(goal.Goal.id)">{{ goal.Goal.title }}</td>
+						<td ng-if="goal.Goal.is_completed == false" class="text-center">{{ goal.Goal.task_completed }} / {{ goal.Goal.task_total }}</td>
+						<td ng-if="goal.Goal.is_completed == true" class="text-center"><span class="glyphicon glyphicon-ok"></span></td>
+						<td class="text-center">{{ categories[goal.Goal.category_id] }}</td>
+						<td class="text-center">{{ difficulties[goal.Goal.difficulty] }}</td>
+						<td class="text-center">{{ priorities[goal.Goal.priority] }}</td>
+						<td class="text-center">{{ goal.Goal.due_date | fixTime | date:'medium'}}</td>
+						<td class="text-left">
+							<a href='#/manage/{{goal.Goal.id}}' ng-click="clearAlerts()">Manage</a>&nbsp;&nbsp;
+							<a href='#/edit/{{goal.Goal.id}}'><span class="glyphicon glyphicon-edit"></span></a>&nbsp;&nbsp;
+							<a href='#' ng-click="deleteGoal(goal.Goal.id)"><span class="glyphicon glyphicon-trash"></span></a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
-	</div>
-	<div ng-hide="goals.length">No goals found. Please add a goal to get started.</div>
-	<table class="table" ng-show="goals.length">
-		<thead>
-			<tr>
-				<th>Goal</th>
-				<th>Completed</th>
-				<th>Category</th>
-				<th>Difficulty</th>
-				<th>Priority</th>
-				<th>Due date</th>
-				<th></th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr ng-repeat="goal in goals">
-				<td class="clickable" ng-click="manageGoal(goal.Goal.id)">{{ goal.Goal.title }}</td>
-				<td ng-if="goal.Goal.is_completed == false">{{ goal.Goal.task_completed }} / {{ goal.Goal.task_total }}</td>
-				<td ng-if="goal.Goal.is_completed == true"><span class="glyphicon glyphicon-ok"></span></td>
-				<td>{{ categories[goal.Goal.category_id] }}</td>
-				<td>{{ difficulties[goal.Goal.difficulty] }}</td>
-				<td>{{ priorities[goal.Goal.priority] }}</td>
-				<td>{{ goal.Goal.due_date | fixTime | date:'medium'}}</td>
-				<td>
-					<div class="btn-group" dropdown>
-						<button type="button" class="btn btn-danger">Actions</button>
-						<button type="button" class="btn btn-danger dropdown-toggle">
-						<span class="caret"></span>
-						<span class="sr-only">Split button!</span>
-						</button>
-						<ul class="dropdown-menu" role="menu">
-						<li><a href='#/manage/{{goal.Goal.id}}' ng-click="clearAlerts()">Manage Goal</a></li>
-						<li class="divider"></li>
-						<li><a href='#/edit/{{goal.Goal.id}}'>Edit Goal</a></li>
-						<li><a href='#' ng-click="deleteGoal(goal.Goal.id)">Delete Goal</a></li>
-						</ul>
-					</div>
-				</td>
-			</tr>
-		</tbody>
-	</table>
-</div><!-- END col-md-6 -->
-</div><!-- END row -->
+	
+</div>

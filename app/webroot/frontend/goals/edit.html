@@ -1,90 +1,87 @@
 <div class="row" ng-controller="GoalEditCtrl">
-<div class="col-md-6">
-	<div>
-		<h3>Edit your SMART Goal</h3>
+	<div class="col-lg-12">
+		<div class="form-title">Edit your SMART Goal</div>
 	</div>
-	<div class="row">
-		<div class="col-xs-8">
-			<alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+
+	<div class="col-lg-12" ng-show="alerts.length">
+		<alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+	</div>
+
+	<div>
+	<form method="POST" role="form">
+		<div class="row">
+			<div class="col-xs-8">
+				<div class="form-group">
+					<label for="inputTitle">Goal title</label>
+					<input type="text" class="form-control" id="inputTitle" placeholder="Goal title" ng-model="formdata.Title">
+				</div>
+			</div>
 		</div>
+
+		<div class="row">
+			<div class="col-xs-4">
+				<div class="form-group">
+					<label for="inputStartdate">Start date</label>
+					<input type="text" class="form-control" id="inputStartdate" placeholder="Start date" ng-model="formdata.Startdate">
+				</div>
+			</div>
+			<div class="col-xs-4">
+				<div class="form-group">
+					<label for="inputDuedate">Due date</label>
+					<input type="text" class="form-control" id="inputDuedate" placeholder="Due date" ng-model="formdata.Duedate">
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-4">
+				<div class="form-group">
+					<label for="inputCategory">Category</label>
+					<select class="form-control" id="inputCategory" ng-model="formdata.Category">
+						<option ng-repeat="(id, category) in categories" value="{{id}}" ng-selected="{{id == formdata.Category}}">{{category}}</option>
+					</select>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-4">
+				<div class="form-group">
+					<label for="inputDifficulty">Difficulty</label>
+					<select class="form-control" id="inputDifficulty" ng-model="formdata.Difficulty">
+						<option ng-repeat="(id, difficulty) in difficulties" value="{{id}}" ng-selected="{{id == formdata.Difficulty}}">{{difficulty}}</option>
+					</select>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-4">
+				<div class="form-group">
+					<label for="inputPriority">Priority</label>
+					<select class="form-control" id="inputPriority" ng-model="formdata.Priority">
+						<option ng-repeat="(id, priority) in priorities" value="{{id}}" ng-selected="{{id == formdata.Priority}}">{{priority}}</option>
+					</select>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-8">
+				<div class="form-group">
+					<label for="inputReason">Reason why you want to achieve this goal</label>
+					<textarea class="form-control" id="inputReason" ng-model="formdata.Reason"></textarea>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-8">
+				<div>
+					<button class="btn btn-primary" ng-click="editGoal()">Submit</button>
+					<a href="#/show" class="btn btn-info">Cancel</a>
+				</div>
+			</div>
+		</div>
+	</form>
 	</div>
-	<div>
-		<form method="POST" role="form">
-			<div class="row">
-				<div class="col-xs-8">
-					<div class="form-group">
-						<label for="inputTitle">Goal title</label>
-						<input type="text" class="form-control" id="inputTitle" placeholder="Goal title" ng-model="formdata.Title">
-					</div>
-				</div>
-			</div>
-
-			<div class="row">
-				<div class="col-xs-4">
-					<div class="form-group">
-						<label for="inputStartdate">Start date</label>
-						<input type="text" class="form-control" id="inputStartdate" placeholder="Start date" ng-model="formdata.Startdate">
-					</div>
-				</div>
-				<div class="col-xs-4">
-					<div class="form-group">
-						<label for="inputDuedate">Due date</label>
-						<input type="text" class="form-control" id="inputDuedate" placeholder="Due date" ng-model="formdata.Duedate">
-					</div>
-				</div>
-			</div>
-
-			<div class="row">
-				<div class="col-xs-4">
-					<div class="form-group">
-						<label for="inputCategory">Category</label>
-						<select class="form-control" id="inputCategory" ng-model="formdata.Category">
-							<option ng-repeat="(id, category) in categories" value="{{id}}" ng-selected="{{id == formdata.Category}}">{{category}}</option>
-						</select>
-					</div>
-				</div>
-			</div>
-
-			<div class="row">
-				<div class="col-xs-4">
-					<div class="form-group">
-						<label for="inputDifficulty">Difficulty</label>
-						<select class="form-control" id="inputDifficulty" ng-model="formdata.Difficulty">
-							<option ng-repeat="(id, difficulty) in difficulties" value="{{id}}" ng-selected="{{id == formdata.Difficulty}}">{{difficulty}}</option>
-						</select>
-					</div>
-				</div>
-			</div>
-
-			<div class="row">
-				<div class="col-xs-4">
-					<div class="form-group">
-						<label for="inputPriority">Priority</label>
-						<select class="form-control" id="inputPriority" ng-model="formdata.Priority">
-							<option ng-repeat="(id, priority) in priorities" value="{{id}}" ng-selected="{{id == formdata.Priority}}">{{priority}}</option>
-						</select>
-					</div>
-				</div>
-			</div>
-
-			<div class="row">
-				<div class="col-xs-8">
-					<div class="form-group">
-						<label for="inputReason">Reason why you want to achieve this goal</label>
-						<textarea class="form-control" id="inputReason" ng-model="formdata.Reason"></textarea>
-					</div>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-xs-8">
-					<div>
-						<button class="btn btn-primary" ng-click="editGoal()">Submit</button>
-						<a href="#/show" class="btn btn-info">Cancel</a>
-					</div>
-				</div>
-			</div>
-	</div>
-		</form>
-	</div>
-</div><!-- END col-md-6 -->
 </div><!-- END row -->

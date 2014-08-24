@@ -34,6 +34,7 @@ class UsersController extends AppController {
 	public function login() {
 		$userdata = array('id' => 1, 'username' => 'foo');
 		$this->Auth->login($userdata);
+		$this->redirect(array('controller' => 'dashboard', 'action' => 'index'));
 	}
 
 	public function logout() {
