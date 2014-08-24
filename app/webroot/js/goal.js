@@ -19,6 +19,18 @@ goalApp.config(['$routeProvider', function($routeProvider) {
 	when('/manage/:id', {
 		templateUrl: 'frontend/goals/manage.html',
 	}).
+	when('/notes', {
+		templateUrl: 'frontend/notes/index.html',
+	}).
+	when('/notes/view/:id', {
+		templateUrl: 'frontend/notes/view.html',
+	}).
+	when('/notes/add', {
+		templateUrl: 'frontend/notes/add.html',
+	}).
+	when('/notes/edit/:id', {
+		templateUrl: 'frontend/notes/edit.html',
+	}).
 	otherwise({
 		redirectTo: '/dashboard'
 	});
@@ -599,3 +611,174 @@ goalApp.controller('DashboardCtrl', function ($scope, $rootScope, $cookieStore) 
 
 	$rootScope.pageTitle = "Dashboard";
 });
+
+/********************************************************************/
+/******************************* NOTES ******************************/
+/********************************************************************/
+
+/* Show notes */
+goalApp.controller('NotesIndexCtrl', function ($scope, $rootScope, $http, $location, $modal, $window, $route, AlertService, modalService) {
+	$scope.alerts = AlertService.alerts;
+	$scope.closeAlert = function(index) {
+		$scope.alerts.splice(index, 1);
+	};
+
+	$rootScope.pageTitle = "Notes";
+
+	$http.get('notes.json').
+	success(function(data, status, headers, config) {
+		$scope.notes = data['notes'];
+	}).
+	error(function(data, status, headers, config) {
+		$scope.notes = [];
+	});
+
+	/* Delete note action */
+	$scope.deleteNote = function(id) {
+		/* Open modal window */
+		var modalDefaults = {
+			backdrop: true,
+			keyboard: true,
+			modalFade: true,
+			templateUrl: 'frontend/partials/confirm.html'
+		};
+
+		var modalOptions = {
+			closeButtonText: 'No',
+			actionButtonText: 'Yes',
+			headerText: 'Please confirm',
+			bodyText: 'Are you sure you want to delete the note ?'
+		};
+
+		modalService.showModal(modalDefaults, modalOptions).then(function (result) {
+			AlertService.alerts = [];
+			$http.delete('notes/delete/' + id + '.json').
+			success(function(data, status, headers, config) {
+				if (data['message']['type'] == 'error') {
+					AlertService.alerts.push({type: 'danger', msg: data['message']['text']});
+				} else
+				if (data['message']['type'] == 'success') {
+					AlertService.alerts.push({type: 'success', msg: data['message']['text']});
+				}
+				$route.reload();
+			}).
+			error(function(data, status, headers, config) {
+				AlertService.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
+				$route.reload();
+			});
+		});
+	};
+});
+
+/* View note */
+goalApp.controller('NoteViewCtrl', function ($scope, $rootScope, $http, $modal, $routeParams, $location, $route, AlertService, modalService) {
+	AlertService.alerts = [];
+	$scope.closeAlert = function(index) {
+		$scope.alerts.splice(index, 1);
+	};
+
+	$scope.note = [];
+
+	$rootScope.pageTitle = "View Note";
+
+	$http.get('notes/' + $routeParams['id'] + '.json').
+	success(function(data, status, headers, config) {
+		$scope.note = data['note'];
+		console.log($scope.note);
+	}).
+	error(function(data, status, headers, config) {
+		AlertService.alerts.push({type: 'danger', msg: 'Note not found'});
+		$location.path('/notes');
+	});
+});
+
+/* Add note */
+goalApp.controller('NoteAddCtrl', function ($scope, $rootScope, $http, $location, AlertService) {
+	AlertService.alerts = [];
+	$scope.closeAlert = function(index) {
+		$scope.alerts.splice(index, 1);
+	};
+
+	$scope.formdata = [];
+
+	$rootScope.pageTitle = "Add Note";
+
+	$scope.addNote = function() {
+		$scope.alerts = [];
+
+		var data = {
+			'Note' : {
+				title: $scope.formdata.Title,
+				note: $scope.formdata.Note,
+				pin_dashboard: $scope.formdata.PinDashboard,
+				pin_top: $scope.formdata.PinTop,
+			}
+		};
+
+		$http.post("notes/add.json", data).
+		success(function (data, status, headers) {
+			if (data['message']['type'] == 'error') {
+				$scope.alerts.push({type: 'danger', msg: data['message']['text']});
+			}
+			if (data['message']['type'] == 'success') {
+				AlertService.alerts.push({type: 'success', msg: data['message']['text']});
+				$location.path('/notes');
+			}
+		}).
+		error(function (data, status, headers) {
+			$scope.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
+		});
+	}
+});
+
+/* Edit note */
+goalApp.controller('NoteEditCtrl', function ($scope, $rootScope, $http, $routeParams, $location, AlertService, SelectService) {
+	AlertService.alerts = [];
+	$scope.closeAlert = function(index) {
+		$scope.alerts.splice(index, 1);
+	};
+
+	$rootScope.pageTitle = "Edit Note";
+
+	$scope.formdata = [];
+
+	$http.get('notes/' + $routeParams['id'] + '.json').
+	success(function(data, status, headers, config) {
+		$scope.formdata.Title = data['note']['Note']['title'];
+		$scope.formdata.Note = data['note']['Note']['note'];
+		$scope.formdata.PinDashboard = data['note']['Note']['pin_dashboard'];
+		$scope.formdata.PinTop = data['note']['Note']['pin_top'];
+	}).
+	error(function(data, status, headers, config) {
+		AlertService.alerts.push({type: 'danger', msg: 'Note not found'});
+		$location.path('/notes');
+	});
+
+	$scope.editNote = function() {
+		$scope.alerts = [];
+
+		var data = {
+			'Note' : {
+				title: $scope.formdata.Title,
+				note: $scope.formdata.Note,
+				pin_dashboard: $scope.formdata.PinDashboard,
+				pin_top: $scope.formdata.PinTop,
+			}
+		};
+
+		$http.post("notes/edit/" +  + $routeParams['id'] + ".json", data).
+		success(function (data, status, headers) {
+			if (data['message']['type'] == 'error') {
+				$scope.alerts.push({type: 'danger', msg: data['message']['text']});
+			}
+			if (data['message']['type'] == 'success') {
+				AlertService.alerts.push({type: 'success', msg: data['message']['text']});
+				$location.path('/notes');
+			}
+		}).
+		error(function (data, status, headers) {
+			$scope.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
+		});
+	}
+});
+

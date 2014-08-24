@@ -74,17 +74,20 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 				<a href="#/dashboard">Dashboard <span class="menu-icon fa fa-tachometer"></span></a>
 			</li>
 			<li class="sidebar-list">
-				<a href="#/show">Goals <span class="menu-icon fa fa-table"></span></a>
+				<a href="#/show">Goals <span class="menu-icon fa fa-cubes"></span></a>
 			</li>
 			<li class="sidebar-list">
 				<a href="#">Categories <span class="menu-icon fa fa-tasks"></span></a>
 			</li>
 			<li class="sidebar-list">
-				<a href="#">Calendar <span class="menu-icon fa fa-cogs"></span></a>
+				<a href="#/notes">Notes <span class="menu-icon fa fa-edit"></span></a>
+			</li>
+			<li class="sidebar-list">
+				<a href="#/notes">Journal <span class="menu-icon fa fa-list-alt"></span></a>
 			</li>
 			<li class="sidebar-title separator"><span>QUICK LINKS</span></li>
 			<li class="sidebar-list">
-				<a href="#" target="_blank">Upcoming Tasks <span class="menu-icon fa fa-external-link"></span></a>
+				<a href="#" target="_blank">Upcoming Tasks <span class="menu-icon fa fa-calendar"></span></a>
 			</li>
 		</ul>
 		<!-- Sidebar Footer -->

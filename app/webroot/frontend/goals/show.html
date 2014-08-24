@@ -3,7 +3,13 @@
 		<div class="header-button">
 			<a href="#/add" class="btn btn-info">Add Goal</a>
 		</div>
+
 		<div ng-hide="goals.length">No goals found. Please add a goal to get started.</div>
+
+		<div ng-show="alerts.length">
+			<alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+		</div>
+
 		<div class="table-responsive">
 			<table class="table" ng-show="goals.length">
 				<thead>
@@ -29,7 +35,7 @@
 						<td class="text-left">
 							<a href='#/manage/{{goal.Goal.id}}' ng-click="clearAlerts()">Manage</a>&nbsp;&nbsp;
 							<a href='#/edit/{{goal.Goal.id}}'><span class="glyphicon glyphicon-edit"></span></a>&nbsp;&nbsp;
-							<a href='#' ng-click="deleteGoal(goal.Goal.id)"><span class="glyphicon glyphicon-trash"></span></a>
+							<a href='#/show' ng-click="deleteGoal(goal.Goal.id)"><span class="glyphicon glyphicon-trash"></span></a>
 						</td>
 					</tr>
 				</tbody>

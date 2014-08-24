@@ -5,3 +5,28 @@
 .form-title {
 	font-size: 23px;
 }
+
+.small-margin {
+	padding-right: 15px;
+}
+
+.small-text {
+	font-size: 11px;
+	color: #AAAAAA;
+}
+
+.view-title {
+	font-size: 23px;
+}
+
+.view-content {
+	padding: 10px 0 10px 0;
+}
+
+.view-content-footer {
+	padding: 10px 0 20px 0;
+}
+
+h3.modal-title-confirm {
+	padding-left: 20px;
+}

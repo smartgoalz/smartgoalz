@@ -1,0 +1,44 @@
+<div class="row" ng-controller="NotesIndexCtrl">
+	<div class="col-lg-12">
+		<div class="header-button">
+			<a href="#/notes/add" class="btn btn-info">Add Note</a>
+		</div>
+
+		<div ng-hide="notes.length">No notes found. Please add a note to get started.</div>
+
+		<div ng-show="alerts.length">
+			<alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+		</div>
+
+		<div class="table-responsive">
+			<table class="table" ng-show="notes.length">
+				<thead>
+					<tr>
+						<th>Notes</th>
+						<th></th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="note in notes">
+						<td>
+							<a href='#/notes/view/{{note.Note.id}}'>{{note.Note.title}}</a>
+							<span class="small-margin"></span>
+							<span class="small-text">created on {{note.Note.created | fixTime | date:'dd-M-yyyy'}}</span>
+						</td>
+						<td>
+							<a href="">
+							<span ng-show="note.Note.pin_top" class="fa fa-thumb-tack"></span>
+							</a>
+						</td>
+						<td class="text-left">
+							<a href='#/notes/edit/{{note.Note.id}}'><span class="glyphicon glyphicon-edit"></span></a>
+							<span class="small-margin"></span>
+							<a href='#/notes' ng-click="deleteNote(note.Note.id)"><span class="glyphicon glyphicon-trash"></span></a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>

@@ -43,6 +43,7 @@
 	Router::mapResources('categories');
 	Router::mapResources('goals');
 	Router::mapResources('tasks');
+	Router::mapResources('notes');
 	Router::parseExtensions('json');
 
 /**

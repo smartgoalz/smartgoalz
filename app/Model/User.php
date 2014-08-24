@@ -37,6 +37,9 @@ class User extends AppModel {
 		'Goal' => array(
 			'className' => 'Goal',
 		),
+		'Note' => array(
+			'className' => 'Note',
+		),
 	);
 
 }
