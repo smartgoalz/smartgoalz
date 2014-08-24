@@ -1,59 +1,60 @@
 <div class="row" ng-controller="GoalManageCtrl">
-<div class="col-md-6">
+	<div class="col-lg-12">
+		<span class="view-title">{{ goaldata.Goal.title }}</span>
+		<span class="small-margin"></span>
+		<a href='#/goals/edit/{{goaldata.Goal.id}}'><span class="glyphicon glyphicon-pencil"></span></a>
+	</div>
 
-<div>
-	<span class="goal-title">{{ goaldata.Goal.title }}</span>
-	<span class="goal-title-edit"><button class="btn-mini btn-default btn-xmini" ng-click="editGoal(goaldata.Goal.id)">Edit Goal</button></span>
-</div>
-<br />
-<div class="row">
-	<div class="col-xs-4">Start date : {{ goaldata.Goal.start_date }}</div>
-	<div class="col-xs-4">Due date : {{ goaldata.Goal.due_date }}</div>
-</div>
+	<div class="col-lg-12">
+		<div>Start date : {{ goaldata.Goal.start_date }}</div>
+		<div>Due date : {{ goaldata.Goal.due_date }}</div>
+		<div>Priority : {{ priorities[goaldata.Goal.priority] }}</div>
+		<div>Difficulty : {{ difficulties[goaldata.Goal.difficulty] }}</div>
+		<div>Completed : {{ goaldata.Goal.task_completed }} / {{ goaldata.Goal.task_total }}</div>
+	</div>
 
-<div>Priority : {{ priorities[goaldata.Goal.priority] }}</div>
-<div>Difficulty : {{ difficulties[goaldata.Goal.difficulty] }}</div>
-<div>Completed : {{ goaldata.Goal.task_completed }} / {{ goaldata.Goal.task_total }}</div>
-
-<br />
-
-<div class="row">
-	<div class="col-xs-8">
+	<div class="col-lg-12" ng-show="alerts.length">
 		<alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
 	</div>
-</div>
 
-<div>
-	<button class="btn btn-primary" ng-click="addTask()">Add Task</button>&nbsp;&nbsp;
-	<a href="#/show" class="btn btn-info">Cancel</a>
-</div>
-<br />
-	<div ng-hide="goaldata.Task.length">No tasks found. Please add a task to get started.</div>
-	<table class="table table-hover" ng-show="goaldata.Task.length">
-		<thead>
-			<tr>
-				<th>Task</th>
-				<th>Start date</th>
-				<th>Due date</th>
-				<th>Completed</th>
-				<th>Actions</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr ng-repeat="task in goaldata.Task" ui:sortable ng:model="goaldata.Task">
-				<td>{{ task.title }}</td>
-				<td>{{ task.start_date }}</td>
-				<td>{{ task.due_date }}</td>
-				<td ng-if="task.is_completed == true">&nbsp;&nbsp;&nbsp;<span class="glyphicon glyphicon-ok"></span></td>
-				<td ng-if="task.is_completed == false">
-					<button class="btn-mini btn-xmini btn-default" ng-click="doneTask(task.id)">Done</button>
-				</td>
-				<td>
-					<a href="" ng-click="editTask(task.id)"><span class="glyphicon glyphicon-pencil"></span></a>&nbsp;&nbsp;
-					<a href="" ng-click="deleteTask(task.id)"><span class="glyphicon glyphicon-trash"></span></a>
-				</td>
-			</tr>
-		</tbody>
-	</table>
+	<div class="col-lg-12">
+		<button class="btn btn-primary" ng-click="addTask()">Add Task</button>&nbsp;&nbsp;
+		<a href="#/goals" class="btn btn-info">Cancel</a>
+	</div>
+
+	<div class="col-lg-12" ng-hide="goaldata.Task.length">
+		<div>No tasks found. Please add a task to get started.</div>
+	</div>
+	<div class="col-lg-12" ng-show="goaldata.Task.length">
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th class="text-right">#</th>
+					<th class="text-left">Task</th>
+					<th class="text-center">Start date</th>
+					<th class="text-center">Due date</th>
+					<th class="text-center">Completed</th>
+					<th class="text-center">Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="task in goaldata.Task" ui:sortable ng:model="goaldata.Task">
+					<td class="text-right">{{ $index + 1 }}</td>
+					<td class="text-left">{{ task.title }}</td>
+					<td class="text-center">{{ task.start_date }}</td>
+					<td class="text-center">{{ task.due_date }}</td>
+					<td ng-if="task.is_completed == true" class="text-center"><span class="glyphicon glyphicon-ok"></span></td>
+					<td ng-if="task.is_completed == false" class="text-center">
+						<button class="btn-mini btn-xmini btn-default" ng-click="doneTask(task.id)">Done</button>
+					</td>
+					<td class="text-center">
+						<a href="" ng-click="editTask(task.id)"><span class="glyphicon glyphicon-pencil"></span></a>&nbsp;&nbsp;
+						<a href="" ng-click="deleteTask(task.id)"><span class="glyphicon glyphicon-trash"></span></a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 </div><!-- END col-md-6 -->
 </div><!-- END row -->
+

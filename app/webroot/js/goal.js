@@ -7,16 +7,16 @@ goalApp.config(['$routeProvider', function($routeProvider) {
 	when('/dashboard', {
 		templateUrl: 'frontend/dashboard/dashboard.html',
 	}).
-	when('/show', {
-		templateUrl: 'frontend/goals/show.html',
+	when('/goals', {
+		templateUrl: 'frontend/goals/index.html',
 	}).
-	when('/add', {
+	when('/goals/add', {
 		templateUrl: 'frontend/goals/add.html',
 	}).
-	when('/edit/:id', {
+	when('/goals/edit/:id', {
 		templateUrl: 'frontend/goals/edit.html',
 	}).
-	when('/manage/:id', {
+	when('/goals/manage/:id', {
 		templateUrl: 'frontend/goals/manage.html',
 	}).
 	when('/notes', {
@@ -184,7 +184,7 @@ goalApp.controller('ContentCtrl', function ($scope, $rootScope, $cookieStore) {
 });
 
 /* Show goals */
-goalApp.controller('GoalShowCtrl', function ($scope, $rootScope, $http, $location, $modal, $window, $route, AlertService, modalService, SelectService) {
+goalApp.controller('GoalsIndexCtrl', function ($scope, $rootScope, $http, $location, $modal, $window, $route, AlertService, modalService, SelectService) {
 	$scope.alerts = AlertService.alerts;
 	$scope.closeAlert = function(index) {
 		$scope.alerts.splice(index, 1);
@@ -297,7 +297,7 @@ goalApp.controller('GoalAddCtrl', function ($scope, $rootScope, $http, $location
 			}
 			if (data['message']['type'] == 'success') {
 				AlertService.alerts.push({type: 'success', msg: data['message']['text']});
-				$location.path('/show');
+				$location.path('/goals');
 			}
 		}).
 		error(function (data, status, headers) {
@@ -338,7 +338,7 @@ goalApp.controller('GoalEditCtrl', function ($scope, $rootScope, $http, $routePa
 	}).
 	error(function(data, status, headers, config) {
 		AlertService.alerts.push({type: 'danger', msg: 'Goal not found'});
-		$location.path('/show');
+		$location.path('/goals');
 	});
 
 	$scope.editGoal = function() {
@@ -363,7 +363,7 @@ goalApp.controller('GoalEditCtrl', function ($scope, $rootScope, $http, $routePa
 			}
 			if (data['message']['type'] == 'success') {
 				AlertService.alerts.push({type: 'success', msg: data['message']['text']});
-				$location.path('/show');
+				$location.path('/goals');
 			}
 		}).
 		error(function (data, status, headers) {
@@ -372,11 +372,13 @@ goalApp.controller('GoalEditCtrl', function ($scope, $rootScope, $http, $routePa
 	}
 });
 
-goalApp.controller('GoalManageCtrl', function ($scope, $http, $modal, $routeParams, $location, $route, AlertService, modalService, SelectService) {
+goalApp.controller('GoalManageCtrl', function ($scope, $rootScope, $http, $modal, $routeParams, $location, $route, AlertService, modalService, SelectService) {
 	$scope.alerts = AlertService.alerts;
 	$scope.closeAlert = function(index) {
 		$scope.alerts.splice(index, 1);
 	};
+
+	$rootScope.pageTitle = "Manage Goal";
 
 	$scope.formdata = [];
 	$scope.goaldata = [];
@@ -390,7 +392,7 @@ goalApp.controller('GoalManageCtrl', function ($scope, $http, $modal, $routePara
 	}).
 	error(function(data, status, headers, config) {
 		AlertService.alerts.push({type: 'danger', msg: 'Goal not found'});
-		$location.path('/show');
+		$location.path('/goals');
 	});
 
 	/* Edit goal action */

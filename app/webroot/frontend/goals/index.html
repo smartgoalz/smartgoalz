@@ -1,7 +1,7 @@
-<div class="row" ng-controller="GoalShowCtrl">
+<div class="row" ng-controller="GoalsIndexCtrl">
 	<div class="col-lg-12">
 		<div class="header-button">
-			<a href="#/add" class="btn btn-info">Add Goal</a>
+			<a href="#/goals/add" class="btn btn-info">Add Goal</a>
 		</div>
 
 		<div ng-hide="goals.length">No goals found. Please add a goal to get started.</div>
@@ -33,9 +33,11 @@
 						<td class="text-center">{{ priorities[goal.Goal.priority] }}</td>
 						<td class="text-center">{{ goal.Goal.due_date | fixTime | date:'medium'}}</td>
 						<td class="text-left">
-							<a href='#/manage/{{goal.Goal.id}}' ng-click="clearAlerts()">Manage</a>&nbsp;&nbsp;
-							<a href='#/edit/{{goal.Goal.id}}'><span class="glyphicon glyphicon-edit"></span></a>&nbsp;&nbsp;
-							<a href='#/show' ng-click="deleteGoal(goal.Goal.id)"><span class="glyphicon glyphicon-trash"></span></a>
+							<a href='#/goals/manage/{{goal.Goal.id}}' ng-click="clearAlerts()">Manage</a>
+							<span class="small-margin"></span>
+							<a href='#/goals/edit/{{goal.Goal.id}}'><span class="glyphicon glyphicon-pencil"></span></a>
+							<span class="small-margin"></span>
+							<a href='#/goals' ng-click="deleteGoal(goal.Goal.id)"><span class="glyphicon glyphicon-trash"></span></a>
 						</td>
 					</tr>
 				</tbody>

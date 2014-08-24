@@ -74,7 +74,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 				<a href="#/dashboard">Dashboard <span class="menu-icon fa fa-tachometer"></span></a>
 			</li>
 			<li class="sidebar-list">
-				<a href="#/show">Goals <span class="menu-icon fa fa-cubes"></span></a>
+				<a href="#/goals">Goals <span class="menu-icon fa fa-cubes"></span></a>
 			</li>
 			<li class="sidebar-list">
 				<a href="#">Timewatch <span class="menu-icon fa fa-clock-o"></span></a>
@@ -87,7 +87,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 			</li>
 			<li class="sidebar-title separator"><span>QUICK LINKS</span></li>
 			<li class="sidebar-list">
-				<a href="#" target="_blank">Upcoming Tasks <span class="menu-icon fa fa-calendar"></span></a>
+				<a href="#">Upcoming Tasks <span class="menu-icon fa fa-calendar"></span></a>
 			</li>
 		</ul>
 		<!-- Sidebar Footer -->
