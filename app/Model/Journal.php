@@ -26,23 +26,32 @@
  */
 
 /**
- * User Model
+ * Journal Model
  */
-class User extends AppModel {
+class Journal extends AppModel {
 
-	public $hasMany = array(
-		'Category' => array(
-			'className' => 'Category',
-		),
-		'Goal' => array(
-			'className' => 'Goal',
-		),
-		'Note' => array(
-			'className' => 'Note',
-		),
-		'Journal' => array(
-			'className' => 'Journal',
+	public $belongsTo = array(
+		'User' => array(
+			'className' => 'User',
+			'foreignKey' => 'user_id',
 		),
 	);
 
+	/* Validation rules for the Group table */
+	public $validate = array(
+		'title' => array(
+			'rule1' => array(
+				'rule' => 'notEmpty',
+				'message' => 'Oops ! Journal Entry title cannot be empty.',
+				'required'   => true,
+				'allowEmpty' => false,
+			),
+			'rule2' => array(
+				'rule' => array('maxLength', 255),
+				'message' => 'Oh ! Journal Entry title cannot be more than 255 characters.',
+				'required'   => true,
+				'allowEmpty' => false,
+			),
+		),
+	);
 }

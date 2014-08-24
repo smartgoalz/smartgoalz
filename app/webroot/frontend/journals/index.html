@@ -1,0 +1,40 @@
+<div class="row" ng-controller="JournalsIndexCtrl">
+	<div class="col-lg-12">
+		<div class="header-button">
+			<a href="#/journals/add" class="btn btn-info">Add Entry</a>
+		</div>
+
+		<div ng-hide="journals.length">No journal entries found. Please add one to get started.</div>
+
+		<div ng-show="alerts.length">
+			<alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+		</div>
+
+		<div class="table-responsive">
+			<table class="table" ng-show="journals.length">
+				<thead>
+					<tr>
+						<th width="35px">Date</th>
+						<th>Entry</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="journal in journals">
+						<td>
+							{{journal.Journal.entrydate | fixTime | date:'dd-M-yyyy'}}
+						</td>
+						<td>
+							<a href='#/journals/view/{{journal.Journal.id}}'>{{journal.Journal.title}}</a>
+						</td>
+						<td class="text-left">
+							<a href='#/journals/edit/{{journal.Journal.id}}'><span class="glyphicon glyphicon-edit"></span></a>
+							<span class="small-margin"></span>
+							<a href='#/journals' ng-click="deleteJournal(journal.Journal.id)"><span class="glyphicon glyphicon-trash"></span></a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>

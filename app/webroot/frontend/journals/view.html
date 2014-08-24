@@ -1,0 +1,21 @@
+<div class="row" ng-controller="JournalViewCtrl">
+	<div class="col-lg-12">
+		<div ng-show="alerts.length">
+			<alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+		</div>
+
+		<div>
+			<span class="view-title">{{ journal.Journal.title }}</span>
+			for {{ journal.Journal.entrydate }}
+		</div>
+
+		<div class="view-content">
+			<div>{{ journal.Journal.entry }}</div>
+		</div>
+
+		<div class="view-actions">
+			<a href='#/journals/edit/{{journal.Journal.id}}' class="btn btn-info">Edit Entry</a>
+			<a href="#/journals" class="btn btn-danger">Cancel</a>
+		</div>
+	</div>
+</div>

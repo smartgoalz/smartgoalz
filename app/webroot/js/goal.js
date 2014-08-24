@@ -31,6 +31,18 @@ goalApp.config(['$routeProvider', function($routeProvider) {
 	when('/notes/edit/:id', {
 		templateUrl: 'frontend/notes/edit.html',
 	}).
+	when('/journals', {
+		templateUrl: 'frontend/journals/index.html',
+	}).
+	when('/journals/view/:id', {
+		templateUrl: 'frontend/journals/view.html',
+	}).
+	when('/journals/add', {
+		templateUrl: 'frontend/journals/add.html',
+	}).
+	when('/journals/edit/:id', {
+		templateUrl: 'frontend/journals/edit.html',
+	}).
 	otherwise({
 		redirectTo: '/dashboard'
 	});
@@ -684,7 +696,6 @@ goalApp.controller('NoteViewCtrl', function ($scope, $rootScope, $http, $modal, 
 	$http.get('notes/' + $routeParams['id'] + '.json').
 	success(function(data, status, headers, config) {
 		$scope.note = data['note'];
-		console.log($scope.note);
 	}).
 	error(function(data, status, headers, config) {
 		AlertService.alerts.push({type: 'danger', msg: 'Note not found'});
@@ -782,3 +793,168 @@ goalApp.controller('NoteEditCtrl', function ($scope, $rootScope, $http, $routePa
 	}
 });
 
+/********************************************************************/
+/***************************** JOURNAL ******************************/
+/********************************************************************/
+
+/* Show journal */
+goalApp.controller('JournalsIndexCtrl', function ($scope, $rootScope, $http, $location, $modal, $window, $route, AlertService, modalService) {
+	$scope.alerts = AlertService.alerts;
+	$scope.closeAlert = function(index) {
+		$scope.alerts.splice(index, 1);
+	};
+
+	$rootScope.pageTitle = "Journal";
+
+	$http.get('journals.json').
+	success(function(data, status, headers, config) {
+		$scope.journals = data['journals'];
+	}).
+	error(function(data, status, headers, config) {
+		$scope.journals = [];
+	});
+
+	/* Delete journal entry action */
+	$scope.deleteJournal = function(id) {
+		/* Open modal window */
+		var modalDefaults = {
+			backdrop: true,
+			keyboard: true,
+			modalFade: true,
+			templateUrl: 'frontend/partials/confirm.html'
+		};
+
+		var modalOptions = {
+			closeButtonText: 'No',
+			actionButtonText: 'Yes',
+			headerText: 'Please confirm',
+			bodyText: 'Are you sure you want to delete the journal entry ?'
+		};
+
+		modalService.showModal(modalDefaults, modalOptions).then(function (result) {
+			AlertService.alerts = [];
+			$http.delete('journals/delete/' + id + '.json').
+			success(function(data, status, headers, config) {
+				if (data['message']['type'] == 'error') {
+					AlertService.alerts.push({type: 'danger', msg: data['message']['text']});
+				} else
+				if (data['message']['type'] == 'success') {
+					AlertService.alerts.push({type: 'success', msg: data['message']['text']});
+				}
+				$route.reload();
+			}).
+			error(function(data, status, headers, config) {
+				AlertService.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
+				$route.reload();
+			});
+		});
+	};
+});
+
+/* View journal entry */
+goalApp.controller('JournalViewCtrl', function ($scope, $rootScope, $http, $modal, $routeParams, $location, $route, AlertService, modalService) {
+	AlertService.alerts = [];
+	$scope.closeAlert = function(index) {
+		$scope.alerts.splice(index, 1);
+	};
+
+	$scope.note = [];
+
+	$rootScope.pageTitle = "View Journal Entry";
+
+	$http.get('journals/' + $routeParams['id'] + '.json').
+	success(function(data, status, headers, config) {
+		$scope.journal = data['journal'];
+	}).
+	error(function(data, status, headers, config) {
+		AlertService.alerts.push({type: 'danger', msg: 'Journal entry not found'});
+		$location.path('/journals');
+	});
+});
+
+/* Add journal entry */
+goalApp.controller('JournalAddCtrl', function ($scope, $rootScope, $http, $location, AlertService) {
+	AlertService.alerts = [];
+	$scope.closeAlert = function(index) {
+		$scope.alerts.splice(index, 1);
+	};
+
+	$scope.formdata = [];
+
+	$rootScope.pageTitle = "Add Journal Entry";
+
+	$scope.addJournal = function() {
+		$scope.alerts = [];
+
+		var data = {
+			'Journal' : {
+				title: $scope.formdata.Title,
+				entry: $scope.formdata.Entry,
+				entrydate: $scope.formdata.Entrydate,
+			}
+		};
+
+		$http.post("journals/add.json", data).
+		success(function (data, status, headers) {
+			if (data['message']['type'] == 'error') {
+				$scope.alerts.push({type: 'danger', msg: data['message']['text']});
+			}
+			if (data['message']['type'] == 'success') {
+				AlertService.alerts.push({type: 'success', msg: data['message']['text']});
+				$location.path('/journals');
+			}
+		}).
+		error(function (data, status, headers) {
+			$scope.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
+		});
+	}
+});
+
+/* Edit journal entry */
+goalApp.controller('JournalEditCtrl', function ($scope, $rootScope, $http, $routeParams, $location, AlertService, SelectService) {
+	AlertService.alerts = [];
+	$scope.closeAlert = function(index) {
+		$scope.alerts.splice(index, 1);
+	};
+
+	$rootScope.pageTitle = "Edit Journal Entry";
+
+	$scope.formdata = [];
+
+	$http.get('journals/' + $routeParams['id'] + '.json').
+	success(function(data, status, headers, config) {
+		$scope.formdata.Title = data['journal']['Journal']['title'];
+		$scope.formdata.Entry = data['journal']['Journal']['entry'];
+		$scope.formdata.Entrydate = data['journal']['Journal']['entrydate'];
+	}).
+	error(function(data, status, headers, config) {
+		AlertService.alerts.push({type: 'danger', msg: 'Journal Entry not found'});
+		$location.path('/journals');
+	});
+
+	$scope.editJournal = function() {
+		$scope.alerts = [];
+
+		var data = {
+			'Journal' : {
+				title: $scope.formdata.Title,
+				entry: $scope.formdata.Entry,
+				entrydate: $scope.formdata.Entrydate,
+			}
+		};
+
+		$http.post("journals/edit/" +  + $routeParams['id'] + ".json", data).
+		success(function (data, status, headers) {
+			if (data['message']['type'] == 'error') {
+				$scope.alerts.push({type: 'danger', msg: data['message']['text']});
+			}
+			if (data['message']['type'] == 'success') {
+				AlertService.alerts.push({type: 'success', msg: data['message']['text']});
+				$location.path('/journals');
+			}
+		}).
+		error(function (data, status, headers) {
+			$scope.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
+		});
+	}
+});

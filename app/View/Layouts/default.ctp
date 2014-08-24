@@ -77,13 +77,13 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 				<a href="#/show">Goals <span class="menu-icon fa fa-cubes"></span></a>
 			</li>
 			<li class="sidebar-list">
-				<a href="#">Categories <span class="menu-icon fa fa-tasks"></span></a>
+				<a href="#">Timewatch <span class="menu-icon fa fa-clock-o"></span></a>
 			</li>
 			<li class="sidebar-list">
 				<a href="#/notes">Notes <span class="menu-icon fa fa-edit"></span></a>
 			</li>
 			<li class="sidebar-list">
-				<a href="#/notes">Journal <span class="menu-icon fa fa-list-alt"></span></a>
+				<a href="#/journals">Journal <span class="menu-icon fa fa-list-alt"></span></a>
 			</li>
 			<li class="sidebar-title separator"><span>QUICK LINKS</span></li>
 			<li class="sidebar-list">
