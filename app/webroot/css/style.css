@@ -30,3 +30,7 @@
 h3.modal-title-confirm {
 	padding-left: 20px;
 }
+
+.modal-alert {
+	color: #FF0000;
+}

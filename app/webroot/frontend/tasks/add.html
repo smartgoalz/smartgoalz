@@ -5,17 +5,17 @@
         <div class="modal-body">
 		<div>
 			<form method="POST" role="form">
-				<div class="row">
-					<div class="col-xs-12">
-						<div class="form-group">
-							<div ng-repeat="alert in alerts" class="modal-alert">{{alert.msg}}</div>
+				<div class="row" ng-show="alerts.length">
+					<div class="col-xs-6">
+						<div>
+							<div ng-repeat="alert in alerts" type="{{alert.type}}" class="modal-alert">{{alert.msg}}</div>
 						</div>
 					</div>
 				</div>
 
 				<div class="row">
 					<div class="col-xs-12">
-						<div class="form-group">
+						<div>
 							<label for="inputTitle">Task</label>
 							<input type="text" class="form-control" id="inputTitle" placeholder="Task" ng-model="formdata.Title">
 						</div>
@@ -24,13 +24,13 @@
 
 				<div class="row">
 					<div class="col-xs-6">
-						<div class="form-group">
+						<div>
 							<label for="inputStartdate">Start date</label>
 							<input type="text" class="form-control" id="inputStartdate" placeholder="Start date" ng-model="formdata.Startdate">
 						</div>
 					</div>
 					<div class="col-xs-6">
-						<div class="form-group">
+						<div>
 							<label for="inputDuedate">Due date</label>
 							<input type="text" class="form-control" id="inputDuedate" placeholder="Due date" ng-model="formdata.Duedate">
 						</div>
@@ -39,7 +39,7 @@
 
 				<div class="row" ng-show="goaldata.Task">
 					<div class="col-xs-6">
-						<div class="form-group">
+						<div>
 							<label for="inputPrev">After</label>
 							<select class="form-control" id="inputPrev" ng-model="formdata.Prev">
 								<option ng-repeat="prevtask in goaldata.Task" value="{{prevtask.id}}" ng-if="prevtask.id != taskid" ng-selected="{{prevtask.id == formdata.Prev}}">{{prevtask.title}}</option>
@@ -50,7 +50,7 @@
 
 				<div class="row">
 					<div class="col-xs-6">
-						<div class="form-group">
+						<div>
 							<label for="inputReminder">Send Reminder</label>
 							<select class="form-control" id="inputReminder" ng-model="formdata.Reminder">
 								<option value="1">Never</option>
@@ -64,15 +64,15 @@
 
 				<div class="row">
 					<div class="col-xs-6">
-						<div class="form-group">
-							 <label for="inputCompleted" class="checkbox"><input type="checkbox" class="form-control" id="inputCompleted" placeholder="Completed" ng-model="formdata.Completed"> Completed</label>
+						<div>
+							 <label for="inputCompleted" class="checkbox"><input type="checkbox" id="inputCompleted" placeholder="Completed" ng-model="formdata.Completed"> Completed</label>
 						</div>
 					</div>
 				</div>
 
 				<div class="row" ng-show="formdata.Completed">
 					<div class="col-xs-6">
-						<div class="form-group">
+						<div>
 							<label for="inputCompletiondate">Completion date</label>
 							<input type="text" class="form-control" id="inputCompletiondate" placeholder="Completion date" ng-model="formdata.Completiondate">
 						</div>
@@ -81,7 +81,7 @@
 
 				<div class="row">
 					<div class="col-xs-12">
-						<div class="form-group">
+						<div>
 							<label for="inputNotes">Notes</label>
 							<textarea class="form-control" id="inputNotes" ng-model="formdata.Notes"></textarea>
 						</div>
