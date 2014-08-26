@@ -43,6 +43,7 @@
 	Router::mapResources('categories');
 	Router::mapResources('goals');
 	Router::mapResources('tasks');
+	Router::mapResources('timewatches');
 	Router::mapResources('notes');
 	Router::mapResources('journals');
 	Router::parseExtensions('json');

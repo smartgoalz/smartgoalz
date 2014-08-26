@@ -1,0 +1,66 @@
+<div class="row" ng-controller="TimewatchEditCtrl">
+	<div class="col-lg-12">
+		<div class="form-title">Edit Timewatch</div>
+	</div>
+
+	<div class="col-lg-12" ng-show="alerts.length">
+		<alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+	</div>
+
+	<div>
+		<div class="row">
+			<div class="col-xs-8">
+				<div class="form-group">
+					<label for="inputGoal">Selected Goal</label>
+					<input class="form-control" id="inputGoal" ng-disabled="1" ng-model="formdata.Goal">
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-8">
+				<div class="form-group">
+					<label for="inputTask">Selected Task</label>
+					<input class="form-control" id="inputTask" ng-disabled="1" ng-model="formdata.Task">
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-8">
+				<div class="form-group">
+					<label for="inputStarttime">Started</label>
+					<input class="form-control" id="inputStarttime" ng-model="formdata.Starttime">
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-3">
+				<div class="form-group">
+					 <label for="inputIsStopped" class="checkbox">
+						<input type="checkbox" class="form-control" id="inputIsStopped" ng-model="formdata.IsStopped"> Timer stopped
+					 </label>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-8">
+				<div class="form-group">
+					<label for="inputEndtime">Stopped</label>
+					<input class="form-control" id="inputEndtime" ng-disabled="!formdata.IsStopped" ng-model="formdata.Endtime">
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-8">
+				<div>
+					<button class="btn btn-primary" ng-click="editTimewatch()">Submit</button>
+					<a href="#/timewatch" class="btn btn-info" ng-click="clearAlerts()">Cancel</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

@@ -19,6 +19,15 @@ goalApp.config(['$routeProvider', function($routeProvider) {
 	when('/goals/manage/:id', {
 		templateUrl: 'frontend/goals/manage.html',
 	}).
+	when('/timewatch', {
+		templateUrl: 'frontend/timewatch/start.html',
+	}).
+	when('/timewatch/stop/:id', {
+		templateUrl: 'frontend/timewatch/stop.html',
+	}).
+	when('/timewatch/edit/:id', {
+		templateUrl: 'frontend/timewatch/edit.html',
+	}).
 	when('/notes', {
 		templateUrl: 'frontend/notes/index.html',
 	}).
@@ -625,6 +634,252 @@ goalApp.controller('DashboardCtrl', function ($scope, $rootScope, $cookieStore) 
 
 	$rootScope.pageTitle = "Dashboard";
 });
+
+/********************************************************************/
+/***************************** TIMEWATCH ****************************/
+/********************************************************************/
+
+goalApp.controller('TimewatchStartCtrl', function ($scope, $rootScope, $location, $http, $route, $modal, $window, AlertService, modalService) {
+	$scope.alerts = AlertService.alerts;
+	$scope.closeAlert = function(index) {
+		$scope.alerts.splice(index, 1);
+	};
+
+	$rootScope.pageTitle = "Timewatch";
+
+	$scope.formdata = [];
+	$scope.goals = [];
+	$scope.tasks = [];
+
+	$scope.timewatches = [];
+
+	/* Get current timewatches */
+	$http.get('timewatches.json').
+	success(function(data, status, headers, config) {
+		$scope.timewatches = data['timewatches'];
+	}).
+	error(function(data, status, headers, config) {
+		$scope.timewatches = [];
+	});
+
+	$http.get('goals.json').
+	success(function(data, status, headers, config) {
+		$scope.goals = data['goals'];
+	}).
+	error(function(data, status, headers, config) {
+		$scope.goals = [];
+	});
+
+	$scope.$watch('formdata.Goal', function(newVal) {
+		if (newVal) {
+			$http.get('goals/' + newVal + '.json').
+			success(function(data, status, headers, config) {
+				$scope.tasks = data['goal']['Task'];
+			}).
+			error(function(data, status, headers, config) {
+				$scope.tasks = [];
+			});
+		}
+	});
+
+	/* Start timer */
+	$scope.startTimer = function(id) {
+		$scope.alerts = [];
+		AlertService.alerts = [];
+
+		var data = {
+			'Timewatch' : {
+				task_id: id,
+				start_time: '2014-08-01 00:00:00',
+				end_time: '2014-08-01 00:00:00',
+			}
+		};
+
+		$http.post("timewatches/start.json", data).
+		success(function (data, status, headers) {
+			if (data['message']['type'] == 'error') {
+				$scope.alerts.push({type: 'danger', msg: data['message']['text']});
+			}
+			if (data['message']['type'] == 'success') {
+				AlertService.alerts.push({type: 'success', msg: data['message']['text']});
+				$location.path('/timewatch/stop/' + data['message']['id']);
+			}
+		}).
+		error(function (data, status, headers) {
+			$scope.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
+		});
+	}
+
+	/* Delete timewatch action */
+	$scope.deleteTimewatch = function(id) {
+		/* Open modal window */
+		var modalDefaults = {
+			backdrop: true,
+			keyboard: true,
+			modalFade: true,
+			templateUrl: 'frontend/partials/confirm.html'
+		};
+
+		var modalOptions = {
+			closeButtonText: 'No',
+			actionButtonText: 'Yes',
+			headerText: 'Please confirm',
+			bodyText: 'Are you sure you want to delete the timewatch ?'
+		};
+
+		modalService.showModal(modalDefaults, modalOptions).then(function (result) {
+			AlertService.alerts = [];
+			$http.delete('timewatches/delete/' + id + '.json').
+			success(function(data, status, headers, config) {
+				if (data['message']['type'] == 'error') {
+					AlertService.alerts.push({type: 'danger', msg: data['message']['text']});
+				} else
+				if (data['message']['type'] == 'success') {
+					AlertService.alerts.push({type: 'success', msg: data['message']['text']});
+				}
+				$route.reload();
+			}).
+			error(function(data, status, headers, config) {
+				AlertService.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
+				$route.reload();
+			});
+		});
+	};
+
+	$scope.clearAlerts = function() {
+		AlertService.alerts = [];
+		$scope.alerts = [];
+	}
+});
+
+goalApp.controller('TimewatchStopCtrl', function ($scope, $rootScope, $cookieStore, $http, $route, $routeParams, $location, AlertService) {
+	$scope.alerts = AlertService.alerts;
+	$scope.closeAlert = function(index) {
+		$scope.alerts.splice(index, 1);
+	};
+
+	$scope.timewatch = [];
+
+	$rootScope.pageTitle = "Timewatch";
+
+	$http.get('timewatches/' + $routeParams['id'] + '.json').
+	success(function(data, status, headers, config) {
+		$scope.formdata.Goal = data['timewatch']['Goal']['title'];
+		$scope.formdata.Task = data['timewatch']['Task']['title'];
+		$scope.formdata.Starttime = data['timewatch']['Timewatch']['start_time'];
+		$scope.formdata.IsStopped = !data['timewatch']['Timewatch']['is_active'];
+		if ($scope.formdata.IsStopped) {
+			$scope.formdata.Endtime = data['timewatch']['Timewatch']['end_time'];
+		} else {
+			$scope.formdata.Endtime = "";
+		}
+		if ($scope.formdata.IsStopped == true) {
+			AlertService.alerts = [];
+			AlertService.alerts.push({type: 'danger', msg: 'Oops ! The timewatch for the selected task is already stopped.'});
+			$location.path('/timewatch');
+		}
+	}).
+	error(function(data, status, headers, config) {
+		AlertService.alerts = [];
+		AlertService.alerts.push({type: 'danger', msg: 'Timewatch not found'});
+		$location.path('/timewatch');
+	});
+
+	/* Stop timer */
+	$scope.stopTimer = function(id) {
+		$scope.alerts = [];
+		AlertService.alerts = [];
+
+		var data = {
+			'Timewatch' : {
+				id: id,
+				end_time: '2014-08-01 00:00:00',
+			}
+		};
+
+		$http.post("timewatches/stop/" + id + ".json", data).
+		success(function (data, status, headers) {
+			if (data['message']['type'] == 'error') {
+				$scope.alerts.push({type: 'danger', msg: data['message']['text']});
+			}
+			if (data['message']['type'] == 'success') {
+				AlertService.alerts.push({type: 'success', msg: data['message']['text']});
+				$location.path('/timewatch');
+			}
+		}).
+		error(function (data, status, headers) {
+			$scope.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
+		});
+	}
+
+	$scope.clearAlerts = function() {
+		AlertService.alerts = [];
+		$scope.alerts = [];
+	}
+});
+
+goalApp.controller('TimewatchEditCtrl', function ($scope, $rootScope, $cookieStore, $http, $route, $routeParams, $location, AlertService) {
+	$scope.alerts = AlertService.alerts;
+	$scope.closeAlert = function(index) {
+		$scope.alerts.splice(index, 1);
+	};
+
+	$scope.timewatch = [];
+
+	$rootScope.pageTitle = "Edit Timewatch";
+
+	$http.get('timewatches/' + $routeParams['id'] + '.json').
+	success(function(data, status, headers, config) {
+		$scope.formdata.Goal = data['timewatch']['Goal']['title'];
+		$scope.formdata.Task = data['timewatch']['Task']['title'];
+		$scope.formdata.Starttime = data['timewatch']['Timewatch']['start_time'];
+		$scope.formdata.IsStopped = !data['timewatch']['Timewatch']['is_active'];
+		if ($scope.formdata.IsStopped) {
+			$scope.formdata.Endtime = data['timewatch']['Timewatch']['end_time'];
+		} else {
+			$scope.formdata.Endtime = "";
+		}
+	}).
+	error(function(data, status, headers, config) {
+		AlertService.alerts = [];
+		AlertService.alerts.push({type: 'danger', msg: 'Timewatch not found'});
+		$location.path('/timewatch');
+	});
+
+	/* Stop timer */
+	$scope.editTimewatch = function() {
+		$scope.alerts = [];
+		AlertService.alerts = [];
+
+		var data = {
+			'Timewatch' : {
+				start_time: $scope.formdata.Starttime,
+				end_time: $scope.formdata.Endtime,
+				is_active: !$scope.formdata.IsStopped,
+			}
+		};
+
+		$http.post("timewatches/edit/" + $routeParams['id'] + ".json", data).
+		success(function (data, status, headers) {
+			if (data['message']['type'] == 'error') {
+				$scope.alerts.push({type: 'danger', msg: data['message']['text']});
+			}
+			if (data['message']['type'] == 'success') {
+				AlertService.alerts.push({type: 'success', msg: data['message']['text']});
+				$location.path('/timewatch');
+			}
+		}).
+		error(function (data, status, headers) {
+			$scope.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
+		});
+	}
+
+	$scope.clearAlerts = function() {
+		AlertService.alerts = [];
+		$scope.alerts = [];
+	}
+});
+
 
 /********************************************************************/
 /******************************* NOTES ******************************/

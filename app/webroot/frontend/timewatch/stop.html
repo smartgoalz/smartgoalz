@@ -1,0 +1,56 @@
+<div class="row" ng-controller="TimewatchStopCtrl">
+	<div class="col-lg-12">
+		<div class="form-title">Stop Timer</div>
+	</div>
+
+	<div class="col-lg-12" ng-show="alerts.length">
+		<alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+	</div>
+
+	<div>
+		<div class="row">
+			<div class="col-xs-8">
+				<div class="form-group">
+					<label for="inputGoal">Selected Goal</label>
+					<input class="form-control" id="inputGoal" ng-disabled="1" ng-model="formdata.Goal">
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-8">
+				<div class="form-group">
+					<label for="inputTask">Selected Task</label>
+					<input class="form-control" id="inputTask" ng-disabled="1" ng-model="formdata.Task">
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-8">
+				<div class="form-group">
+					<label for="inputStarttime">Started</label>
+					<input class="form-control" id="inputStarttime" ng-disabled="1" ng-model="formdata.Starttime">
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-8">
+				<div class="form-group">
+					<label for="inputTitle">Time Elapsed :</label>
+					<label for="inputTitle">10 Hours</label>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-8">
+				<div>
+					<button class="btn btn-danger btn-lg" ng-click="stopTimer(timewatch.Timewatch.id)">STOP TIMER</button>
+					<a href="#/timewatch" class="btn btn-info" ng-click="clearAlerts()">Cancel</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
