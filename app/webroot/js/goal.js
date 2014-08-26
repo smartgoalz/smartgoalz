@@ -87,9 +87,14 @@ goalApp.factory('SelectService', function($http, $q) {
 		return {1: 'Very Hard', 2: 'Hard', 3: 'Normal', 4: 'Easy', 5: 'Very Easy'};
 	}
 
+	var reminders = function() {
+		return {1: 'Before due date', 2: 'Weekly', 3: 'Daily', 4: 'Never'};
+	};
+
 	return {
 		priorities : priorities(),
 		difficulties : difficulties(),
+		reminders : reminders(),
 		categories: categories,
 	};
 });
@@ -513,10 +518,12 @@ goalApp.controller('GoalManageCtrl', function ($scope, $rootScope, $http, $modal
 });
 
 /* Task add modal */
-var TaskAddModalInstanceCtrl = function ($scope, $modalInstance, $http, AlertService, goaldata) {
+var TaskAddModalInstanceCtrl = function ($scope, $modalInstance, $http, AlertService, SelectService, goaldata) {
 	$scope.alerts = [];
 	$scope.formdata = [];
 	$scope.goaldata = goaldata;
+
+	$scope.reminders = SelectService.reminders;
 
 	$scope.addTask = function () {
 		$scope.alerts = [];
@@ -556,12 +563,14 @@ var TaskAddModalInstanceCtrl = function ($scope, $modalInstance, $http, AlertSer
 };
 
 /* Task edit modal */
-var TaskEditModalInstanceCtrl = function ($scope, $modalInstance, $http, AlertService, goaldata, id) {
+var TaskEditModalInstanceCtrl = function ($scope, $modalInstance, $http, AlertService, SelectService, goaldata, id) {
 	$scope.alerts = [];
 	$scope.formdata = [];
 	$scope.goaldata = goaldata;
 	$scope.taskid = id;
 	AlertService.alerts = [];
+
+	$scope.reminders = SelectService.reminders;
 
 	var found = false;
 	var task = [];

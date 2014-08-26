@@ -38,7 +38,7 @@
 				<div class="row" ng-show="goaldata.Task.length > 1">
 					<div class="col-xs-6">
 						<div>
-							<label for="inputPrev">After Task</label>
+							<label for="inputPrev">After task</label>
 							<select class="form-control" id="inputPrev" ng-model="formdata.Prev">
 								<option ng-repeat="prevtask in goaldata.Task" value="{{prevtask.id}}" ng-if="prevtask.id != taskid" ng-selected="{{prevtask.id == formdata.Prev}}">{{prevtask.title}}</option>
 							</select>
@@ -49,13 +49,9 @@
 				<div class="row">
 					<div class="col-xs-6">
 						<div>
-							<label for="inputReminder">Send Reminder</label>
+							<label for="inputReminder">Send reminders</label>
 							<select class="form-control" id="inputReminder" ng-model="formdata.Reminder">
-								<option value="1">Very hard</option>
-								<option value="2">Hard</option>
-								<option value="3">Normal</option>
-								<option value="4">Easy</option>
-								<option value="5">Very Easy</option>
+								<option ng-repeat="(id, reminder) in reminders" value="{{id}}" ng-selected="{{id == formdata.Reminder}}">{{reminder}}</option>
 							</select>
 						</div>
 					</div>
