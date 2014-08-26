@@ -414,9 +414,9 @@ goalApp.controller('GoalManageCtrl', function ($scope, $rootScope, $http, $modal
 		AlertService.alerts = [];
 
 		/* Open modal window */
-		var addModalInstance = $modal.open({
+		var TaskAddModalInstance = $modal.open({
 			templateUrl: 'frontend/tasks/add.html',
-			controller: AddModalInstanceCtrl,
+			controller: TaskAddModalInstanceCtrl,
 			resolve: {
 				goaldata: function () {
 					return $scope.goaldata;
@@ -424,7 +424,7 @@ goalApp.controller('GoalManageCtrl', function ($scope, $rootScope, $http, $modal
 			}
 		});
 
-		addModalInstance.result.then(function (result) {
+		TaskAddModalInstance.result.then(function (result) {
 			$route.reload();
 		}, function () {
 		});
@@ -435,9 +435,9 @@ goalApp.controller('GoalManageCtrl', function ($scope, $rootScope, $http, $modal
 		AlertService.alerts = [];
 
 		/* Open modal window */
-		var editModalInstance = $modal.open({
+		var TaskEditModalInstance = $modal.open({
 			templateUrl: 'frontend/tasks/edit.html',
-			controller: EditModalInstanceCtrl,
+			controller: TaskEditModalInstanceCtrl,
 			resolve: {
 				goaldata: function () {
 					return $scope.goaldata;
@@ -448,7 +448,7 @@ goalApp.controller('GoalManageCtrl', function ($scope, $rootScope, $http, $modal
 			}
 		});
 
-		editModalInstance.result.then(function (result) {
+		TaskEditModalInstance.result.then(function (result) {
 			$route.reload();
 		}, function () {
 		});
@@ -513,12 +513,12 @@ goalApp.controller('GoalManageCtrl', function ($scope, $rootScope, $http, $modal
 });
 
 /* Task add modal */
-var AddModalInstanceCtrl = function ($scope, $modalInstance, $http, AlertService, goaldata) {
+var TaskAddModalInstanceCtrl = function ($scope, $modalInstance, $http, AlertService, goaldata) {
 	$scope.alerts = [];
 	$scope.formdata = [];
 	$scope.goaldata = goaldata;
 
-	$scope.submit = function () {
+	$scope.addTask = function () {
 		$scope.alerts = [];
 
 		var data = {
@@ -556,7 +556,7 @@ var AddModalInstanceCtrl = function ($scope, $modalInstance, $http, AlertService
 };
 
 /* Task edit modal */
-var EditModalInstanceCtrl = function ($scope, $modalInstance, $http, AlertService, goaldata, id) {
+var TaskEditModalInstanceCtrl = function ($scope, $modalInstance, $http, AlertService, goaldata, id) {
 	$scope.alerts = [];
 	$scope.formdata = [];
 	$scope.goaldata = goaldata;
@@ -587,7 +587,7 @@ var EditModalInstanceCtrl = function ($scope, $modalInstance, $http, AlertServic
 		$modalInstance.dismiss();
 	}
 
-	$scope.submit = function () {
+	$scope.editTask = function () {
 		$scope.alerts = [];
 
 		var data = {
@@ -639,6 +639,7 @@ goalApp.controller('DashboardCtrl', function ($scope, $rootScope, $cookieStore) 
 /***************************** TIMEWATCH ****************************/
 /********************************************************************/
 
+/* Start timewatch */
 goalApp.controller('TimewatchStartCtrl', function ($scope, $rootScope, $location, $http, $route, $modal, $window, AlertService, modalService) {
 	$scope.alerts = AlertService.alerts;
 	$scope.closeAlert = function(index) {
@@ -747,6 +748,7 @@ goalApp.controller('TimewatchStartCtrl', function ($scope, $rootScope, $location
 	};
 });
 
+/* Stop timewatch */
 goalApp.controller('TimewatchStopCtrl', function ($scope, $rootScope, $cookieStore, $http, $route, $routeParams, $location, AlertService) {
 	$scope.alerts = AlertService.alerts;
 	$scope.closeAlert = function(index) {
@@ -808,6 +810,7 @@ goalApp.controller('TimewatchStopCtrl', function ($scope, $rootScope, $cookieSto
 	}
 });
 
+/* Edit timewatch */
 goalApp.controller('TimewatchEditCtrl', function ($scope, $rootScope, $cookieStore, $http, $route, $routeParams, $location, AlertService) {
 	$scope.alerts = AlertService.alerts;
 	$scope.closeAlert = function(index) {
@@ -864,7 +867,6 @@ goalApp.controller('TimewatchEditCtrl', function ($scope, $rootScope, $cookieSto
 		});
 	}
 });
-
 
 /********************************************************************/
 /******************************* NOTES ******************************/

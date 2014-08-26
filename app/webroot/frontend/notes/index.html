@@ -1,7 +1,7 @@
 <div class="row" ng-controller="NotesIndexCtrl">
 	<div class="col-lg-12">
 		<div class="header-button">
-			<a href="#/notes/add" class="btn btn-info">Add Note</a>
+			<a href="#/notes/add" class="btn btn-info" ng-click="clearAlerts()">Add Note</a>
 		</div>
 
 		<div ng-hide="notes.length">No notes found. Please add a note to get started.</div>

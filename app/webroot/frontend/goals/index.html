@@ -25,7 +25,7 @@
 				</thead>
 				<tbody>
 					<tr ng-repeat="goal in goals">
-						<td class="clickable" ng-click="manageGoal(goal.Goal.id)">{{ goal.Goal.title }}</td>
+						<td><a href='#/goals/manage/{{goal.Goal.id}}' ng-click="clearAlerts()">{{ goal.Goal.title }}</a></td>
 						<td ng-if="goal.Goal.is_completed == false" class="text-center">{{ goal.Goal.task_completed }} / {{ goal.Goal.task_total }}</td>
 						<td ng-if="goal.Goal.is_completed == true" class="text-center"><span class="glyphicon glyphicon-ok"></span></td>
 						<td class="text-center">{{ categories[goal.Goal.category_id] }}</td>
@@ -33,8 +33,6 @@
 						<td class="text-center">{{ priorities[goal.Goal.priority] }}</td>
 						<td class="text-center">{{ goal.Goal.due_date | fixTime | date:'medium'}}</td>
 						<td class="text-left">
-							<a href='#/goals/manage/{{goal.Goal.id}}' ng-click="clearAlerts()">Manage</a>
-							<span class="small-margin"></span>
 							<a href='#/goals/edit/{{goal.Goal.id}}' ng-click="clearAlerts()"><span class="glyphicon glyphicon-pencil"></span></a>
 							<span class="small-margin"></span>
 							<a href='#/goals' ng-click="deleteGoal(goal.Goal.id)"><span class="glyphicon glyphicon-trash"></span></a>

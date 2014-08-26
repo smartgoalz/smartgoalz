@@ -1,7 +1,7 @@
 <div class="row" ng-controller="JournalsIndexCtrl">
 	<div class="col-lg-12">
 		<div class="header-button">
-			<a href="#/journals/add" class="btn btn-info">Add Entry</a>
+			<a href="#/journals/add" class="btn btn-info" ng-click="clearAlerts()">Add Entry</a>
 		</div>
 
 		<div ng-hide="journals.length">No journal entries found. Please add one to get started.</div>

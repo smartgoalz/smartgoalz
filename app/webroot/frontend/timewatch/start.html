@@ -74,7 +74,7 @@
 							<span ng-hide="timewatch.Timewatch.is_active">{{timewatch.Timewatch.end_time}}</span>
 						</td>
 						<td>
-							<span ng-show="timewatch.Timewatch.is_active" ng-click="clearAlerts()"><a href='#/timewatch/stop/{{timewatch.Timewatch.id}}'>Stop</a></span>
+							<span ng-show="timewatch.Timewatch.is_active"><a href='#/timewatch/stop/{{timewatch.Timewatch.id}}' ng-click="clearAlerts()">Stop</a></span>
 						</td>
 						<td>
 							<span class="small-margin"></span>
