@@ -22,7 +22,7 @@
 				<tbody>
 					<tr ng-repeat="note in notes">
 						<td>
-							<a href='#/notes/view/{{note.Note.id}}'>{{note.Note.title}}</a>
+							<a href='#/notes/view/{{note.Note.id}}' ng-click="clearAlerts()">{{note.Note.title}}</a>
 							<span class="small-margin"></span>
 							<span class="small-text">created on {{note.Note.created | fixTime | date:'dd-M-yyyy'}}</span>
 						</td>
@@ -32,7 +32,7 @@
 							</a>
 						</td>
 						<td class="text-left">
-							<a href='#/notes/edit/{{note.Note.id}}'><span class="glyphicon glyphicon-pencil"></span></a>
+							<a href='#/notes/edit/{{note.Note.id}}' ng-click="clearAlerts()"><span class="glyphicon glyphicon-pencil"></span></a>
 							<span class="small-margin"></span>
 							<a href='#/notes' ng-click="deleteNote(note.Note.id)"><span class="glyphicon glyphicon-trash"></span></a>
 						</td>

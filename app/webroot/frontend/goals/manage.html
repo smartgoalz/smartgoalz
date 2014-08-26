@@ -2,7 +2,7 @@
 	<div class="col-lg-12">
 		<span class="view-title">{{ goaldata.Goal.title }}</span>
 		<span class="small-margin"></span>
-		<a href='#/goals/edit/{{goaldata.Goal.id}}'><span class="glyphicon glyphicon-pencil"></span></a>
+		<a href='#/goals/edit/{{goaldata.Goal.id}}' ng-click="clearAlerts()"><span class="glyphicon glyphicon-pencil"></span></a>
 	</div>
 
 	<div class="col-lg-12">
@@ -19,7 +19,7 @@
 
 	<div class="col-lg-12">
 		<button class="btn btn-primary" ng-click="addTask()">Add Task</button>&nbsp;&nbsp;
-		<a href="#/goals" class="btn btn-info">Cancel</a>
+		<a href="#/goals" class="btn btn-info" ng-click="clearAlerts()">Cancel</a>
 	</div>
 
 	<div class="col-lg-12" ng-hide="goaldata.Task.length">

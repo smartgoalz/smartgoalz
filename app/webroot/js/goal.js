@@ -186,10 +186,15 @@ goalApp.controller('BodyCtrl', function ($scope, $rootScope, $cookieStore) {
 	};
 });
 
-goalApp.controller('ContentCtrl', function ($scope, $rootScope, $cookieStore) {
+goalApp.controller('ContentCtrl', function ($scope, $rootScope, $cookieStore, AlertService) {
 	$scope.formdata = [];
 
 	$rootScope.pageTitle = "";
+
+	$scope.clearAlerts = function() {
+		AlertService.alerts = [];
+		$scope.alerts = [];
+	}
 });
 
 /* Show goals */
@@ -254,11 +259,6 @@ goalApp.controller('GoalsIndexCtrl', function ($scope, $rootScope, $http, $locat
 			});
 		});
 	};
-
-	$scope.clearAlerts = function() {
-		AlertService.alerts = [];
-		$scope.alerts = [];
-	}
 });
 
 /* Add goal */
@@ -745,11 +745,6 @@ goalApp.controller('TimewatchStartCtrl', function ($scope, $rootScope, $location
 			});
 		});
 	};
-
-	$scope.clearAlerts = function() {
-		AlertService.alerts = [];
-		$scope.alerts = [];
-	}
 });
 
 goalApp.controller('TimewatchStopCtrl', function ($scope, $rootScope, $cookieStore, $http, $route, $routeParams, $location, AlertService) {
@@ -811,11 +806,6 @@ goalApp.controller('TimewatchStopCtrl', function ($scope, $rootScope, $cookieSto
 			$scope.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
 		});
 	}
-
-	$scope.clearAlerts = function() {
-		AlertService.alerts = [];
-		$scope.alerts = [];
-	}
 });
 
 goalApp.controller('TimewatchEditCtrl', function ($scope, $rootScope, $cookieStore, $http, $route, $routeParams, $location, AlertService) {
@@ -872,11 +862,6 @@ goalApp.controller('TimewatchEditCtrl', function ($scope, $rootScope, $cookieSto
 		error(function (data, status, headers) {
 			$scope.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
 		});
-	}
-
-	$scope.clearAlerts = function() {
-		AlertService.alerts = [];
-		$scope.alerts = [];
 	}
 });
 

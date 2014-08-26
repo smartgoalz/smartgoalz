@@ -1,7 +1,7 @@
 <div class="row" ng-controller="GoalsIndexCtrl">
 	<div class="col-lg-12">
 		<div class="header-button">
-			<a href="#/goals/add" class="btn btn-info">Add Goal</a>
+			<a href="#/goals/add" class="btn btn-info" ng-click="clearAlerts()">Add Goal</a>
 		</div>
 
 		<div ng-hide="goals.length">No goals found. Please add a goal to get started.</div>
@@ -35,7 +35,7 @@
 						<td class="text-left">
 							<a href='#/goals/manage/{{goal.Goal.id}}' ng-click="clearAlerts()">Manage</a>
 							<span class="small-margin"></span>
-							<a href='#/goals/edit/{{goal.Goal.id}}'><span class="glyphicon glyphicon-pencil"></span></a>
+							<a href='#/goals/edit/{{goal.Goal.id}}' ng-click="clearAlerts()"><span class="glyphicon glyphicon-pencil"></span></a>
 							<span class="small-margin"></span>
 							<a href='#/goals' ng-click="deleteGoal(goal.Goal.id)"><span class="glyphicon glyphicon-trash"></span></a>
 						</td>

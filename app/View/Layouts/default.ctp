@@ -71,23 +71,23 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 			</li>
 			<li class="sidebar-title"><span>NAVIGATION</span></li>
 			<li class="sidebar-list">
-				<a href="#/dashboard">Dashboard <span class="menu-icon fa fa-tachometer"></span></a>
+				<a href="#/dashboard" ng-click="clearAlerts()">Dashboard <span class="menu-icon fa fa-tachometer"></span></a>
 			</li>
 			<li class="sidebar-list">
-				<a href="#/goals">Goals <span class="menu-icon fa fa-cubes"></span></a>
+				<a href="#/goals" ng-click="clearAlerts()">Goals <span class="menu-icon fa fa-cubes"></span></a>
 			</li>
 			<li class="sidebar-list">
-				<a href="#/timewatch">Timewatch <span class="menu-icon fa fa-clock-o"></span></a>
+				<a href="#/timewatch" ng-click="clearAlerts()">Timewatch <span class="menu-icon fa fa-clock-o"></span></a>
 			</li>
 			<li class="sidebar-list">
-				<a href="#/notes">Notes <span class="menu-icon fa fa-edit"></span></a>
+				<a href="#/notes" ng-click="clearAlerts()">Notes <span class="menu-icon fa fa-edit"></span></a>
 			</li>
 			<li class="sidebar-list">
-				<a href="#/journals">Journal <span class="menu-icon fa fa-list-alt"></span></a>
+				<a href="#/journals" ng-click="clearAlerts()">Journal <span class="menu-icon fa fa-list-alt"></span></a>
 			</li>
 			<li class="sidebar-title separator"><span>QUICK LINKS</span></li>
 			<li class="sidebar-list">
-				<a href="#">Upcoming Tasks <span class="menu-icon fa fa-calendar"></span></a>
+				<a href="#" ng-click="clearAlerts()">Upcoming Tasks <span class="menu-icon fa fa-calendar"></span></a>
 			</li>
 		</ul>
 		<!-- Sidebar Footer -->
