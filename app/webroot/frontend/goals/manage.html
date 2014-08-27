@@ -6,8 +6,8 @@
 	</div>
 
 	<div class="col-lg-12">
-		<div>Start date : {{ goaldata.Goal.start_date }}</div>
-		<div>Due date : {{ goaldata.Goal.due_date }}</div>
+		<div>Start date : {{ goaldata.Goal.start_date | showDate }}</div>
+		<div>Due date : {{ goaldata.Goal.due_date | showDate }}</div>
 		<div>Priority : {{ priorities[goaldata.Goal.priority] }}</div>
 		<div>Difficulty : {{ difficulties[goaldata.Goal.difficulty] }}</div>
 		<div>Completed : {{ goaldata.Goal.task_completed }} / {{ goaldata.Goal.task_total }}</div>
@@ -41,8 +41,8 @@
 				<tr ng-repeat="task in goaldata.Task" ui:sortable ng:model="goaldata.Task">
 					<td class="text-left">{{ $index + 1 }}</td>
 					<td class="text-left">{{ task.title }}</td>
-					<td class="text-center">{{ task.start_date }}</td>
-					<td class="text-center">{{ task.due_date }}</td>
+					<td class="text-center">{{ task.start_date | showDate }}</td>
+					<td class="text-center">{{ task.due_date | showDate }}</td>
 					<td ng-if="task.is_completed == true" class="text-center"><span class="glyphicon glyphicon-ok"></span></td>
 					<td ng-if="task.is_completed == false" class="text-center">
 						<button class="btn-mini btn-xmini btn-default" ng-click="doneTask(task.id)">Done</button>
@@ -57,4 +57,3 @@
 	</div>
 </div><!-- END col-md-6 -->
 </div><!-- END row -->
-

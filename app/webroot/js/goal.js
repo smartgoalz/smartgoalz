@@ -148,17 +148,11 @@ angular.module('goalApp').service('modalService', ['$modal', function ($modal) {
 
 /******************* FILTERS *******************/
 
-goalApp.filter('fixTime', function() {
+goalApp.filter('showDate', function() {
 	return function(input) {
-		var goodTime = input.replace(/(.+) (.+)/, "$1T$2Z");
-		return goodTime;
-	};
-});
-
-
-
-goalApp.filter('dateToISO', function() {
-	return function(input) {
+		if (!input) {
+			return '';
+		}
 		jsdate = new Date(input.replace(/(.+) (.+)/, "$1T$2Z"));
 		return jsdate.toString('dd-MMMM-yyyy');
 	};
@@ -224,11 +218,17 @@ goalApp.controller('ContentCtrl', function ($scope, $rootScope, $cookieStore, Al
 	};
 
 	$scope.dateToNg = function(input) {
+		if (!input) {
+			return '';
+		}
 		jsdate = new Date(input.replace(/(.+) (.+)/, "$1T$2Z"));
 		return jsdate.toString($rootScope.dateFormat);
 	}
 
 	$scope.dateToSQL = function(input) {
+		if (!input) {
+			return '';
+		}
 		return input.toString("yyyy-MM-dd HH:mm:ss");
 	}
 });
@@ -323,8 +323,8 @@ goalApp.controller('GoalAddCtrl', function ($scope, $rootScope, $http, $location
 		var data = {
 			'Goal' : {
 				title: $scope.formdata.Title,
-				start_date: $scope.formdata.Startdate,
-				due_date: $scope.formdata.Duedate,
+				start_date: $scope.dateToSQL($scope.formdata.Startdate),
+				due_date: $scope.dateToSQL($scope.formdata.Duedate),
 				category_id: $scope.formdata.Category,
 				difficulty: $scope.formdata.Difficulty,
 				priority: $scope.formdata.Priority,
@@ -374,8 +374,8 @@ goalApp.controller('GoalEditCtrl', function ($scope, $rootScope, $http, $routePa
 	$http.get('goals/' + $routeParams['id'] + '.json').
 	success(function(data, status, headers, config) {
 		$scope.formdata.Title = data['goal']['Goal']['title'];
-		$scope.formdata.Startdate = data['goal']['Goal']['start_date'];
-		$scope.formdata.Duedate = data['goal']['Goal']['due_date'];
+		$scope.formdata.Startdate = $scope.dateToNg(data['goal']['Goal']['start_date']);
+		$scope.formdata.Duedate = $scope.dateToNg(data['goal']['Goal']['due_date']);
 		$scope.formdata.Category = data['goal']['Goal']['category_id'];
 		$scope.formdata.Difficulty = data['goal']['Goal']['difficulty'];
 		$scope.formdata.Priority = data['goal']['Goal']['priority'];
@@ -392,8 +392,8 @@ goalApp.controller('GoalEditCtrl', function ($scope, $rootScope, $http, $routePa
 		var data = {
 			'Goal' : {
 				title: $scope.formdata.Title,
-				start_date: $scope.formdata.Startdate,
-				due_date: $scope.formdata.Duedate,
+				start_date: $scope.dateToSQL($scope.formdata.Startdate),
+				due_date: $scope.dateToSQL($scope.formdata.Duedate),
 				category_id: $scope.formdata.Category,
 				difficulty: $scope.formdata.Difficulty,
 				priority: $scope.formdata.Priority,
@@ -549,10 +549,30 @@ goalApp.controller('GoalManageCtrl', function ($scope, $rootScope, $http, $modal
 });
 
 /* Task add modal */
-var TaskAddModalInstanceCtrl = function ($scope, $modalInstance, $http, AlertService, SelectService, goaldata) {
+var TaskAddModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, $http, AlertService, SelectService, goaldata) {
 	$scope.alerts = [];
 	$scope.formdata = [];
 	$scope.goaldata = goaldata;
+
+	$scope.modalCalendar = {
+		opened: {},
+		dateFormat: $rootScope.dateFormat,
+		dateOptions: {},
+
+		open: function($event, which) {
+			$event.preventDefault();
+			$event.stopPropagation();
+			$scope.modalCalendar.opened[which] = true;
+		}
+	};
+
+	/* Copy from parent */
+	$scope.modalDateToSQL = function(input) {
+		if (!input) {
+			return '';
+		}
+		return input.toString("yyyy-MM-dd HH:mm:ss");
+	}
 
 	$scope.reminders = SelectService.reminders;
 
@@ -563,12 +583,12 @@ var TaskAddModalInstanceCtrl = function ($scope, $modalInstance, $http, AlertSer
 			'Task' : {
 				goal_id: goaldata.Goal.id,
 				title: $scope.formdata.Title,
-				start_date: $scope.formdata.Startdate,
-				due_date: $scope.formdata.Duedate,
+				start_date: $scope.modalDateToSQL($scope.formdata.Startdate),
+				due_date: $scope.modalDateToSQL($scope.formdata.Duedate),
 				prev_id: $scope.formdata.Prev,
 				reminder_time: $scope.formdata.Reminder,
 				is_completed: $scope.formdata.Completed,
-				completion_date: $scope.formdata.Completiondate,
+				completion_date: $scope.modalDateToSQL($scope.formdata.Completiondate),
 				notes: $scope.formdata.Notes,
 			}
 		};
@@ -594,12 +614,42 @@ var TaskAddModalInstanceCtrl = function ($scope, $modalInstance, $http, AlertSer
 };
 
 /* Task edit modal */
-var TaskEditModalInstanceCtrl = function ($scope, $modalInstance, $http, AlertService, SelectService, goaldata, id) {
+var TaskEditModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, $http, AlertService, SelectService, goaldata, id) {
 	$scope.alerts = [];
 	$scope.formdata = [];
 	$scope.goaldata = goaldata;
 	$scope.taskid = id;
 	AlertService.alerts = [];
+
+	/* Copy from parent */
+	$scope.modalCalendar = {
+		opened: {},
+		dateFormat: $rootScope.dateFormat,
+		dateOptions: {},
+
+		open: function($event, which) {
+			$event.preventDefault();
+			$event.stopPropagation();
+			$scope.modalCalendar.opened[which] = true;
+		}
+	};
+
+	/* Copy from parent - return actual javascript date */
+	$scope.modalDateToNgDate = function(input) {
+		if (!input) {
+			return '';
+		}
+		jsdate = new Date(input.replace(/(.+) (.+)/, "$1T$2Z"));
+		return jsdate;
+	}
+
+	/* Copy from parent */
+	$scope.modalDateToSQL = function(input) {
+		if (!input) {
+			return '';
+		}
+		return input.toString("yyyy-MM-dd HH:mm:ss");
+	}
 
 	$scope.reminders = SelectService.reminders;
 
@@ -614,15 +664,22 @@ var TaskEditModalInstanceCtrl = function ($scope, $modalInstance, $http, AlertSe
 	}
 
 	if (found) {
+			/**
+			 * BUG : There is some issue in modal edit window - modalDateToNgDate() has to return
+			 * a javascript date and not the string format as in parent. It throws a 'undefined a'
+			 * in the browser console and the date is NAN if no other changes are made and the
+			 * modal window is submitted. Ouch !
+			 */
 			$scope.formdata.Title = task.title;
-			$scope.formdata.Startdate = task.start_date;
-			$scope.formdata.Duedate = task.due_data;
 			$scope.formdata.Prev = task.prev_id;
+			$scope.formdata.Startdate = $scope.modalDateToNgDate(task.start_date);
+			$scope.formdata.Duedate = $scope.modalDateToNgDate(task.due_date);
 			$scope.formdata.Reminder = task.reminder_time;
 			$scope.formdata.Completed = task.is_completed;
-			$scope.formdata.Completiondate = task.completion_date;
+			$scope.formdata.Completiondate = $scope.modalDateToNgDate(task.completion_date);
 			$scope.formdata.Notes = task.notes;
 	} else {
+		$scope.formdata = [];
 		AlertService.alerts.push({type: 'danger', msg: 'Task not found'});
 		$modalInstance.dismiss();
 	}
@@ -634,12 +691,12 @@ var TaskEditModalInstanceCtrl = function ($scope, $modalInstance, $http, AlertSe
 			'Task' : {
 				goal_id: goaldata.Goal.id,
 				title: $scope.formdata.Title,
-				start_date: $scope.formdata.Startdate,
-				due_date: $scope.formdata.Duedate,
+				start_date: $scope.modalDateToSQL($scope.formdata.Startdate),
+				due_date: $scope.modalDateToSQL($scope.formdata.Duedate),
 				prev_id: $scope.formdata.Prev,
 				reminder_time: $scope.formdata.Reminder,
 				is_completed: $scope.formdata.Completed,
-				completion_date: $scope.formdata.Completiondate,
+				completion_date: $scope.modalDateToSQL($scope.formdata.Completiondate),
 				notes: $scope.formdata.Notes,
 			}
 		};
@@ -1223,7 +1280,7 @@ goalApp.controller('JournalEditCtrl', function ($scope, $rootScope, $http, $rout
 			'Journal' : {
 				title: $scope.formdata.Title,
 				entry: $scope.formdata.Entry,
-				entrydate: $scope.formdata.Entrydate,
+				entrydate: $scope.dateToSQL($scope.formdata.Entrydate),
 			}
 		};
 

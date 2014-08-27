@@ -31,7 +31,7 @@
 						<td class="text-center">{{ categories[goal.Goal.category_id] }}</td>
 						<td class="text-center">{{ difficulties[goal.Goal.difficulty] }}</td>
 						<td class="text-center">{{ priorities[goal.Goal.priority] }}</td>
-						<td class="text-center">{{ goal.Goal.due_date | fixTime | date:'medium'}}</td>
+						<td class="text-center">{{ goal.Goal.due_date | showDate }}</td>
 						<td class="text-left">
 							<a href='#/goals/edit/{{goal.Goal.id}}' ng-click="clearAlerts()"><span class="glyphicon glyphicon-pencil"></span></a>
 							<span class="small-margin"></span>

@@ -24,7 +24,7 @@
 						<td>
 							<a href='#/notes/view/{{note.Note.id}}' ng-click="clearAlerts()">{{note.Note.title}}</a>
 							<span class="small-margin"></span>
-							<span class="small-text">created on {{note.Note.created | fixTime | date:'dd-M-yyyy'}}</span>
+							<span class="small-text">created on {{note.Note.created | showDate }}</span>
 						</td>
 						<td>
 							<a href="">
