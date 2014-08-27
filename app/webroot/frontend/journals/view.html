@@ -5,8 +5,8 @@
 		</div>
 
 		<div>
-			<span class="view-title">{{ journal.Journal.title }}</span>
-			for {{ journal.Journal.entrydate }}
+			<div class="view-title">{{ journal.Journal.title }}</div>
+			<div class="small-text">{{ journal.Journal.entrydate | dateToISO }}</div>
 		</div>
 
 		<div class="view-content">

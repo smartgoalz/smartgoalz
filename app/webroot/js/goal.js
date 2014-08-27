@@ -155,12 +155,22 @@ goalApp.filter('fixTime', function() {
 	};
 });
 
+
+
+goalApp.filter('dateToISO', function() {
+	return function(input) {
+		jsdate = new Date(input.replace(/(.+) (.+)/, "$1T$2Z"));
+		return jsdate.toString('dd-MMMM-yyyy');
+	};
+});
+
 /******************* CONTROLLERS *******************/
 
 goalApp.controller('BodyCtrl', function ($scope, $rootScope, $cookieStore) {
 	$scope.formdata = [];
 
 	$rootScope.pageTitle = "";
+	$rootScope.dateFormat = "dd-MMMM-yyyy";
 
 	/* Template function */
 	var mobileView = 992;
@@ -199,6 +209,27 @@ goalApp.controller('ContentCtrl', function ($scope, $rootScope, $cookieStore, Al
 	$scope.clearAlerts = function() {
 		AlertService.alerts = [];
 		$scope.alerts = [];
+	}
+
+	$scope.calendar = {
+		opened: {},
+		dateFormat: $rootScope.dateFormat,
+		dateOptions: {},
+
+		open: function($event, which) {
+			$event.preventDefault();
+			$event.stopPropagation();
+			$scope.calendar.opened[which] = true;
+		}
+	};
+
+	$scope.dateToNg = function(input) {
+		jsdate = new Date(input.replace(/(.+) (.+)/, "$1T$2Z"));
+		return jsdate.toString($rootScope.dateFormat);
+	}
+
+	$scope.dateToSQL = function(input) {
+		return input.toString("yyyy-MM-dd HH:mm:ss");
 	}
 });
 
@@ -1143,7 +1174,7 @@ goalApp.controller('JournalAddCtrl', function ($scope, $rootScope, $http, $locat
 			'Journal' : {
 				title: $scope.formdata.Title,
 				entry: $scope.formdata.Entry,
-				entrydate: $scope.formdata.Entrydate,
+				entrydate: $scope.dateToSQL($scope.formdata.Entrydate),
 			}
 		};
 
@@ -1178,7 +1209,7 @@ goalApp.controller('JournalEditCtrl', function ($scope, $rootScope, $http, $rout
 	success(function(data, status, headers, config) {
 		$scope.formdata.Title = data['journal']['Journal']['title'];
 		$scope.formdata.Entry = data['journal']['Journal']['entry'];
-		$scope.formdata.Entrydate = data['journal']['Journal']['entrydate'];
+		$scope.formdata.Entrydate = $scope.dateToNg(data['journal']['Journal']['entrydate']);
 	}).
 	error(function(data, status, headers, config) {
 		AlertService.alerts.push({type: 'danger', msg: 'Journal Entry not found'});

@@ -23,8 +23,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 <html ng-app="goalApp">
 <head>
 	<?php echo $this->Html->charset(); ?>
-	<title>SMART Goalz | <?php echo $title_for_layout; ?>
-	</title>
+	<title>SMART Goalz | <?php echo $title_for_layout; ?></title>
 	<?php
 		echo $this->Html->meta('icon');
 
@@ -45,6 +44,9 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 
 		/* Font awesome version 4.1.0*/
 		echo $this->Html->css('font-awesome.min.css?'.time());
+
+		/* Date.js library */
+		echo $this->Html->script('date.js');
 
 		/* Dashboard */
 		echo $this->Html->css('dashboard.css?'.time());

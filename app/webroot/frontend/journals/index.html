@@ -22,7 +22,7 @@
 				<tbody>
 					<tr ng-repeat="journal in journals">
 						<td>
-							{{journal.Journal.entrydate | fixTime | date:'dd-M-yyyy'}}
+							{{journal.Journal.entrydate | dateToISO }}
 						</td>
 						<td>
 							<a href='#/journals/view/{{journal.Journal.id}}' ng-click="clearAlerts()">{{journal.Journal.title}}</a>
