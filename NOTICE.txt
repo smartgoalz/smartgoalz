@@ -1,0 +1,33 @@
+SMARTGoalz - Easy to use web based application for managing your goals
+
+Copyright (c) 2014 Prashant Shah <pshah.me@gmail.com>
+
+SMARTGoalz includes the following open source software under other copyright
+notices and distributed according to the terms of their own licenses.
+
+1. Laravel - PHP Framework
+	HOMEPAGE: http://http://laravel.com
+	LICENSE: The MIT License
+
+2. Bootstrap - HTML and CSS Framework
+	HOMEPAGE: http://getbootstrap.com
+	LICENSE: The MIT License
+
+3. AngularJS -Javascript MVW Framework
+	HOMEPAGE: https://angularjs.org
+	LICENSE: The MIT License
+
+4. Angular directives for Bootstrap
+	HOMEPAGE: http://angular-ui.github.io/bootstrap/
+	LICENSE: The MIT License
+
+5. AngularJS + Bootstrap Responsive Dashboard
+	HOMEPAGE: https://github.com/Ehesp/Responsive-Dashboard
+	LICENSE: The MIT License
+
+6. DateJS - Javascript date library
+	HOMEPAGE: http://www.datejs.com
+	LICENSE: The MIT License
+
+Whilst every effort has been made to ensure that information is correct, incase
+of any discrepancies please contact the author(s) of this software.
