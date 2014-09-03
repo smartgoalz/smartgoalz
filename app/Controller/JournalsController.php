@@ -34,6 +34,7 @@ class JournalsController extends AppController {
 	public function index() {
 		$journals = $this->Journal->find('all', array(
 			'conditions' => array('Journal.user_id' => $this->Auth->user('id')),
+			'order' => array('Journal.entrydate desc'),
 		));
 		$this->set(array(
 			'journals' => $journals,

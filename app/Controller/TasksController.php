@@ -279,4 +279,15 @@ class TasksController extends AppController {
 			'_serialize' => array('message')
 		));
 	}
+
+	public function recalculate() {
+		$message = array(
+			'text' => __('OK'),
+			'type' => 'success'
+		);
+		$this->set(array(
+			'message' => $message,
+			'_serialize' => array('message')
+		));
+	}
 }

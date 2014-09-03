@@ -42,7 +42,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 		echo $this->Html->css('bootstrap.min.css?'.time());
 		echo $this->Html->css('bootstrap-theme.min.css?'.time());
 
-		/* Font awesome version 4.1.0*/
+		/* Font awesome version 4.2.0*/
 		echo $this->Html->css('font-awesome.min.css?'.time());
 
 		/* Date.js library */
@@ -82,6 +82,15 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 				<a href="#/timewatch" ng-click="clearAlerts()">Timewatch <span class="menu-icon fa fa-clock-o"></span></a>
 			</li>
 			<li class="sidebar-list">
+				<a href="#" ng-click="clearAlerts()">Organizer <span class="menu-icon fa fa-database"></span></a>
+			</li>
+			<li class="sidebar-list">
+				<a href="#" ng-click="clearAlerts()">Daily Routine <span class="menu-icon fa fa-coffee"></span></a>
+			</li>
+			<li class="sidebar-list">
+				<a href="#" ng-click="clearAlerts()">Monitor <span class="menu-icon fa fa-signal"></span></a>
+			</li>
+			<li class="sidebar-list">
 				<a href="#/notes" ng-click="clearAlerts()">Notes <span class="menu-icon fa fa-edit"></span></a>
 			</li>
 			<li class="sidebar-list">
@@ -89,7 +98,10 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 			</li>
 			<li class="sidebar-title separator"><span>QUICK LINKS</span></li>
 			<li class="sidebar-list">
-				<a href="#" ng-click="clearAlerts()">Upcoming Tasks <span class="menu-icon fa fa-calendar"></span></a>
+				<a href="#" ng-click="clearAlerts()">Upcoming Tasks <span class="menu-icon fa fa-info-circle"></span></a>
+			</li>
+			<li class="sidebar-list">
+				<a href="#" ng-click="clearAlerts()">Calendar <span class="menu-icon fa fa-calendar"></span></a>
 			</li>
 		</ul>
 		<!-- Sidebar Footer -->
@@ -115,25 +127,11 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 			<div class="row header">
 				<div class="col-xs-12">
 					<div class="user pull-right">
-						<div class="item dropdown">
-							<a href="#" class="dropdown-toggle"><img src="img/avatar.jpg"></a>
-							<ul class="dropdown-menu dropdown-menu-right">
-								<li class="dropdown-header">Joe Bloggs</li>
-								<li class="divider"></li>
-								<li class="link"><a href="#">Profile</a></li>
-								<li class="link"><a href="#">Menu Item</a></li>
-								<li class="link"><a href="#">Menu Item</a></li>
-								<li class="divider"></li>
-								<li class="link"><a href="#">Logout</a></li>
-							</ul>
+						<div class="item">
+							<a href="#"><i class="fa fa-sign-out fa-fw"></i>Logout</a>
 						</div>
-						<div class="item dropdown">
-							<a href="#" class="dropdown-toggle"><i class="fa fa-bell-o"></i></a>
-							<ul class="dropdown-menu dropdown-menu-right">
-								<li class="dropdown-header">Notifications</li>
-								<li class="divider"></li>
-								<li><a href="#">Server Down!</a></li>
-							</ul>
+						<div class="item">
+							<a href="#"><i class="fa fa-gears fa-fw"></i> Profile</a>
 						</div>
 					</div>
 					<div class="meta">

@@ -22,7 +22,11 @@ notices and distributed according to the terms of their own licenses.
 	LICENSE: The MIT License
 
 5. AngularJS + Bootstrap Responsive Dashboard
-	HOMEPAGE : https://github.com/Ehesp/Responsive-Dashboard
+	HOMEPAGE: https://github.com/Ehesp/Responsive-Dashboard
+	LICENSE: The MIT License
+
+6. DateJS - Javascript date library
+	HOMEPAGE: http://www.datejs.com
 	LICENSE: The MIT License
 
 Whilst every effort has been made to ensure that information is correct, incase

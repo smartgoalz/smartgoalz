@@ -34,3 +34,35 @@ h3.modal-title-confirm {
 .modal-alert {
 	color: #FF0000;
 }
+
+/*
+.row.header .user > .item-link {
+	width: 120px;
+}
+
+.row.header .user > .item i.item-icon {
+	font-size: 13px;
+	padding-right: 2px;
+}
+*/
+
+.row.header .user > .item {
+	display: inline-block;
+	float: right;
+	height: 60px;
+	text-align: center;
+	vertical-align: middle;
+	padding-right: 20px;
+}
+
+.row.header .user > .item a {
+	text-decoration: none;
+}
+
+.row.header .user > .item a:hover {
+	color: #333333;
+}
+
+.row.header .user > .item a .fa {
+	font-size: 14px;
+}

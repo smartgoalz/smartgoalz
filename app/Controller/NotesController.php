@@ -34,6 +34,7 @@ class NotesController extends AppController {
 	public function index() {
 		$notes = $this->Note->find('all', array(
 			'conditions' => array('Note.user_id' => $this->Auth->user('id')),
+			'order' => array('Note.modified desc'),
 		));
 		$this->set(array(
 			'notes' => $notes,

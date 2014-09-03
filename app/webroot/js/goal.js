@@ -200,6 +200,8 @@ goalApp.controller('ContentCtrl', function ($scope, $rootScope, $cookieStore, Al
 
 	$rootScope.pageTitle = "";
 
+	$scope.alerts = [];
+
 	$scope.clearAlerts = function() {
 		AlertService.alerts = [];
 		$scope.alerts = [];
@@ -579,13 +581,57 @@ var TaskAddModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, $ht
 	$scope.addTask = function () {
 		$scope.alerts = [];
 
+		/* Calculating weight */
+		weight = 0;
+		recalulate_weights = false;
+		if ($scope.goaldata.Task.length == 0) {
+			/* First task */
+			weight = 1000000;
+		} else
+		if (!$scope.formdata.Prev) {
+			/* No parent selected, before first task */
+			weight = Math.floor(parseInt(goaldata.Task[0].weight) / 2);
+		} else {
+			found = false;
+			prev_id = -1;
+			next_id = -1;
+			for (var c = 0, len = goaldata.Task.length; c < len; c++) {
+				if (found == true) {
+					next_id = c;
+					break;
+				}
+				prev_id = c;
+				if (goaldata.Task[c].id == $scope.formdata.Prev) {
+					found = true;
+					continue;
+				}
+			}
+			if (prev_id == -1 && next_id == -1) {
+				/* Not going to happen */
+				weight = 1000000;
+			} else
+			if (next_id == -1) {
+				/* Last task */
+				weight = parseInt(goaldata.Task[prev_id].weight) + 1000000;
+			} else {
+				/* Inbetween prev and next task */
+				difference = Math.floor(
+					(parseInt(goaldata.Task[next_id].weight) - parseInt(goaldata.Task[prev_id].weight)) / 2
+				);
+				weight = parseInt(goaldata.Task[prev_id].weight) + difference;
+				if (difference < 10) {
+					recalulate_weights = true;
+				}
+			}
+		}
+
 		var data = {
 			'Task' : {
 				goal_id: goaldata.Goal.id,
 				title: $scope.formdata.Title,
 				start_date: $scope.modalDateToSQL($scope.formdata.Startdate),
 				due_date: $scope.modalDateToSQL($scope.formdata.Duedate),
-				prev_id: $scope.formdata.Prev,
+				weight: weight,
 				reminder_time: $scope.formdata.Reminder,
 				is_completed: $scope.formdata.Completed,
 				completion_date: $scope.modalDateToSQL($scope.formdata.Completiondate),
@@ -595,6 +641,16 @@ var TaskAddModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, $ht
 
 		$http.post("tasks/add.json", data).
 		success(function (data, status, headers) {
+
+			if (recalulate_weights == true) {
+				var recaldata = {
+					'Task' : {
+						goal_id: goaldata.Goal.id,
+					}
+				};
+				$http.post("tasks/recalculate.json", recaldata);
+			}
+
 			if (data['message']['type'] == 'error') {
 				$scope.alerts.push({type: 'danger', msg: data['message']['text']});
 			}
@@ -655,7 +711,7 @@ var TaskEditModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, $h
 
 	var found = false;
 	var task = [];
-	for(var c = 0, len = goaldata.Task.length; c < len; c++) {
+	for (var c = 0, len = goaldata.Task.length; c < len; c++) {
 		if (goaldata.Task[c].id == id) {
 			found = true;
 			var task = goaldata.Task[c];

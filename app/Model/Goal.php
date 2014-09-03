@@ -46,6 +46,7 @@ class Goal extends AppModel {
 			'className' => 'Task',
 			'dependent' => true,
 			'exclusive' => true,
+			'order' => 'Task.weight ASC'
 		),
 	);
 
