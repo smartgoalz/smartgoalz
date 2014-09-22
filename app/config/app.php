@@ -13,7 +13,7 @@ return array(
 	|
 	*/
 
-	'debug' => false,
+	'debug' => true,
 
 	/*
 	|--------------------------------------------------------------------------
@@ -121,7 +121,11 @@ return array(
 		'Illuminate\Validation\ValidationServiceProvider',
 		'Illuminate\View\ViewServiceProvider',
 		'Illuminate\Workbench\WorkbenchServiceProvider',
-
+		'Way\Generators\GeneratorsServiceProvider',
+		'Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider',
+		'McCool\LaravelAutoPresenter\LaravelAutoPresenterServiceProvider',
+		'Smartgoalz\ServiceProviders\ValidationServiceProvider',
+		'Smartgoalz\ServiceProviders\JournalServiceProvider',
 	),
 
 	/*

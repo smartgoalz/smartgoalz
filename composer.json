@@ -4,7 +4,12 @@
 	"keywords": ["framework", "laravel"],
 	"license": "MIT",
 	"require": {
-		"laravel/framework": "4.2.*"
+		"laravel/framework": "4.2.*",
+		"xethron/migrations-generator": "dev-master",
+		"phpunit/phpunit": "3.7.*",
+		"raveren/kint": "dev-master",
+		"mccool/laravel-auto-presenter": "~2.2",
+		"mockery/mockery": "dev-master"
 	},
 	"autoload": {
 		"classmap": [
@@ -13,7 +18,8 @@
 			"app/models",
 			"app/database/migrations",
 			"app/database/seeds",
-			"app/tests/TestCase.php"
+			"app/tests/TestCase.php",
+			"app/lib"
 		]
 	},
 	"scripts": {

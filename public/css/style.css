@@ -66,3 +66,7 @@ h3.modal-title-confirm {
 .row.header .user > .item a .fa {
 	font-size: 14px;
 }
+
+.alert {
+	margin: 6px 0 10px 0;
+}

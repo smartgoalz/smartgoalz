@@ -1,4 +1,5 @@
-var goalApp = angular.module('goalApp', ['ngResource', 'ngRoute', 'ui.bootstrap', 'ui.router', 'ngCookies']);
+var goalApp = angular.module('goalApp', ['ngResource', 'ngRoute', 'ui.bootstrap',
+	'ui.router', 'ngCookies', 'ngSanitize', 'textAngular']);
 
 /******************* ROUTES *******************/
 
@@ -43,8 +44,8 @@ goalApp.config(['$routeProvider', function($routeProvider) {
 	when('/journals', {
 		templateUrl: 'frontend/journals/index.html',
 	}).
-	when('/journals/view/:id', {
-		templateUrl: 'frontend/journals/view.html',
+	when('/journals/show/:id', {
+		templateUrl: 'frontend/journals/show.html',
 	}).
 	when('/journals/add', {
 		templateUrl: 'frontend/journals/add.html',
@@ -59,9 +60,26 @@ goalApp.config(['$routeProvider', function($routeProvider) {
 
 /******************* SERVICES *******************/
 
-goalApp.factory('AlertService', function() {
+goalApp.factory('alertService', function() {
 	return {
-		alerts : []
+		alerts : [],
+		add : function(message, alertType) {
+			if (typeof message === 'object') {
+				for (var key in message) {
+					var eachmsg = message[key];
+					for (var index in eachmsg) {
+						this.alerts.push({type: alertType, msg: eachmsg[index]});
+					}
+				}
+			} else {
+				this.alerts.push({type: alertType, msg: message});
+			}
+		},
+		clear : function() {
+			for (var c = this.alerts.length - 1; c >= 0; c--) {
+				this.alerts.splice(c, 1);
+			}
+		}
 	};
 });
 
@@ -195,7 +213,8 @@ goalApp.controller('BodyCtrl', function ($scope, $rootScope, $cookieStore) {
 	};
 });
 
-goalApp.controller('ContentCtrl', function ($scope, $rootScope, $cookieStore, AlertService) {
+goalApp.controller('ContentCtrl', function ($scope, $rootScope, $cookieStore, alertService) {
+	$scope.alerts = alertService.alerts;
 	$scope.formdata = [];
 
 	$rootScope.pageTitle = "";
@@ -203,7 +222,7 @@ goalApp.controller('ContentCtrl', function ($scope, $rootScope, $cookieStore, Al
 	$scope.alerts = [];
 
 	$scope.clearAlerts = function() {
-		AlertService.alerts = [];
+		alertService.alerts = [];
 		$scope.alerts = [];
 	}
 
@@ -219,25 +238,34 @@ goalApp.controller('ContentCtrl', function ($scope, $rootScope, $cookieStore, Al
 		}
 	};
 
-	$scope.dateToNg = function(input) {
+	$scope.dateToJS = function(input) {
 		if (!input) {
-			return '';
+			return new Date();
 		}
-		jsdate = new Date(input.replace(/(.+) (.+)/, "$1T$2Z"));
-		return jsdate.toString($rootScope.dateFormat);
+		// return jsdate.toString($rootScope.dateFormat);
+		return new Date(input.replace(/(.+) (.+)/, "$1T$2Z"));
 	}
 
 	$scope.dateToSQL = function(input) {
 		if (!input) {
 			return '';
 		}
+
 		return input.toString("yyyy-MM-dd HH:mm:ss");
+	}
+
+	$scope.dateToSQLNoTime = function(input) {
+		if (!input) {
+			return '';
+		}
+
+		return input.toString("yyyy-MM-dd 00:00:00");
 	}
 });
 
 /* Show goals */
-goalApp.controller('GoalsIndexCtrl', function ($scope, $rootScope, $http, $location, $modal, $window, $route, AlertService, modalService, SelectService) {
-	$scope.alerts = AlertService.alerts;
+goalApp.controller('GoalsIndexCtrl', function ($scope, $rootScope, $http, $location, $modal, $window, $route, alertService, modalService, SelectService) {
+	$scope.alerts = alertService.alerts;
 	$scope.closeAlert = function(index) {
 		$scope.alerts.splice(index, 1);
 	};
@@ -280,19 +308,19 @@ goalApp.controller('GoalsIndexCtrl', function ($scope, $rootScope, $http, $locat
 		};
 
 		modalService.showModal(modalDefaults, modalOptions).then(function (result) {
-			AlertService.alerts = [];
+			alertService.alerts = [];
 			$http.delete('goals/delete/' + id + '.json').
 			success(function(data, status, headers, config) {
 				if (data['message']['type'] == 'error') {
-					AlertService.alerts.push({type: 'danger', msg: data['message']['text']});
+					alertService.alerts.push({type: 'danger', msg: data['message']['text']});
 				} else
 				if (data['message']['type'] == 'success') {
-					AlertService.alerts.push({type: 'success', msg: data['message']['text']});
+					alertService.alerts.push({type: 'success', msg: data['message']['text']});
 				}
 				$route.reload();
 			}).
 			error(function(data, status, headers, config) {
-				AlertService.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
+				alertService.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
 				$route.reload();
 			});
 		});
@@ -300,8 +328,8 @@ goalApp.controller('GoalsIndexCtrl', function ($scope, $rootScope, $http, $locat
 });
 
 /* Add goal */
-goalApp.controller('GoalAddCtrl', function ($scope, $rootScope, $http, $location, AlertService, SelectService) {
-	AlertService.alerts = [];
+goalApp.controller('GoalAddCtrl', function ($scope, $rootScope, $http, $location, alertService, SelectService) {
+	alertService.alerts = [];
 	$scope.closeAlert = function(index) {
 		$scope.alerts.splice(index, 1);
 	};
@@ -343,7 +371,7 @@ goalApp.controller('GoalAddCtrl', function ($scope, $rootScope, $http, $location
 				$scope.alerts.push({type: 'danger', msg: data['message']['text']});
 			}
 			if (data['message']['type'] == 'success') {
-				AlertService.alerts.push({type: 'success', msg: data['message']['text']});
+				alertService.alerts.push({type: 'success', msg: data['message']['text']});
 				$location.path('/goals');
 			}
 		}).
@@ -354,8 +382,8 @@ goalApp.controller('GoalAddCtrl', function ($scope, $rootScope, $http, $location
 });
 
 /* Edit goal */
-goalApp.controller('GoalEditCtrl', function ($scope, $rootScope, $http, $routeParams, $location, AlertService, SelectService) {
-	AlertService.alerts = [];
+goalApp.controller('GoalEditCtrl', function ($scope, $rootScope, $http, $routeParams, $location, alertService, SelectService) {
+	alertService.alerts = [];
 	$scope.closeAlert = function(index) {
 		$scope.alerts.splice(index, 1);
 	};
@@ -376,15 +404,15 @@ goalApp.controller('GoalEditCtrl', function ($scope, $rootScope, $http, $routePa
 	$http.get('goals/' + $routeParams['id'] + '.json').
 	success(function(data, status, headers, config) {
 		$scope.formdata.Title = data['goal']['Goal']['title'];
-		$scope.formdata.Startdate = $scope.dateToNg(data['goal']['Goal']['start_date']);
-		$scope.formdata.Duedate = $scope.dateToNg(data['goal']['Goal']['due_date']);
+		$scope.formdata.Startdate = $scope.dateToJS(data['goal']['Goal']['start_date']);
+		$scope.formdata.Duedate = $scope.dateToJS(data['goal']['Goal']['due_date']);
 		$scope.formdata.Category = data['goal']['Goal']['category_id'];
 		$scope.formdata.Difficulty = data['goal']['Goal']['difficulty'];
 		$scope.formdata.Priority = data['goal']['Goal']['priority'];
 		$scope.formdata.Reason = data['goal']['Goal']['reason'];
 	}).
 	error(function(data, status, headers, config) {
-		AlertService.alerts.push({type: 'danger', msg: 'Goal not found'});
+		alertService.alerts.push({type: 'danger', msg: 'Goal not found'});
 		$location.path('/goals');
 	});
 
@@ -409,7 +437,7 @@ goalApp.controller('GoalEditCtrl', function ($scope, $rootScope, $http, $routePa
 				$scope.alerts.push({type: 'danger', msg: data['message']['text']});
 			}
 			if (data['message']['type'] == 'success') {
-				AlertService.alerts.push({type: 'success', msg: data['message']['text']});
+				alertService.alerts.push({type: 'success', msg: data['message']['text']});
 				$location.path('/goals');
 			}
 		}).
@@ -419,8 +447,8 @@ goalApp.controller('GoalEditCtrl', function ($scope, $rootScope, $http, $routePa
 	}
 });
 
-goalApp.controller('GoalManageCtrl', function ($scope, $rootScope, $http, $modal, $routeParams, $location, $route, AlertService, modalService, SelectService) {
-	$scope.alerts = AlertService.alerts;
+goalApp.controller('GoalManageCtrl', function ($scope, $rootScope, $http, $modal, $routeParams, $location, $route, alertService, modalService, SelectService) {
+	$scope.alerts = alertService.alerts;
 	$scope.closeAlert = function(index) {
 		$scope.alerts.splice(index, 1);
 	};
@@ -438,7 +466,7 @@ goalApp.controller('GoalManageCtrl', function ($scope, $rootScope, $http, $modal
 		$scope.goaldata = data['goal'];
 	}).
 	error(function(data, status, headers, config) {
-		AlertService.alerts.push({type: 'danger', msg: 'Goal not found'});
+		alertService.alerts.push({type: 'danger', msg: 'Goal not found'});
 		$location.path('/goals');
 	});
 
@@ -449,7 +477,7 @@ goalApp.controller('GoalManageCtrl', function ($scope, $rootScope, $http, $modal
 
 	/* Add task action */
 	$scope.addTask = function() {
-		AlertService.alerts = [];
+		alertService.alerts = [];
 
 		/* Open modal window */
 		var TaskAddModalInstance = $modal.open({
@@ -470,7 +498,7 @@ goalApp.controller('GoalManageCtrl', function ($scope, $rootScope, $http, $modal
 
 	/* Edit task action */
 	$scope.editTask = function(id) {
-		AlertService.alerts = [];
+		alertService.alerts = [];
 
 		/* Open modal window */
 		var TaskEditModalInstance = $modal.open({
@@ -494,7 +522,7 @@ goalApp.controller('GoalManageCtrl', function ($scope, $rootScope, $http, $modal
 
 	/* Delete task action */
 	$scope.deleteTask = function(id) {
-		AlertService.alerts = [];
+		alertService.alerts = [];
 
 		/* Open modal window */
 		var modalDefaults = {
@@ -515,15 +543,15 @@ goalApp.controller('GoalManageCtrl', function ($scope, $rootScope, $http, $modal
 			$http.delete('tasks/delete/' + id + '.json').
 			success(function(data, status, headers, config) {
 				if (data['message']['type'] == 'error') {
-					AlertService.alerts.push({type: 'danger', msg: data['message']['text']});
+					alertService.alerts.push({type: 'danger', msg: data['message']['text']});
 				} else
 				if (data['message']['type'] == 'success') {
-					AlertService.alerts.push({type: 'success', msg: data['message']['text']});
+					alertService.alerts.push({type: 'success', msg: data['message']['text']});
 				}
 				$route.reload();
 			}).
 			error(function(data, status, headers, config) {
-				AlertService.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
+				alertService.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
 				$route.reload();
 			});
 		});
@@ -531,27 +559,27 @@ goalApp.controller('GoalManageCtrl', function ($scope, $rootScope, $http, $modal
 
 	/* Mark task completed action */
 	$scope.doneTask = function(id) {
-		AlertService.alerts = [];
+		alertService.alerts = [];
 
 		$http.post("tasks/done/" + id + ".json").
 		success(function (data, status, headers) {
 			if (data['message']['type'] == 'error') {
-				AlertService.alerts.push({type: 'danger', msg: data['message']['text']});
+				alertService.alerts.push({type: 'danger', msg: data['message']['text']});
 			}
 			if (data['message']['type'] == 'success') {
-				AlertService.alerts.push({type: 'success', msg: data['message']['text']});
+				alertService.alerts.push({type: 'success', msg: data['message']['text']});
 			}
 			$route.reload();
 		}).
 		error(function (data, status, headers) {
-			AlertService.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
+			alertService.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
 			$route.reload();
 		});
 	};
 });
 
 /* Task add modal */
-var TaskAddModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, $http, AlertService, SelectService, goaldata) {
+var TaskAddModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, $http, alertService, SelectService, goaldata) {
 	$scope.alerts = [];
 	$scope.formdata = [];
 	$scope.goaldata = goaldata;
@@ -655,7 +683,7 @@ var TaskAddModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, $ht
 				$scope.alerts.push({type: 'danger', msg: data['message']['text']});
 			}
 			if (data['message']['type'] == 'success') {
-				AlertService.alerts.push({type: 'success', msg: data['message']['text']});
+				alertService.alerts.push({type: 'success', msg: data['message']['text']});
 				$modalInstance.close();
 			}
 		}).
@@ -670,12 +698,12 @@ var TaskAddModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, $ht
 };
 
 /* Task edit modal */
-var TaskEditModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, $http, AlertService, SelectService, goaldata, id) {
+var TaskEditModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, $http, alertService, SelectService, goaldata, id) {
 	$scope.alerts = [];
 	$scope.formdata = [];
 	$scope.goaldata = goaldata;
 	$scope.taskid = id;
-	AlertService.alerts = [];
+	alertService.alerts = [];
 
 	/* Copy from parent */
 	$scope.modalCalendar = {
@@ -691,7 +719,7 @@ var TaskEditModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, $h
 	};
 
 	/* Copy from parent - return actual javascript date */
-	$scope.modalDateToNgDate = function(input) {
+	$scope.modaldateToJSDate = function(input) {
 		if (!input) {
 			return '';
 		}
@@ -721,22 +749,22 @@ var TaskEditModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, $h
 
 	if (found) {
 			/**
-			 * BUG : There is some issue in modal edit window - modalDateToNgDate() has to return
+			 * BUG : There is some issue in modal edit window - modaldateToJSDate() has to return
 			 * a javascript date and not the string format as in parent. It throws a 'undefined a'
 			 * in the browser console and the date is NAN if no other changes are made and the
 			 * modal window is submitted. Ouch !
 			 */
 			$scope.formdata.Title = task.title;
 			$scope.formdata.Prev = task.prev_id;
-			$scope.formdata.Startdate = $scope.modalDateToNgDate(task.start_date);
-			$scope.formdata.Duedate = $scope.modalDateToNgDate(task.due_date);
+			$scope.formdata.Startdate = $scope.modaldateToJSDate(task.start_date);
+			$scope.formdata.Duedate = $scope.modaldateToJSDate(task.due_date);
 			$scope.formdata.Reminder = task.reminder_time;
 			$scope.formdata.Completed = task.is_completed;
-			$scope.formdata.Completiondate = $scope.modalDateToNgDate(task.completion_date);
+			$scope.formdata.Completiondate = $scope.modaldateToJSDate(task.completion_date);
 			$scope.formdata.Notes = task.notes;
 	} else {
 		$scope.formdata = [];
-		AlertService.alerts.push({type: 'danger', msg: 'Task not found'});
+		alertService.alerts.push({type: 'danger', msg: 'Task not found'});
 		$modalInstance.dismiss();
 	}
 
@@ -763,7 +791,7 @@ var TaskEditModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, $h
 				$scope.alerts.push({type: 'danger', msg: data['message']['text']});
 			}
 			if (data['message']['type'] == 'success') {
-				AlertService.alerts.push({type: 'success', msg: data['message']['text']});
+				alertService.alerts.push({type: 'success', msg: data['message']['text']});
 				$modalInstance.close();
 			}
 		}).
@@ -793,8 +821,8 @@ goalApp.controller('DashboardCtrl', function ($scope, $rootScope, $cookieStore) 
 /********************************************************************/
 
 /* Start timewatch */
-goalApp.controller('TimewatchStartCtrl', function ($scope, $rootScope, $location, $http, $route, $modal, $window, AlertService, modalService) {
-	$scope.alerts = AlertService.alerts;
+goalApp.controller('TimewatchStartCtrl', function ($scope, $rootScope, $location, $http, $route, $modal, $window, alertService, modalService) {
+	$scope.alerts = alertService.alerts;
 	$scope.closeAlert = function(index) {
 		$scope.alerts.splice(index, 1);
 	};
@@ -839,7 +867,7 @@ goalApp.controller('TimewatchStartCtrl', function ($scope, $rootScope, $location
 	/* Start timer */
 	$scope.startTimer = function(id) {
 		$scope.alerts = [];
-		AlertService.alerts = [];
+		alertService.alerts = [];
 
 		var data = {
 			'Timewatch' : {
@@ -855,7 +883,7 @@ goalApp.controller('TimewatchStartCtrl', function ($scope, $rootScope, $location
 				$scope.alerts.push({type: 'danger', msg: data['message']['text']});
 			}
 			if (data['message']['type'] == 'success') {
-				AlertService.alerts.push({type: 'success', msg: data['message']['text']});
+				alertService.alerts.push({type: 'success', msg: data['message']['text']});
 				$location.path('/timewatch/stop/' + data['message']['id']);
 			}
 		}).
@@ -882,19 +910,19 @@ goalApp.controller('TimewatchStartCtrl', function ($scope, $rootScope, $location
 		};
 
 		modalService.showModal(modalDefaults, modalOptions).then(function (result) {
-			AlertService.alerts = [];
+			alertService.alerts = [];
 			$http.delete('timewatches/delete/' + id + '.json').
 			success(function(data, status, headers, config) {
 				if (data['message']['type'] == 'error') {
-					AlertService.alerts.push({type: 'danger', msg: data['message']['text']});
+					alertService.alerts.push({type: 'danger', msg: data['message']['text']});
 				} else
 				if (data['message']['type'] == 'success') {
-					AlertService.alerts.push({type: 'success', msg: data['message']['text']});
+					alertService.alerts.push({type: 'success', msg: data['message']['text']});
 				}
 				$route.reload();
 			}).
 			error(function(data, status, headers, config) {
-				AlertService.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
+				alertService.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
 				$route.reload();
 			});
 		});
@@ -902,8 +930,8 @@ goalApp.controller('TimewatchStartCtrl', function ($scope, $rootScope, $location
 });
 
 /* Stop timewatch */
-goalApp.controller('TimewatchStopCtrl', function ($scope, $rootScope, $cookieStore, $http, $route, $routeParams, $location, AlertService) {
-	$scope.alerts = AlertService.alerts;
+goalApp.controller('TimewatchStopCtrl', function ($scope, $rootScope, $cookieStore, $http, $route, $routeParams, $location, alertService) {
+	$scope.alerts = alertService.alerts;
 	$scope.closeAlert = function(index) {
 		$scope.alerts.splice(index, 1);
 	};
@@ -924,21 +952,21 @@ goalApp.controller('TimewatchStopCtrl', function ($scope, $rootScope, $cookieSto
 			$scope.formdata.Endtime = "";
 		}
 		if ($scope.formdata.IsStopped == true) {
-			AlertService.alerts = [];
-			AlertService.alerts.push({type: 'danger', msg: 'Oops ! The timewatch for the selected task is already stopped.'});
+			alertService.alerts = [];
+			alertService.alerts.push({type: 'danger', msg: 'Oops ! The timewatch for the selected task is already stopped.'});
 			$location.path('/timewatch');
 		}
 	}).
 	error(function(data, status, headers, config) {
-		AlertService.alerts = [];
-		AlertService.alerts.push({type: 'danger', msg: 'Timewatch not found'});
+		alertService.alerts = [];
+		alertService.alerts.push({type: 'danger', msg: 'Timewatch not found'});
 		$location.path('/timewatch');
 	});
 
 	/* Stop timer */
 	$scope.stopTimer = function(id) {
 		$scope.alerts = [];
-		AlertService.alerts = [];
+		alertService.alerts = [];
 
 		var data = {
 			'Timewatch' : {
@@ -953,7 +981,7 @@ goalApp.controller('TimewatchStopCtrl', function ($scope, $rootScope, $cookieSto
 				$scope.alerts.push({type: 'danger', msg: data['message']['text']});
 			}
 			if (data['message']['type'] == 'success') {
-				AlertService.alerts.push({type: 'success', msg: data['message']['text']});
+				alertService.alerts.push({type: 'success', msg: data['message']['text']});
 				$location.path('/timewatch');
 			}
 		}).
@@ -964,8 +992,8 @@ goalApp.controller('TimewatchStopCtrl', function ($scope, $rootScope, $cookieSto
 });
 
 /* Edit timewatch */
-goalApp.controller('TimewatchEditCtrl', function ($scope, $rootScope, $cookieStore, $http, $route, $routeParams, $location, AlertService) {
-	$scope.alerts = AlertService.alerts;
+goalApp.controller('TimewatchEditCtrl', function ($scope, $rootScope, $cookieStore, $http, $route, $routeParams, $location, alertService) {
+	$scope.alerts = alertService.alerts;
 	$scope.closeAlert = function(index) {
 		$scope.alerts.splice(index, 1);
 	};
@@ -987,15 +1015,15 @@ goalApp.controller('TimewatchEditCtrl', function ($scope, $rootScope, $cookieSto
 		}
 	}).
 	error(function(data, status, headers, config) {
-		AlertService.alerts = [];
-		AlertService.alerts.push({type: 'danger', msg: 'Timewatch not found'});
+		alertService.alerts = [];
+		alertService.alerts.push({type: 'danger', msg: 'Timewatch not found'});
 		$location.path('/timewatch');
 	});
 
 	/* Stop timer */
 	$scope.editTimewatch = function() {
 		$scope.alerts = [];
-		AlertService.alerts = [];
+		alertService.alerts = [];
 
 		var data = {
 			'Timewatch' : {
@@ -1011,7 +1039,7 @@ goalApp.controller('TimewatchEditCtrl', function ($scope, $rootScope, $cookieSto
 				$scope.alerts.push({type: 'danger', msg: data['message']['text']});
 			}
 			if (data['message']['type'] == 'success') {
-				AlertService.alerts.push({type: 'success', msg: data['message']['text']});
+				alertService.alerts.push({type: 'success', msg: data['message']['text']});
 				$location.path('/timewatch');
 			}
 		}).
@@ -1026,8 +1054,8 @@ goalApp.controller('TimewatchEditCtrl', function ($scope, $rootScope, $cookieSto
 /********************************************************************/
 
 /* Show notes */
-goalApp.controller('NotesIndexCtrl', function ($scope, $rootScope, $http, $location, $modal, $window, $route, AlertService, modalService) {
-	$scope.alerts = AlertService.alerts;
+goalApp.controller('NotesIndexCtrl', function ($scope, $rootScope, $http, $location, $modal, $window, $route, alertService, modalService) {
+	$scope.alerts = alertService.alerts;
 	$scope.closeAlert = function(index) {
 		$scope.alerts.splice(index, 1);
 	};
@@ -1060,19 +1088,19 @@ goalApp.controller('NotesIndexCtrl', function ($scope, $rootScope, $http, $locat
 		};
 
 		modalService.showModal(modalDefaults, modalOptions).then(function (result) {
-			AlertService.alerts = [];
+			alertService.alerts = [];
 			$http.delete('notes/delete/' + id + '.json').
 			success(function(data, status, headers, config) {
 				if (data['message']['type'] == 'error') {
-					AlertService.alerts.push({type: 'danger', msg: data['message']['text']});
+					alertService.alerts.push({type: 'danger', msg: data['message']['text']});
 				} else
 				if (data['message']['type'] == 'success') {
-					AlertService.alerts.push({type: 'success', msg: data['message']['text']});
+					alertService.alerts.push({type: 'success', msg: data['message']['text']});
 				}
 				$route.reload();
 			}).
 			error(function(data, status, headers, config) {
-				AlertService.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
+				alertService.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
 				$route.reload();
 			});
 		});
@@ -1080,8 +1108,8 @@ goalApp.controller('NotesIndexCtrl', function ($scope, $rootScope, $http, $locat
 });
 
 /* View note */
-goalApp.controller('NoteViewCtrl', function ($scope, $rootScope, $http, $modal, $routeParams, $location, $route, AlertService, modalService) {
-	AlertService.alerts = [];
+goalApp.controller('NoteViewCtrl', function ($scope, $rootScope, $http, $modal, $routeParams, $location, $route, alertService, modalService) {
+	alertService.alerts = [];
 	$scope.closeAlert = function(index) {
 		$scope.alerts.splice(index, 1);
 	};
@@ -1095,14 +1123,14 @@ goalApp.controller('NoteViewCtrl', function ($scope, $rootScope, $http, $modal, 
 		$scope.note = data['note'];
 	}).
 	error(function(data, status, headers, config) {
-		AlertService.alerts.push({type: 'danger', msg: 'Note not found'});
+		alertService.alerts.push({type: 'danger', msg: 'Note not found'});
 		$location.path('/notes');
 	});
 });
 
 /* Add note */
-goalApp.controller('NoteAddCtrl', function ($scope, $rootScope, $http, $location, AlertService) {
-	AlertService.alerts = [];
+goalApp.controller('NoteAddCtrl', function ($scope, $rootScope, $http, $location, alertService) {
+	alertService.alerts = [];
 	$scope.closeAlert = function(index) {
 		$scope.alerts.splice(index, 1);
 	};
@@ -1129,7 +1157,7 @@ goalApp.controller('NoteAddCtrl', function ($scope, $rootScope, $http, $location
 				$scope.alerts.push({type: 'danger', msg: data['message']['text']});
 			}
 			if (data['message']['type'] == 'success') {
-				AlertService.alerts.push({type: 'success', msg: data['message']['text']});
+				alertService.alerts.push({type: 'success', msg: data['message']['text']});
 				$location.path('/notes');
 			}
 		}).
@@ -1140,8 +1168,8 @@ goalApp.controller('NoteAddCtrl', function ($scope, $rootScope, $http, $location
 });
 
 /* Edit note */
-goalApp.controller('NoteEditCtrl', function ($scope, $rootScope, $http, $routeParams, $location, AlertService, SelectService) {
-	AlertService.alerts = [];
+goalApp.controller('NoteEditCtrl', function ($scope, $rootScope, $http, $routeParams, $location, alertService, SelectService) {
+	alertService.alerts = [];
 	$scope.closeAlert = function(index) {
 		$scope.alerts.splice(index, 1);
 	};
@@ -1158,7 +1186,7 @@ goalApp.controller('NoteEditCtrl', function ($scope, $rootScope, $http, $routePa
 		$scope.formdata.PinTop = data['note']['Note']['pin_top'];
 	}).
 	error(function(data, status, headers, config) {
-		AlertService.alerts.push({type: 'danger', msg: 'Note not found'});
+		alertService.alerts.push({type: 'danger', msg: 'Note not found'});
 		$location.path('/notes');
 	});
 
@@ -1180,7 +1208,7 @@ goalApp.controller('NoteEditCtrl', function ($scope, $rootScope, $http, $routePa
 				$scope.alerts.push({type: 'danger', msg: data['message']['text']});
 			}
 			if (data['message']['type'] == 'success') {
-				AlertService.alerts.push({type: 'success', msg: data['message']['text']});
+				alertService.alerts.push({type: 'success', msg: data['message']['text']});
 				$location.path('/notes');
 			}
 		}).
@@ -1195,19 +1223,24 @@ goalApp.controller('NoteEditCtrl', function ($scope, $rootScope, $http, $routePa
 /********************************************************************/
 
 /* Show journal */
-goalApp.controller('JournalsIndexCtrl', function ($scope, $rootScope, $http, $location, $modal, $window, $route, AlertService, modalService) {
-	$scope.alerts = AlertService.alerts;
-	$scope.closeAlert = function(index) {
-		$scope.alerts.splice(index, 1);
-	};
-
+goalApp.controller('JournalsIndexCtrl', function ($scope, $rootScope, $http,
+	$location, $modal, $window, $route, alertService, modalService)
+{
+	$scope.alerts = alertService.alerts;
 	$rootScope.pageTitle = "Journal";
+	$scope.journals = [];
 
-	$http.get('journals.json').
+	/* Fetch all journal entries */
+	$http.get('api/journal/index').
 	success(function(data, status, headers, config) {
-		$scope.journals = data['journals'];
+		if (data.status == 'success') {
+			$scope.journals = data.data.journals;
+		} else {
+			$scope.journals = [];
+		}
 	}).
 	error(function(data, status, headers, config) {
+		alertService.add('Oh snap ! Something went wrong, please try again.', 'danger');
 		$scope.journals = [];
 	});
 
@@ -1229,129 +1262,131 @@ goalApp.controller('JournalsIndexCtrl', function ($scope, $rootScope, $http, $lo
 		};
 
 		modalService.showModal(modalDefaults, modalOptions).then(function (result) {
-			AlertService.alerts = [];
-			$http.delete('journals/delete/' + id + '.json').
+			alertService.clear();
+			/* Send DELETE request to delete the journal entry */
+			$http.delete('api/journal/destroy/' + id).
 			success(function(data, status, headers, config) {
-				if (data['message']['type'] == 'error') {
-					AlertService.alerts.push({type: 'danger', msg: data['message']['text']});
-				} else
-				if (data['message']['type'] == 'success') {
-					AlertService.alerts.push({type: 'success', msg: data['message']['text']});
+				if (data.status == 'success') {
+					alertService.add(data.message, 'success');
+				} else {
+					alertService.add(data.message, 'danger');
 				}
 				$route.reload();
 			}).
 			error(function(data, status, headers, config) {
-				AlertService.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
+				alertService.add('Oh snap! Change a few things up and try submitting again.', 'danger');
 				$route.reload();
 			});
 		});
 	};
 });
 
-/* View journal entry */
-goalApp.controller('JournalViewCtrl', function ($scope, $rootScope, $http, $modal, $routeParams, $location, $route, AlertService, modalService) {
-	AlertService.alerts = [];
-	$scope.closeAlert = function(index) {
-		$scope.alerts.splice(index, 1);
-	};
+/* Show journal entry */
+goalApp.controller('JournalShowCtrl', function ($scope, $rootScope, $http,
+	$routeParams, $location, alertService, $sce)
+{
+	$scope.alerts = alertService.alerts;
+	$rootScope.pageTitle = "Show Journal Entry";
+	$scope.journal = [];
 
-	$scope.note = [];
-
-	$rootScope.pageTitle = "View Journal Entry";
-
-	$http.get('journals/' + $routeParams['id'] + '.json').
+	$http.get('api/journal/show/' + $routeParams['id']).
 	success(function(data, status, headers, config) {
-		$scope.journal = data['journal'];
+		if (data.status == 'success') {
+			$scope.journal = data.data.journal;
+		} else {
+			alertService.add(data.message, 'danger');
+			$location.path('/journals');
+		}
 	}).
 	error(function(data, status, headers, config) {
-		AlertService.alerts.push({type: 'danger', msg: 'Journal entry not found'});
+		alertService.add('Oh snap ! Something went wrong, please try again.', 'danger');
 		$location.path('/journals');
 	});
+
+	$scope.skipFilter = function(value) {
+		return $sce.trustAsHtml(value);
+	};
 });
 
 /* Add journal entry */
-goalApp.controller('JournalAddCtrl', function ($scope, $rootScope, $http, $location, AlertService) {
-	AlertService.alerts = [];
-	$scope.closeAlert = function(index) {
-		$scope.alerts.splice(index, 1);
-	};
-
-	$scope.formdata = [];
-
+goalApp.controller('JournalAddCtrl', function ($scope, $rootScope, $http, $location, alertService) {
+	$scope.alerts = alertService.alerts;
 	$rootScope.pageTitle = "Add Journal Entry";
+	$scope.formdata = [];
+	$scope.formdata.Date = new Date();
 
 	$scope.addJournal = function() {
-		$scope.alerts = [];
+		alertService.clear();
 
 		var data = {
-			'Journal' : {
+			'journal' : {
 				title: $scope.formdata.Title,
 				entry: $scope.formdata.Entry,
-				entrydate: $scope.dateToSQL($scope.formdata.Entrydate),
+				date: $scope.dateToSQLNoTime($scope.formdata.Date),
 			}
 		};
 
-		$http.post("journals/add.json", data).
+		$http.post("api/journal/create", data).
 		success(function (data, status, headers) {
-			if (data['message']['type'] == 'error') {
-				$scope.alerts.push({type: 'danger', msg: data['message']['text']});
-			}
-			if (data['message']['type'] == 'success') {
-				AlertService.alerts.push({type: 'success', msg: data['message']['text']});
+			if (data.status == 'success') {
+				alertService.add(data.message, 'success');
 				$location.path('/journals');
+			} else {
+				alertService.add(data.message, 'danger');
 			}
 		}).
 		error(function (data, status, headers) {
-			$scope.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
+			alertService.add('Oh snap ! Something went wrong, please try again.', 'danger');
 		});
 	}
 });
 
 /* Edit journal entry */
-goalApp.controller('JournalEditCtrl', function ($scope, $rootScope, $http, $routeParams, $location, AlertService, SelectService) {
-	AlertService.alerts = [];
-	$scope.closeAlert = function(index) {
-		$scope.alerts.splice(index, 1);
-	};
-
+goalApp.controller('JournalEditCtrl', function ($scope, $rootScope, $http,
+	$routeParams, $location, alertService, SelectService)
+{
+	$scope.alerts = alertService.alerts;
 	$rootScope.pageTitle = "Edit Journal Entry";
-
 	$scope.formdata = [];
 
-	$http.get('journals/' + $routeParams['id'] + '.json').
+	$http.get('api/journal/show/' + $routeParams['id']).
 	success(function(data, status, headers, config) {
-		$scope.formdata.Title = data['journal']['Journal']['title'];
-		$scope.formdata.Entry = data['journal']['Journal']['entry'];
-		$scope.formdata.Entrydate = $scope.dateToNg(data['journal']['Journal']['entrydate']);
+		if (data.status == 'success') {
+			$scope.formdata.Title = data.data.journal.title;
+			$scope.formdata.Entry = data.data.journal.entry;
+			$scope.formdata.Date = $scope.dateToJS(data.data.journal.date);
+		} else {
+			alertService.add(data.message, 'danger');
+			$location.path('/journals');
+		}
 	}).
 	error(function(data, status, headers, config) {
-		AlertService.alerts.push({type: 'danger', msg: 'Journal Entry not found'});
+		alertService.add('Oh snap ! Something went wrong, please try again.', 'danger');
 		$location.path('/journals');
 	});
 
 	$scope.editJournal = function() {
-		$scope.alerts = [];
+		alertService.clear();
 
 		var data = {
-			'Journal' : {
+			'journal' : {
 				title: $scope.formdata.Title,
 				entry: $scope.formdata.Entry,
-				entrydate: $scope.dateToSQL($scope.formdata.Entrydate),
+				date: $scope.dateToSQLNoTime($scope.formdata.Date),
 			}
 		};
 
-		$http.post("journals/edit/" +  + $routeParams['id'] + ".json", data).
+		$http.put("api/journal/update/" + $routeParams['id'], data).
 		success(function (data, status, headers) {
-			if (data['message']['type'] == 'error') {
-				$scope.alerts.push({type: 'danger', msg: data['message']['text']});
-			}
-			if (data['message']['type'] == 'success') {
-				AlertService.alerts.push({type: 'success', msg: data['message']['text']});
+			if (data.status == 'success') {
+				alertService.add(data.message, 'success');
 				$location.path('/journals');
+			} else {
+				alertService.add(data.message, 'danger');
 			}
 		}).
 		error(function (data, status, headers) {
-			$scope.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
+			alertService.add('Oh snap ! Something went wrong, please try again.', 'danger');
 		});
 	}
 });
