@@ -125,6 +125,8 @@ return array(
 		'Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider',
 		'McCool\LaravelAutoPresenter\LaravelAutoPresenterServiceProvider',
 		'Smartgoalz\ServiceProviders\ValidationServiceProvider',
+		'Smartgoalz\ServiceProviders\GoalServiceProvider',
+		'Smartgoalz\ServiceProviders\CategoryServiceProvider',
 		'Smartgoalz\ServiceProviders\JournalServiceProvider',
 		'Smartgoalz\ServiceProviders\NoteServiceProvider',
 	),

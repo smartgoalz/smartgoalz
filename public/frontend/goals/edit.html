@@ -1,29 +1,29 @@
 <div class="row" ng-controller="GoalEditCtrl">
-	<div class="col-lg-12">
+	<div class="col-xs-12">
 		<div class="form-title">Edit your SMART Goal</div>
 	</div>
 
-	<div class="col-lg-12" ng-show="alerts.length">
+	<div class="col-xs-12" ng-show="alerts.length">
 		<alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
 	</div>
 
 	<div>
-	<form method="POST" role="form">
+	<form method="POST" role="form" name="appForm">
 		<div class="row">
 			<div class="col-xs-8">
 				<div class="form-group">
-					<label for="inputTitle">Goal title</label>
-					<input type="text" class="form-control" id="inputTitle" placeholder="Goal title" ng-model="formdata.Title">
+					<label for="inputTitle">Title</label>
+					<input type="text" class="form-control" id="inputTitle" placeholder="Title" ng-model="formdata.Title" ng-required="true">
 				</div>
 			</div>
 		</div>
 
 		<div class="row">
-			<div class="col-lg-3">
+			<div class="col-xs-3">
 				<div class="form-group">
 					<label for="inputStartdate">Start date</label>
 					<div class="input-group">
-						<input type="text" class="form-control" datepicker-popup="{{calendar.dateFormat}}" ng-model="formdata.Startdate" is-open="calendar.opened.Startdate" datepicker-options="calendar.dateOptions" close-text="Close" placeholder="Start date" id="inputStartdate"/>
+						<input type="text" class="form-control" datepicker-popup="{{calendar.dateFormat}}" ng-model="formdata.Startdate" is-open="calendar.opened.Startdate" datepicker-options="calendar.dateOptions" close-text="Close" placeholder="Start date" id="inputStartdate" ng-click="calendar.open($event, 'Startdate')" ng-required="true"/>
 						<span class="input-group-btn">
 							<button type="button" class="btn btn-default" ng-click="calendar.open($event, 'Startdate')"><i class="glyphicon glyphicon-calendar"></i></button>
 						</span>
@@ -33,11 +33,11 @@
 		</div>
 
 		<div class="row">
-			<div class="col-lg-3">
+			<div class="col-xs-3">
 				<div class="form-group">
 					<label for="inputDuedate">Due date</label>
 					<div class="input-group">
-						<input type="text" class="form-control" datepicker-popup="{{calendar.dateFormat}}" ng-model="formdata.Duedate" is-open="calendar.opened.Duedate" datepicker-options="calendar.dateOptions" close-text="Close" placeholder="Due date" id="inputDuedate"/>
+						<input type="text" class="form-control" datepicker-popup="{{calendar.dateFormat}}" ng-model="formdata.Duedate" is-open="calendar.opened.Duedate" datepicker-options="calendar.dateOptions" close-text="Close" placeholder="Due date" id="inputDuedate" ng-click="calendar.open($event, 'Duedate')" ng-required="true" />
 						<span class="input-group-btn">
 							<button type="button" class="btn btn-default" ng-click="calendar.open($event, 'Duedate')"><i class="glyphicon glyphicon-calendar"></i></button>
 						</span>
@@ -47,10 +47,10 @@
 		</div>
 
 		<div class="row">
-			<div class="col-xs-4">
+			<div class="col-xs-3">
 				<div class="form-group">
 					<label for="inputCategory">Category</label>
-					<select class="form-control" id="inputCategory" ng-model="formdata.Category">
+					<select class="form-control" id="inputCategory" ng-model="formdata.Category" ng-required="true">
 						<option ng-repeat="(id, category) in categories" value="{{id}}" ng-selected="{{id == formdata.Category}}">{{category}}</option>
 					</select>
 				</div>
@@ -58,10 +58,10 @@
 		</div>
 
 		<div class="row">
-			<div class="col-xs-4">
+			<div class="col-xs-3">
 				<div class="form-group">
 					<label for="inputDifficulty">Difficulty</label>
-					<select class="form-control" id="inputDifficulty" ng-model="formdata.Difficulty">
+					<select class="form-control" id="inputDifficulty" ng-model="formdata.Difficulty" ng-required="true">
 						<option ng-repeat="(id, difficulty) in difficulties" value="{{id}}" ng-selected="{{id == formdata.Difficulty}}">{{difficulty}}</option>
 					</select>
 				</div>
@@ -69,10 +69,10 @@
 		</div>
 
 		<div class="row">
-			<div class="col-xs-4">
+			<div class="col-xs-3">
 				<div class="form-group">
 					<label for="inputPriority">Priority</label>
-					<select class="form-control" id="inputPriority" ng-model="formdata.Priority">
+					<select class="form-control" id="inputPriority" ng-model="formdata.Priority" ng-required="true">
 						<option ng-repeat="(id, priority) in priorities" value="{{id}}" ng-selected="{{id == formdata.Priority}}">{{priority}}</option>
 					</select>
 				</div>
@@ -90,8 +90,8 @@
 		<div class="row">
 			<div class="col-xs-8">
 				<div>
-					<button class="btn btn-primary" ng-click="editGoal()">Submit</button>
-					<a href="#/goals" class="btn btn-info" ng-click="clearAlerts()">Cancel</a>
+					<button class="btn btn-primary" ng-click="editGoal()" ng-disabled="appForm.$invalid">Submit</button>
+					<a href="#/goals" class="btn btn-info">Cancel</a>
 				</div>
 			</div>
 		</div>

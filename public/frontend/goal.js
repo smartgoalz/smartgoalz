@@ -83,18 +83,10 @@ goalApp.factory('alertService', function() {
 	};
 });
 
-goalApp.factory('SelectService', function($http, $q) {
+goalApp.factory('SelectService', function($http, $q, $cookieStore) {
 
 	var categories = function() {
-		var deferred = $q.defer();
-		$http({method : "GET", url: "categories/index.json"}).
-		success(function(result) {
-		    deferred.resolve(result);
-		}).
-		error(function(result) {
-			/* TODO */
-		});
-		return deferred.promise;
+		return $cookieStore.get('categories');
         };
 
 	var priorities = function() {
@@ -113,7 +105,7 @@ goalApp.factory('SelectService', function($http, $q) {
 		priorities : priorities(),
 		difficulties : difficulties(),
 		reminders : reminders(),
-		categories: categories,
+		categories: categories(),
 	};
 });
 
@@ -261,34 +253,51 @@ goalApp.controller('ContentCtrl', function ($scope, $rootScope, $cookieStore, al
 
 		return input.toString("yyyy-MM-dd 00:00:00");
 	}
+
+	/* TODO : Fetch data from server */
+	var categories = {
+		1: 'Personal',
+		2: 'Financial'
+	};
+	$cookieStore.put('categories', categories);
 });
 
-/* Show goals */
-goalApp.controller('GoalsIndexCtrl', function ($scope, $rootScope, $http, $location, $modal, $window, $route, alertService, modalService, SelectService) {
+/********************************************************************/
+/***************************** DASHBOARD ****************************/
+/********************************************************************/
+
+goalApp.controller('DashboardCtrl', function ($scope, $rootScope, $cookieStore) {
 	$scope.alerts = alertService.alerts;
-	$scope.closeAlert = function(index) {
-		$scope.alerts.splice(index, 1);
-	};
+	$rootScope.pageTitle = "Dashboard";
+});
+
+/********************************************************************/
+/****************************** GOALS *******************************/
+/********************************************************************/
+
+/* Show goals */
+goalApp.controller('GoalsIndexCtrl', function ($scope, $rootScope, $http,
+	$location, $modal, $window, $route, alertService, modalService, SelectService)
+{
+	$scope.alerts = alertService.alerts;
+	$rootScope.pageTitle = "Goals";
 
 	$scope.priorities = SelectService.priorities;
 	$scope.difficulties = SelectService.difficulties;
-	$scope.categories = [];
+	$scope.categories = SelectService.categories;
 
-	var categoryPromise = SelectService.categories();
-	categoryPromise.then(function(result) {
-		$scope.categories = result['categories'];
-	});
-
-	$rootScope.pageTitle = "Goals";
-
-	$http.get('goals.json').
+	$http.get('api/goals/index').
 	success(function(data, status, headers, config) {
-		$scope.goals = data['goals'];
+		if (data.status == 'success') {
+			$scope.goals = data.data.goals;
+		} else {
+			$scope.goals = [];
+		}
 	}).
 	error(function(data, status, headers, config) {
+		alertService.add('Oh snap ! Something went wrong, please try again.', 'danger');
 		$scope.goals = [];
 	});
-
 
 	/* Delete goal action */
 	$scope.deleteGoal = function(id) {
@@ -308,19 +317,19 @@ goalApp.controller('GoalsIndexCtrl', function ($scope, $rootScope, $http, $locat
 		};
 
 		modalService.showModal(modalDefaults, modalOptions).then(function (result) {
-			alertService.alerts = [];
-			$http.delete('goals/delete/' + id + '.json').
+			alertService.clear();
+			/* Send DELETE request to delete the goal */
+			$http.delete('api/goals/destroy/' + id).
 			success(function(data, status, headers, config) {
-				if (data['message']['type'] == 'error') {
-					alertService.alerts.push({type: 'danger', msg: data['message']['text']});
-				} else
-				if (data['message']['type'] == 'success') {
-					alertService.alerts.push({type: 'success', msg: data['message']['text']});
+				if (data.status == 'success') {
+					alertService.add(data.message, 'success');
+				} else {
+					alertService.add(data.message, 'danger');
 				}
 				$route.reload();
 			}).
 			error(function(data, status, headers, config) {
-				alertService.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
+				alertService.add('Oh snap! Change a few things up and try submitting again.', 'danger');
 				$route.reload();
 			});
 		});
@@ -328,102 +337,89 @@ goalApp.controller('GoalsIndexCtrl', function ($scope, $rootScope, $http, $locat
 });
 
 /* Add goal */
-goalApp.controller('GoalAddCtrl', function ($scope, $rootScope, $http, $location, alertService, SelectService) {
-	alertService.alerts = [];
-	$scope.closeAlert = function(index) {
-		$scope.alerts.splice(index, 1);
-	};
+goalApp.controller('GoalAddCtrl', function ($scope, $rootScope, $http,
+	$location, alertService, SelectService)
+{
+	$scope.alerts = alertService.alerts;
+	$rootScope.pageTitle = "Add Goal";
 
 	$scope.priorities = SelectService.priorities;
 	$scope.difficulties = SelectService.difficulties;
-	$scope.categories = [];
-
-	var categoryPromise = SelectService.categories();
-	categoryPromise.then(function(result) {
-		$scope.categories = result['categories'];
-	});
+	$scope.categories = SelectService.categories;
 
 	$scope.formdata = [];
 
-	$rootScope.pageTitle = "Add Goal";
-
 	$scope.addGoal = function() {
-		$scope.alerts = [];
+		alertService.clear();
 
 		var data = {
-			'Goal' : {
+			'goal' : {
 				title: $scope.formdata.Title,
-				start_date: $scope.dateToSQL($scope.formdata.Startdate),
-				due_date: $scope.dateToSQL($scope.formdata.Duedate),
+				start_date: $scope.dateToSQLNoTime($scope.formdata.Startdate),
+				due_date: $scope.dateToSQLNoTime($scope.formdata.Duedate),
 				category_id: $scope.formdata.Category,
 				difficulty: $scope.formdata.Difficulty,
 				priority: $scope.formdata.Priority,
 				reason: $scope.formdata.Reason,
-				is_completed: 0,
-				task_total: 0,
-				task_completed: 0,
 			}
 		};
 
-		$http.post("goals/add.json", data).
+		$http.post("api/goals/create", data).
 		success(function (data, status, headers) {
-			if (data['message']['type'] == 'error') {
-				$scope.alerts.push({type: 'danger', msg: data['message']['text']});
-			}
-			if (data['message']['type'] == 'success') {
-				alertService.alerts.push({type: 'success', msg: data['message']['text']});
+			if (data.status == 'success') {
+				alertService.add(data.message, 'success');
 				$location.path('/goals');
+			} else {
+				alertService.add(data.message, 'danger');
 			}
 		}).
 		error(function (data, status, headers) {
-			$scope.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
+			alertService.add('Oh snap ! Something went wrong, please try again.', 'danger');
 		});
 	}
 });
 
 /* Edit goal */
-goalApp.controller('GoalEditCtrl', function ($scope, $rootScope, $http, $routeParams, $location, alertService, SelectService) {
-	alertService.alerts = [];
-	$scope.closeAlert = function(index) {
-		$scope.alerts.splice(index, 1);
-	};
-
+goalApp.controller('GoalEditCtrl', function ($scope, $rootScope, $http,
+	$routeParams, $location, alertService, SelectService)
+{
+	$scope.alerts = alertService.alerts;
 	$rootScope.pageTitle = "Edit Goal";
-
-	$scope.formdata = [];
 
 	$scope.priorities = SelectService.priorities;
 	$scope.difficulties = SelectService.difficulties;
-	$scope.categories = [];
+	$scope.categories = SelectService.categories;
 
-	var categoryPromise = SelectService.categories();
-	categoryPromise.then(function(result) {
-		$scope.categories = result['categories'];
-	});
+	$scope.formdata = [];
 
-	$http.get('goals/' + $routeParams['id'] + '.json').
+	$http.get('api/goals/show/' + $routeParams['id']).
 	success(function(data, status, headers, config) {
-		$scope.formdata.Title = data['goal']['Goal']['title'];
-		$scope.formdata.Startdate = $scope.dateToJS(data['goal']['Goal']['start_date']);
-		$scope.formdata.Duedate = $scope.dateToJS(data['goal']['Goal']['due_date']);
-		$scope.formdata.Category = data['goal']['Goal']['category_id'];
-		$scope.formdata.Difficulty = data['goal']['Goal']['difficulty'];
-		$scope.formdata.Priority = data['goal']['Goal']['priority'];
-		$scope.formdata.Reason = data['goal']['Goal']['reason'];
+		if (data.status == 'success') {
+			$scope.formdata.Title = data.data.goal.title;
+			$scope.formdata.Startdate = $scope.dateToJS(data.data.goal.start_date);
+			$scope.formdata.Duedate = $scope.dateToJS(data.data.goal.due_date);
+			$scope.formdata.Category = data.data.goal.category_id;
+			$scope.formdata.Difficulty = data.data.goal.difficulty;
+			$scope.formdata.Priority = data.data.goal.priority;
+			$scope.formdata.Reason = data.data.goal.reason;
+		} else {
+			alertService.add(data.message, 'danger');
+			$location.path('/goals');
+		}
 	}).
 	error(function(data, status, headers, config) {
-		alertService.alerts.push({type: 'danger', msg: 'Goal not found'});
+		alertService.add('Oh snap ! Something went wrong, please try again.', 'danger');
 		$location.path('/goals');
 	});
 
 	$scope.editGoal = function() {
-		$scope.alerts = [];
+		alertService.clear();
 
 		var data = {
-			'Goal' : {
+			'goal' : {
 				title: $scope.formdata.Title,
-				start_date: $scope.dateToSQL($scope.formdata.Startdate),
-				due_date: $scope.dateToSQL($scope.formdata.Duedate),
+				start_date: $scope.dateToSQLNoTime($scope.formdata.Startdate),
+				due_date: $scope.dateToSQLNoTime($scope.formdata.Duedate),
 				category_id: $scope.formdata.Category,
 				difficulty: $scope.formdata.Difficulty,
 				priority: $scope.formdata.Priority,
@@ -431,49 +427,47 @@ goalApp.controller('GoalEditCtrl', function ($scope, $rootScope, $http, $routePa
 			}
 		};
 
-		$http.post("goals/edit/" +  + $routeParams['id'] + ".json", data).
+		$http.put("api/goals/update/" + $routeParams['id'], data).
 		success(function (data, status, headers) {
-			if (data['message']['type'] == 'error') {
-				$scope.alerts.push({type: 'danger', msg: data['message']['text']});
-			}
-			if (data['message']['type'] == 'success') {
-				alertService.alerts.push({type: 'success', msg: data['message']['text']});
+			if (data.status == 'success') {
+				alertService.add(data.message, 'success');
 				$location.path('/goals');
+			} else {
+				alertService.add(data.message, 'danger');
 			}
 		}).
 		error(function (data, status, headers) {
-			$scope.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
+			alertService.add('Oh snap ! Something went wrong, please try again.', 'danger');
 		});
 	}
 });
 
-goalApp.controller('GoalManageCtrl', function ($scope, $rootScope, $http, $modal, $routeParams, $location, $route, alertService, modalService, SelectService) {
+goalApp.controller('GoalManageCtrl', function ($scope, $rootScope, $http,
+	$modal, $routeParams, $location, $route, alertService, modalService,
+	SelectService)
+{
 	$scope.alerts = alertService.alerts;
-	$scope.closeAlert = function(index) {
-		$scope.alerts.splice(index, 1);
-	};
-
 	$rootScope.pageTitle = "Manage Goal";
-
-	$scope.formdata = [];
-	$scope.goaldata = [];
 
 	$scope.priorities = SelectService.priorities;
 	$scope.difficulties = SelectService.difficulties;
+	$scope.categories = SelectService.categories;
 
-	$http.get('goals/' + $routeParams['id'] + '.json').
+	$scope.goal = [];
+
+	$http.get('api/goals/show/' + $routeParams['id']).
 	success(function(data, status, headers, config) {
-		$scope.goaldata = data['goal'];
+		if (data.status == 'success') {
+			$scope.goal = data.data.goal;
+		} else {
+			alertService.add(data.message, 'danger');
+			$location.path('/goals');
+		}
 	}).
 	error(function(data, status, headers, config) {
-		alertService.alerts.push({type: 'danger', msg: 'Goal not found'});
+		alertService.add('Oh snap ! Something went wrong, please try again.', 'danger');
 		$location.path('/goals');
 	});
-
-	/* Edit goal action */
-	$scope.editGoal = function(id) {
-		$location.path('/edit/' + id);
-	}
 
 	/* Add task action */
 	$scope.addTask = function() {
@@ -540,18 +534,19 @@ goalApp.controller('GoalManageCtrl', function ($scope, $rootScope, $http, $modal
 		};
 
 		modalService.showModal(modalDefaults, modalOptions).then(function (result) {
-			$http.delete('tasks/delete/' + id + '.json').
+			alertService.clear();
+			/* Send DELETE request to delete the task */
+			$http.delete('api/tasks/destroy/' + id).
 			success(function(data, status, headers, config) {
-				if (data['message']['type'] == 'error') {
-					alertService.alerts.push({type: 'danger', msg: data['message']['text']});
-				} else
-				if (data['message']['type'] == 'success') {
-					alertService.alerts.push({type: 'success', msg: data['message']['text']});
+				if (data.status == 'success') {
+					alertService.add(data.message, 'success');
+				} else {
+					alertService.add(data.message, 'danger');
 				}
 				$route.reload();
 			}).
 			error(function(data, status, headers, config) {
-				alertService.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
+				alertService.add('Oh snap! Change a few things up and try submitting again.', 'danger');
 				$route.reload();
 			});
 		});
@@ -561,18 +556,17 @@ goalApp.controller('GoalManageCtrl', function ($scope, $rootScope, $http, $modal
 	$scope.doneTask = function(id) {
 		alertService.alerts = [];
 
-		$http.post("tasks/done/" + id + ".json").
+		$http.post('api/tasks/done/' + id).
 		success(function (data, status, headers) {
-			if (data['message']['type'] == 'error') {
-				alertService.alerts.push({type: 'danger', msg: data['message']['text']});
-			}
-			if (data['message']['type'] == 'success') {
-				alertService.alerts.push({type: 'success', msg: data['message']['text']});
+			if (data.status == 'success') {
+				alertService.add(data.message, 'success');
+			} else {
+				alertService.add(data.message, 'danger');
 			}
 			$route.reload();
 		}).
 		error(function (data, status, headers) {
-			alertService.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
+			alertService.add('Oh snap! Change a few things up and try submitting again.', 'danger');
 			$route.reload();
 		});
 	};
@@ -804,17 +798,6 @@ var TaskEditModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, $h
 		$modalInstance.dismiss();
 	};
 };
-
-
-/********************************************************************/
-/***************************** DASHBOARD ****************************/
-/********************************************************************/
-
-goalApp.controller('DashboardCtrl', function ($scope, $rootScope, $cookieStore) {
-	$scope.formdata = [];
-
-	$rootScope.pageTitle = "Dashboard";
-});
 
 /********************************************************************/
 /***************************** TIMEWATCH ****************************/
@@ -1112,7 +1095,7 @@ goalApp.controller('NotesIndexCtrl', function ($scope, $rootScope, $http,
 	};
 });
 
-/* View note */
+/* Show note */
 goalApp.controller('NoteShowCtrl', function ($scope, $rootScope, $http,
 	$routeParams, $location, alertService, $sce)
 {

@@ -18,6 +18,8 @@ Route::get('/', function()
 
 Route::group(array('prefix' => 'api'), function()
 {
+	Route::controller('goals', 'GoalsController');
+	Route::controller('categories', 'CategoriesController');
 	Route::controller('notes', 'NotesController');
 	Route::controller('journals', 'JournalsController');
 });

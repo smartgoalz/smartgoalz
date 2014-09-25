@@ -1,31 +1,36 @@
 <div class="row" ng-controller="GoalManageCtrl">
-	<div class="col-lg-12">
-		<span class="view-title">{{ goaldata.Goal.title }}</span>
+	<div class="col-xs-12">
+		<span class="view-title">{{ goal.title }}</span>
 		<span class="small-margin"></span>
-		<a href='#/goals/edit/{{goaldata.Goal.id}}' ng-click="clearAlerts()"><span class="glyphicon glyphicon-pencil"></span></a>
+		<a href='#/goals/edit/{{goal.id}}'><span class="glyphicon glyphicon-pencil"></span></a>
 	</div>
 
-	<div class="col-lg-12">
-		<div>Start date : {{ goaldata.Goal.start_date | showDate }}</div>
-		<div>Due date : {{ goaldata.Goal.due_date | showDate }}</div>
-		<div>Priority : {{ priorities[goaldata.Goal.priority] }}</div>
-		<div>Difficulty : {{ difficulties[goaldata.Goal.difficulty] }}</div>
-		<div>Completed : {{ goaldata.Goal.task_completed }} / {{ goaldata.Goal.task_total }}</div>
+	<div class="col-xs-12">
+		<div class="goal-details">
+			<div>Start date : {{ goal.start_date | showDate }}</div>
+			<div>Due date : {{ goal.due_date | showDate }}</div>
+			<div>Category : {{ categories[goal.category_id] }}</div>
+			<div>Difficulty : {{ difficulties[goal.difficulty] }}</div>
+			<div>Priority : {{ priorities[goal.priority] }}</div>
+			<div>Completed : {{ goal.task_completed }} / {{ goal.task_total }}</div>
+			<div>Reason : {{ goal.reason }}</div>
+		</div>
 	</div>
 
-	<div class="col-lg-12" ng-show="alerts.length">
+	<div class="col-xs-12" ng-show="alerts.length">
 		<alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
 	</div>
 
-	<div class="col-lg-12">
-		<button class="btn btn-primary" ng-click="addTask()">Add Task</button>&nbsp;&nbsp;
-		<a href="#/goals" class="btn btn-info" ng-click="clearAlerts()">Cancel</a>
+	<div class="col-xs-12">
+		<button class="btn btn-primary" ng-click="addTask()">Add Task</button>
+		<span class="small-margin"></span>
+		<a href="#/goals" class="btn btn-info">Cancel</a>
 	</div>
 
-	<div class="col-lg-12" ng-hide="goaldata.Task.length">
+	<div class="col-xs-12" ng-hide="goaldata.Task.length">
 		<div>No tasks found. Please add a task to get started.</div>
 	</div>
-	<div class="col-lg-12" ng-show="goaldata.Task.length">
+	<div class="col-xs-12" ng-show="goaldata.Task.length">
 		<table class="table table-hover">
 			<thead>
 				<tr>

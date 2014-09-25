@@ -1,17 +1,17 @@
 <div class="row" ng-controller="GoalsIndexCtrl">
-	<div class="col-lg-12">
+	<div class="col-xs-12">
 		<div class="header-button">
-			<a href="#/goals/add" class="btn btn-info" ng-click="clearAlerts()">Add Goal</a>
+			<a href="#/goals/add" class="btn btn-info">Add Goal</a>
+		</div>
+
+		<div ng-show="alerts.length">
+			<alert ng-repeat="alert in alerts" type="{{alert.type}}">{{alert.msg}}</alert>
 		</div>
 
 		<div ng-hide="goals.length">No goals found. Please add a goal to get started.</div>
 
-		<div ng-show="alerts.length">
-			<alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
-		</div>
-
-		<div class="table-responsive">
-			<table class="table" ng-show="goals.length">
+		<div>
+			<table class="table table-hover" ng-show="goals.length">
 				<thead>
 					<tr>
 						<th>Goals</th>
@@ -25,17 +25,17 @@
 				</thead>
 				<tbody>
 					<tr ng-repeat="goal in goals">
-						<td><a href='#/goals/manage/{{goal.Goal.id}}' ng-click="clearAlerts()">{{ goal.Goal.title }}</a></td>
-						<td ng-if="goal.Goal.is_completed == false" class="text-center">{{ goal.Goal.task_completed }} / {{ goal.Goal.task_total }}</td>
-						<td ng-if="goal.Goal.is_completed == true" class="text-center"><span class="glyphicon glyphicon-ok"></span></td>
-						<td class="text-center">{{ categories[goal.Goal.category_id] }}</td>
-						<td class="text-center">{{ difficulties[goal.Goal.difficulty] }}</td>
-						<td class="text-center">{{ priorities[goal.Goal.priority] }}</td>
-						<td class="text-center">{{ goal.Goal.due_date | showDate }}</td>
+						<td><a href='#/goals/manage/{{goal.id}}'>{{ goal.title }}</a></td>
+						<td ng-if="goal.is_completed == false" class="text-center">{{ goal.task_completed }} / {{ goal.task_total }}</td>
+						<td ng-if="goal.is_completed == true" class="text-center"><span class="glyphicon glyphicon-ok"></span></td>
+						<td class="text-center">{{ categories[goal.category_id] }}</td>
+						<td class="text-center">{{ difficulties[goal.difficulty] }}</td>
+						<td class="text-center">{{ priorities[goal.priority] }}</td>
+						<td class="text-center">{{ goal.due_date | showDate }}</td>
 						<td class="text-left">
-							<a href='#/goals/edit/{{goal.Goal.id}}' ng-click="clearAlerts()"><span class="glyphicon glyphicon-pencil"></span></a>
+							<a href='#/goals/edit/{{goal.id}}'><span class="glyphicon glyphicon-pencil"></span></a>
 							<span class="small-margin"></span>
-							<a href='#/goals' ng-click="deleteGoal(goal.Goal.id)"><span class="glyphicon glyphicon-trash"></span></a>
+							<a href='#/goals' ng-click="deleteGoal(goal.id)"><span class="glyphicon glyphicon-trash"></span></a>
 						</td>
 					</tr>
 				</tbody>
