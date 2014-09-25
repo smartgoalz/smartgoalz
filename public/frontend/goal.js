@@ -32,8 +32,8 @@ goalApp.config(['$routeProvider', function($routeProvider) {
 	when('/notes', {
 		templateUrl: 'frontend/notes/index.html',
 	}).
-	when('/notes/view/:id', {
-		templateUrl: 'frontend/notes/view.html',
+	when('/notes/show/:id', {
+		templateUrl: 'frontend/notes/show.html',
 	}).
 	when('/notes/add', {
 		templateUrl: 'frontend/notes/add.html',
@@ -1054,19 +1054,24 @@ goalApp.controller('TimewatchEditCtrl', function ($scope, $rootScope, $cookieSto
 /********************************************************************/
 
 /* Show notes */
-goalApp.controller('NotesIndexCtrl', function ($scope, $rootScope, $http, $location, $modal, $window, $route, alertService, modalService) {
+goalApp.controller('NotesIndexCtrl', function ($scope, $rootScope, $http,
+	$location, $modal, $window, $route, alertService, modalService)
+{
 	$scope.alerts = alertService.alerts;
-	$scope.closeAlert = function(index) {
-		$scope.alerts.splice(index, 1);
-	};
-
 	$rootScope.pageTitle = "Notes";
+	$scope.notes = [];
 
-	$http.get('notes.json').
+	/* Fetch all notes */
+	$http.get('api/notes/index').
 	success(function(data, status, headers, config) {
-		$scope.notes = data['notes'];
+		if (data.status == 'success') {
+			$scope.notes = data.data.notes;
+		} else {
+			$scope.notes = [];
+		}
 	}).
 	error(function(data, status, headers, config) {
+		alertService.add('Oh snap ! Something went wrong, please try again.', 'danger');
 		$scope.notes = [];
 	});
 
@@ -1088,19 +1093,19 @@ goalApp.controller('NotesIndexCtrl', function ($scope, $rootScope, $http, $locat
 		};
 
 		modalService.showModal(modalDefaults, modalOptions).then(function (result) {
-			alertService.alerts = [];
-			$http.delete('notes/delete/' + id + '.json').
+			alertService.clear();
+			/* Send DELETE request to delete the note */
+			$http.delete('api/notes/destroy/' + id).
 			success(function(data, status, headers, config) {
-				if (data['message']['type'] == 'error') {
-					alertService.alerts.push({type: 'danger', msg: data['message']['text']});
-				} else
-				if (data['message']['type'] == 'success') {
-					alertService.alerts.push({type: 'success', msg: data['message']['text']});
+				if (data.status == 'success') {
+					alertService.add(data.message, 'success');
+				} else {
+					alertService.add(data.message, 'danger');
 				}
 				$route.reload();
 			}).
 			error(function(data, status, headers, config) {
-				alertService.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
+				alertService.add('Oh snap! Change a few things up and try submitting again.', 'danger');
 				$route.reload();
 			});
 		});
@@ -1108,93 +1113,111 @@ goalApp.controller('NotesIndexCtrl', function ($scope, $rootScope, $http, $locat
 });
 
 /* View note */
-goalApp.controller('NoteViewCtrl', function ($scope, $rootScope, $http, $modal, $routeParams, $location, $route, alertService, modalService) {
-	alertService.alerts = [];
-	$scope.closeAlert = function(index) {
-		$scope.alerts.splice(index, 1);
-	};
+goalApp.controller('NoteShowCtrl', function ($scope, $rootScope, $http,
+	$routeParams, $location, alertService, $sce)
+{
+	$scope.alerts = alertService.alerts;
+	$rootScope.pageTitle = "Show Note";
+	$scope.journal = [];
 
-	$scope.note = [];
-
-	$rootScope.pageTitle = "View Note";
-
-	$http.get('notes/' + $routeParams['id'] + '.json').
+	$http.get('api/notes/show/' + $routeParams['id']).
 	success(function(data, status, headers, config) {
-		$scope.note = data['note'];
+		if (data.status == 'success') {
+			$scope.note = data.data.note;
+		} else {
+			alertService.add(data.message, 'danger');
+			$location.path('/notes');
+		}
 	}).
 	error(function(data, status, headers, config) {
-		alertService.alerts.push({type: 'danger', msg: 'Note not found'});
-		$location.path('/notes');
+		alertService.add('Oh snap ! Something went wrong, please try again.', 'danger');
+		$location.path('/journals');
 	});
+
+	$scope.skipFilter = function(value) {
+		return $sce.trustAsHtml(value);
+	};
 });
 
 /* Add note */
-goalApp.controller('NoteAddCtrl', function ($scope, $rootScope, $http, $location, alertService) {
-	alertService.alerts = [];
-	$scope.closeAlert = function(index) {
-		$scope.alerts.splice(index, 1);
-	};
-
+goalApp.controller('NoteAddCtrl', function ($scope, $rootScope, $http,
+	$location, alertService)
+{
+	$scope.alerts = alertService.alerts;
+	$rootScope.pageTitle = "Add Note";
 	$scope.formdata = [];
 
-	$rootScope.pageTitle = "Add Note";
-
 	$scope.addNote = function() {
-		$scope.alerts = [];
+		alertService.clear();
 
 		var data = {
-			'Note' : {
+			'note' : {
 				title: $scope.formdata.Title,
 				note: $scope.formdata.Note,
 				pin_dashboard: $scope.formdata.PinDashboard,
 				pin_top: $scope.formdata.PinTop,
 			}
 		};
+		if ($scope.formdata.PinDashboard == 1)
+			data.note.pin_dashboard = true;
+		else
+			data.note.pin_dashboard = false;
+		if ($scope.formdata.PinTop == 1)
+			data.note.pin_top = true;
+		else
+			data.note.pin_top = false;
 
-		$http.post("notes/add.json", data).
+		$http.post("api/notes/create", data).
 		success(function (data, status, headers) {
-			if (data['message']['type'] == 'error') {
-				$scope.alerts.push({type: 'danger', msg: data['message']['text']});
-			}
-			if (data['message']['type'] == 'success') {
-				alertService.alerts.push({type: 'success', msg: data['message']['text']});
+			if (data.status == 'success') {
+				alertService.add(data.message, 'success');
 				$location.path('/notes');
+			} else {
+				alertService.add(data.message, 'danger');
 			}
 		}).
 		error(function (data, status, headers) {
-			$scope.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
+			alertService.add('Oh snap ! Something went wrong, please try again.', 'danger');
 		});
 	}
 });
 
 /* Edit note */
-goalApp.controller('NoteEditCtrl', function ($scope, $rootScope, $http, $routeParams, $location, alertService, SelectService) {
-	alertService.alerts = [];
-	$scope.closeAlert = function(index) {
-		$scope.alerts.splice(index, 1);
-	};
-
+goalApp.controller('NoteEditCtrl', function ($scope, $rootScope, $http,
+	$routeParams, $location, alertService, SelectService)
+{
+	$scope.alerts = alertService.alerts;
 	$rootScope.pageTitle = "Edit Note";
-
 	$scope.formdata = [];
 
-	$http.get('notes/' + $routeParams['id'] + '.json').
+	$http.get('api/notes/show/' + $routeParams['id']).
 	success(function(data, status, headers, config) {
-		$scope.formdata.Title = data['note']['Note']['title'];
-		$scope.formdata.Note = data['note']['Note']['note'];
-		$scope.formdata.PinDashboard = data['note']['Note']['pin_dashboard'];
-		$scope.formdata.PinTop = data['note']['Note']['pin_top'];
+		if (data.status == 'success') {
+			$scope.formdata.Title = data.data.note.title;
+			$scope.formdata.Note = data.data.note.note;
+			if (data.data.note.pin_dashboard == 1)
+				$scope.formdata.PinDashboard = true;
+			else
+				$scope.formdata.PinDashboard = false;
+			if (data.data.note.pin_top == 1)
+				$scope.formdata.PinTop = true;
+			else
+				$scope.formdata.PinTop = false;
+		} else {
+			alertService.add(data.message, 'danger');
+			$location.path('/notes');
+		}
 	}).
 	error(function(data, status, headers, config) {
-		alertService.alerts.push({type: 'danger', msg: 'Note not found'});
+		alertService.add('Oh snap ! Something went wrong, please try again.', 'danger');
 		$location.path('/notes');
 	});
 
 	$scope.editNote = function() {
-		$scope.alerts = [];
+		alertService.clear();
 
 		var data = {
-			'Note' : {
+			'note' : {
 				title: $scope.formdata.Title,
 				note: $scope.formdata.Note,
 				pin_dashboard: $scope.formdata.PinDashboard,
@@ -1202,18 +1225,17 @@ goalApp.controller('NoteEditCtrl', function ($scope, $rootScope, $http, $routePa
 			}
 		};
 
-		$http.post("notes/edit/" +  + $routeParams['id'] + ".json", data).
+		$http.put("api/notes/update/" + $routeParams['id'], data).
 		success(function (data, status, headers) {
-			if (data['message']['type'] == 'error') {
-				$scope.alerts.push({type: 'danger', msg: data['message']['text']});
-			}
-			if (data['message']['type'] == 'success') {
-				alertService.alerts.push({type: 'success', msg: data['message']['text']});
+			if (data.status == 'success') {
+				alertService.add(data.message, 'success');
 				$location.path('/notes');
+			} else {
+				alertService.add(data.message, 'danger');
 			}
 		}).
 		error(function (data, status, headers) {
-			$scope.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
+			alertService.add('Oh snap ! Something went wrong, please try again.', 'danger');
 		});
 	}
 });
@@ -1231,7 +1253,7 @@ goalApp.controller('JournalsIndexCtrl', function ($scope, $rootScope, $http,
 	$scope.journals = [];
 
 	/* Fetch all journal entries */
-	$http.get('api/journal/index').
+	$http.get('api/journals/index').
 	success(function(data, status, headers, config) {
 		if (data.status == 'success') {
 			$scope.journals = data.data.journals;
@@ -1264,7 +1286,7 @@ goalApp.controller('JournalsIndexCtrl', function ($scope, $rootScope, $http,
 		modalService.showModal(modalDefaults, modalOptions).then(function (result) {
 			alertService.clear();
 			/* Send DELETE request to delete the journal entry */
-			$http.delete('api/journal/destroy/' + id).
+			$http.delete('api/journals/destroy/' + id).
 			success(function(data, status, headers, config) {
 				if (data.status == 'success') {
 					alertService.add(data.message, 'success');
@@ -1289,7 +1311,7 @@ goalApp.controller('JournalShowCtrl', function ($scope, $rootScope, $http,
 	$rootScope.pageTitle = "Show Journal Entry";
 	$scope.journal = [];
 
-	$http.get('api/journal/show/' + $routeParams['id']).
+	$http.get('api/journals/show/' + $routeParams['id']).
 	success(function(data, status, headers, config) {
 		if (data.status == 'success') {
 			$scope.journal = data.data.journal;
@@ -1309,7 +1331,9 @@ goalApp.controller('JournalShowCtrl', function ($scope, $rootScope, $http,
 });
 
 /* Add journal entry */
-goalApp.controller('JournalAddCtrl', function ($scope, $rootScope, $http, $location, alertService) {
+goalApp.controller('JournalAddCtrl', function ($scope, $rootScope, $http,
+	$location, alertService)
+{
 	$scope.alerts = alertService.alerts;
 	$rootScope.pageTitle = "Add Journal Entry";
 	$scope.formdata = [];
@@ -1326,7 +1350,7 @@ goalApp.controller('JournalAddCtrl', function ($scope, $rootScope, $http, $locat
 			}
 		};
 
-		$http.post("api/journal/create", data).
+		$http.post("api/journals/create", data).
 		success(function (data, status, headers) {
 			if (data.status == 'success') {
 				alertService.add(data.message, 'success');
@@ -1349,7 +1373,7 @@ goalApp.controller('JournalEditCtrl', function ($scope, $rootScope, $http,
 	$rootScope.pageTitle = "Edit Journal Entry";
 	$scope.formdata = [];
 
-	$http.get('api/journal/show/' + $routeParams['id']).
+	$http.get('api/journals/show/' + $routeParams['id']).
 	success(function(data, status, headers, config) {
 		if (data.status == 'success') {
 			$scope.formdata.Title = data.data.journal.title;
@@ -1376,7 +1400,7 @@ goalApp.controller('JournalEditCtrl', function ($scope, $rootScope, $http,
 			}
 		};
 
-		$http.put("api/journal/update/" + $routeParams['id'], data).
+		$http.put("api/journals/update/" + $routeParams['id'], data).
 		success(function (data, status, headers) {
 			if (data.status == 'success') {
 				alertService.add(data.message, 'success');

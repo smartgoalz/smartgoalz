@@ -1,12 +1,12 @@
 <?php
 
-use Smartgoalz\Gateways\JournalGateway;
+use Smartgoalz\Gateways\NoteGateway;
 
-class JournalController extends BaseController {
+class NotesController extends BaseController {
 
-	public function __construct(JournalGateway $journalGateway)
+	public function __construct(NoteGateway $noteGateway)
 	{
-		$this->journalGateway = $journalGateway;
+		$this->noteGateway = $noteGateway;
 	}
 
 	/**
@@ -16,7 +16,7 @@ class JournalController extends BaseController {
 	 */
 	public function getIndex()
 	{
-		return Response::json($this->journalGateway->getAll());
+		return Response::json($this->noteGateway->getAll());
 	}
 
 	/**
@@ -27,7 +27,7 @@ class JournalController extends BaseController {
 	 */
 	public function getShow($id)
 	{
-		return Response::json($this->journalGateway->get($id));
+		return Response::json($this->noteGateway->get($id));
 	}
 
 	/**
@@ -37,7 +37,7 @@ class JournalController extends BaseController {
 	 */
 	public function postCreate()
 	{
-		return Response::json($this->journalGateway->create(Input::all()));
+		return Response::json($this->noteGateway->create(Input::all()));
 	}
 
 	/**
@@ -48,7 +48,7 @@ class JournalController extends BaseController {
 	 */
 	public function putUpdate($id)
 	{
-		return Response::json($this->journalGateway->update($id, Input::all()));
+		return Response::json($this->noteGateway->update($id, Input::all()));
 	}
 
 	/**
@@ -59,6 +59,6 @@ class JournalController extends BaseController {
 	 */
 	public function deleteDestroy($id)
 	{
-		return Response::json($this->journalGateway->destroy($id));
+		return Response::json($this->noteGateway->destroy($id));
 	}
 }

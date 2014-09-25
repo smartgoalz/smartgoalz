@@ -10,8 +10,4 @@ class JournalPresenter extends BasePresenter
                 $this->resource = $journal;
         }
 
-        public function dateme(Journal $journal)
-        {
-                return 'Hello, ' . $this->resource->date . ' I am the presenter';
-        }
 }

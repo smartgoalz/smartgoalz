@@ -16,9 +16,10 @@ Route::get('/', function()
 	return View::make('hello');
 });
 
-Route::controller('testing', 'TestingController');;
-
 Route::group(array('prefix' => 'api'), function()
 {
-	Route::controller('journal', 'JournalController');
+	Route::controller('notes', 'NotesController');
+	Route::controller('journals', 'JournalsController');
 });
+
+Route::controller('testing', 'TestingController');

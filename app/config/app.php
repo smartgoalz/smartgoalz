@@ -126,6 +126,7 @@ return array(
 		'McCool\LaravelAutoPresenter\LaravelAutoPresenterServiceProvider',
 		'Smartgoalz\ServiceProviders\ValidationServiceProvider',
 		'Smartgoalz\ServiceProviders\JournalServiceProvider',
+		'Smartgoalz\ServiceProviders\NoteServiceProvider',
 	),
 
 	/*
