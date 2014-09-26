@@ -17,9 +17,23 @@ class Task extends Eloquent
 	 */
         protected $hidden = ['goal_id', 'updated_at', 'deleted_at'];
 
-	protected $fillable = array('title', 'start_date', 'due_date', 'is_completed',
-		'completion_date', 'reminder_time', 'notes');
+	protected $fillable = array('title', 'goal_id', 'start_date', 'due_date', 'is_completed',
+		'completion_date', 'notes', 'weight');
 
-	protected $guarded = array('id', 'goal_id');
+	protected $guarded = array('id', 'timewatch_count');
 
+	/* Recalculate weights for all task belonging to a goal */
+	public static function recalculateWeights($goal_id)
+	{
+		$step_size = 100000;
+
+		$tasks = Task::where('goal_id', $goal_id)->orderBy('weight', 'ASC')->get();
+
+		$step = $step_size;
+		foreach ($tasks as $task) {
+			$task->weight = $step;
+			$step += $step_size;
+			$task->save();
+		}
+	}
 }

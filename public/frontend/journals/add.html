@@ -23,7 +23,7 @@
 				<div class="form-group">
 					<label for="inputDate">Date</label>
 					<div class="input-group">
-						<input type="text" class="form-control" datepicker-popup="{{calendar.dateFormat}}" ng-model="formdata.Date" is-open="calendar.opened.Date" datepicker-options="calendar.dateOptions" close-text="Close" placeholder="Date" ng-click="calendar.open($event, 'Date')" ng-required="true" />
+						<input type="text" class="form-control" datepicker-popup="{{calendar.dateFormat}}" ng-model="formdata.Date" is-open="calendar.opened.Date" datepicker-options="calendar.dateOptions" close-text="Close" placeholder="Date" ng-click="calendar.open($event, 'Date')" ng-required="true">
 						<span class="input-group-btn">
 							<button type="button" class="btn btn-default" ng-click="calendar.open($event, 'Date')"><i class="glyphicon glyphicon-calendar"></i></button>
 						</span>
@@ -43,7 +43,7 @@
 		<div class="row">
 			<div class="col-xs-8">
 				<div>
-					<button class="btn btn-primary" ng-click="addJournal()" ng-disabled="appForm.$invalid">Submit</button>
+					<button class="btn btn-primary" ng-click="addJournal()">Submit</button>
 					<a href="#/journals" class="btn btn-info">Cancel</a>
 				</div>
 			</div>

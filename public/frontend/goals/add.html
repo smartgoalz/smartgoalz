@@ -22,7 +22,7 @@
 				<div class="form-group">
 					<label for="inputStartdate">Start date</label>
 					<div class="input-group">
-						<input type="text" class="form-control" datepicker-popup="{{calendar.dateFormat}}" ng-model="formdata.Startdate" is-open="calendar.opened.Startdate" datepicker-options="calendar.dateOptions" close-text="Close" placeholder="Start date" id="inputStartdate" ng-click="calendar.open($event, 'Startdate')" ng-required="true" />
+						<input type="text" class="form-control" datepicker-popup="{{calendar.dateFormat}}" ng-model="formdata.Startdate" is-open="calendar.opened.Startdate" datepicker-options="calendar.dateOptions" close-text="Close" placeholder="Start date" id="inputStartdate" ng-click="calendar.open($event, 'Startdate')" ng-required="true">
 						<span class="input-group-btn">
 							<button type="button" class="btn btn-default" ng-click="calendar.open($event, 'Startdate')"><i class="glyphicon glyphicon-calendar"></i></button>
 						</span>
@@ -36,7 +36,7 @@
 				<div class="form-group">
 					<label for="inputDuedate">Due date</label>
 					<div class="input-group">
-						<input type="text" class="form-control" datepicker-popup="{{calendar.dateFormat}}" ng-model="formdata.Duedate" is-open="calendar.opened.Duedate" datepicker-options="calendar.dateOptions" close-text="Close" placeholder="Due date" id="inputDuedate" ng-click="calendar.open($event, 'Duedate')" ng-required="true" />
+						<input type="text" class="form-control" datepicker-popup="{{calendar.dateFormat}}" ng-model="formdata.Duedate" is-open="calendar.opened.Duedate" datepicker-options="calendar.dateOptions" close-text="Close" placeholder="Due date" id="inputDuedate" ng-click="calendar.open($event, 'Duedate')" ng-required="true">
 						<span class="input-group-btn">
 							<button type="button" class="btn btn-default" ng-click="calendar.open($event, 'Duedate')"><i class="glyphicon glyphicon-calendar"></i></button>
 						</span>
@@ -89,7 +89,7 @@
 		<div class="row">
 			<div class="col-xs-8">
 				<div>
-					<button class="btn btn-primary" ng-click="addGoal()" ng-disabled="appForm.$invalid">Submit</button>
+					<button class="btn btn-primary" ng-click="addGoal()">Submit</button>
 					<a href="#/goals" class="btn btn-info">Cancel</a>
 				</div>
 			</div>

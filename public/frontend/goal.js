@@ -97,14 +97,9 @@ goalApp.factory('SelectService', function($http, $q, $cookieStore) {
 		return {1: 'Very Hard', 2: 'Hard', 3: 'Normal', 4: 'Easy', 5: 'Very Easy'};
 	}
 
-	var reminders = function() {
-		return {1: 'Before due date', 2: 'Weekly', 3: 'Daily', 4: 'Never'};
-	};
-
 	return {
 		priorities : priorities(),
 		difficulties : difficulties(),
-		reminders : reminders(),
 		categories: categories(),
 	};
 });
@@ -454,6 +449,7 @@ goalApp.controller('GoalManageCtrl', function ($scope, $rootScope, $http,
 	$scope.categories = SelectService.categories;
 
 	$scope.goal = [];
+	$scope.tasks = [];
 
 	$http.get('api/goals/show/' + $routeParams['id']).
 	success(function(data, status, headers, config) {
@@ -491,9 +487,13 @@ goalApp.controller('GoalManageCtrl', function ($scope, $rootScope, $http,
 		var TaskAddModalInstance = $modal.open({
 			templateUrl: 'frontend/tasks/add.html',
 			controller: TaskAddModalInstanceCtrl,
+			scope: $scope,
 			resolve: {
-				goaldata: function () {
-					return $scope.goaldata;
+				goal: function () {
+					return $scope.goal;
+				},
+				tasks: function () {
+					return $scope.tasks;
 				}
 			}
 		});
@@ -512,9 +512,13 @@ goalApp.controller('GoalManageCtrl', function ($scope, $rootScope, $http,
 		var TaskEditModalInstance = $modal.open({
 			templateUrl: 'frontend/tasks/edit.html',
 			controller: TaskEditModalInstanceCtrl,
+			scope: $scope,
 			resolve: {
-				goaldata: function () {
-					return $scope.goaldata;
+				goal: function () {
+					return $scope.goal;
+				},
+				tasks: function () {
+					return $scope.tasks;
 				},
 				id : function () {
 					return id;
@@ -570,7 +574,7 @@ goalApp.controller('GoalManageCtrl', function ($scope, $rootScope, $http,
 	$scope.doneTask = function(id) {
 		alertService.clear();
 
-		$http.post('api/tasks/done/' + id).
+		$http.put('api/tasks/done/' + id).
 		success(function (data, status, headers) {
 			if (data.status == 'success') {
 				alertService.add(data.message, 'success');
@@ -587,116 +591,58 @@ goalApp.controller('GoalManageCtrl', function ($scope, $rootScope, $http,
 });
 
 /* Task add modal */
-var TaskAddModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, $http, alertService, SelectService, goaldata) {
-	$scope.alerts = [];
+var TaskAddModalInstanceCtrl = function ($scope, $rootScope, $modalInstance,
+	$http, alertService, goal, tasks)
+{
+	$scope.alerts = alertService.alerts;
+	$scope.goal = goal;
+	/* Do a deep copy, else below unshift operation will add to original tasks */
+	$scope.tasks = angular.copy(tasks);
+	$scope.tasks.unshift({'id': 0, 'title': '(None)'});
+	$scope.modalAlerts = [];
+
+	/* Initial values of form items */
 	$scope.formdata = [];
-	$scope.goaldata = goaldata;
-
-	$scope.modalCalendar = {
-		opened: {},
-		dateFormat: $rootScope.dateFormat,
-		dateOptions: {},
-
-		open: function($event, which) {
-			$event.preventDefault();
-			$event.stopPropagation();
-			$scope.modalCalendar.opened[which] = true;
-		}
-	};
-
-	/* Copy from parent */
-	$scope.modalDateToSQL = function(input) {
-		if (!input) {
-			return '';
-		}
-		return input.toString("yyyy-MM-dd HH:mm:ss");
-	}
-
-	$scope.reminders = SelectService.reminders;
+	$scope.formdata.Title = '';
+	$scope.formdata.Prev = 0;
+	$scope.formdata.Startdate = new Date();
+	$scope.formdata.Duedate = new Date();
+	$scope.formdata.Completed = 0;
+	$scope.formdata.Completiondate = new Date();
+	$scope.formdata.Notes = '';
 
 	$scope.addTask = function () {
-		$scope.alerts = [];
-
-		/* Calculating weight */
-		weight = 0;
-		recalulate_weights = false;
-		if ($scope.goaldata.Task.length == 0) {
-			/* First task */
-			weight = 1000000;
-		} else
-		if (!$scope.formdata.Prev) {
-			/* No parent selected, before first task */
-			weight = Math.floor(parseInt(goaldata.Task[0].weight) / 2);
-		} else {
-			found = false;
-			prev_id = -1;
-			next_id = -1;
-			for (var c = 0, len = goaldata.Task.length; c < len; c++) {
-				if (found == true) {
-					next_id = c;
-					break;
-				}
-				prev_id = c;
-				if (goaldata.Task[c].id == $scope.formdata.Prev) {
-					found = true;
-					continue;
-				}
-			}
-			if (prev_id == -1 && next_id == -1) {
-				/* Not going to happen */
-				weight = 1000000;
-			} else
-			if (next_id == -1) {
-				/* Last task */
-				weight = parseInt(goaldata.Task[prev_id].weight) + 1000000;
-			} else {
-				/* Inbetween prev and next task */
-				difference = Math.floor(
-					(parseInt(goaldata.Task[next_id].weight) - parseInt(goaldata.Task[prev_id].weight)) / 2
-				);
-				weight = parseInt(goaldata.Task[prev_id].weight) + difference;
-				if (difference < 10) {
-					recalulate_weights = true;
-				}
-			}
-		}
+		alertService.clear();
 
 		var data = {
-			'Task' : {
-				goal_id: goaldata.Goal.id,
+			'task' : {
+				goal_id: goal.id,
 				title: $scope.formdata.Title,
-				start_date: $scope.modalDateToSQL($scope.formdata.Startdate),
-				due_date: $scope.modalDateToSQL($scope.formdata.Duedate),
-				weight: weight,
-				reminder_time: $scope.formdata.Reminder,
+				prev: $scope.formdata.Prev,
+				start_date: $scope.dateToSQLNoTime($scope.formdata.Startdate),
+				due_date: $scope.dateToSQLNoTime($scope.formdata.Duedate),
 				is_completed: $scope.formdata.Completed,
-				completion_date: $scope.modalDateToSQL($scope.formdata.Completiondate),
+				completion_date: $scope.dateToSQLNoTime($scope.formdata.Completiondate),
 				notes: $scope.formdata.Notes,
 			}
 		};
 
-		$http.post("tasks/add.json", data).
+		$http.post("api/tasks/create", data).
 		success(function (data, status, headers) {
-
-			if (recalulate_weights == true) {
-				var recaldata = {
-					'Task' : {
-						goal_id: goaldata.Goal.id,
-					}
-				};
-				$http.post("tasks/recalculate.json", recaldata);
-			}
-
-			if (data['message']['type'] == 'error') {
-				$scope.alerts.push({type: 'danger', msg: data['message']['text']});
-			}
-			if (data['message']['type'] == 'success') {
-				alertService.alerts.push({type: 'success', msg: data['message']['text']});
+			if (data.status == 'success') {
+				alertService.add(data.message, 'success');
 				$modalInstance.close();
+			} else {
+				for (var key in data.message) {
+					var eachmsg = data.message[key];
+					for (var index in eachmsg) {
+						$scope.modalAlerts.push({'msg': eachmsg[index]});
+					}
+				}
 			}
 		}).
 		error(function (data, status, headers) {
-			$scope.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
+			$scope.modalAlerts.push({'msg' : 'Oh snap! Change a few things up and try submitting again.'});
 		});
 	};
 
@@ -706,105 +652,79 @@ var TaskAddModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, $ht
 };
 
 /* Task edit modal */
-var TaskEditModalInstanceCtrl = function ($scope, $rootScope, $modalInstance, $http, alertService, SelectService, goaldata, id) {
-	$scope.alerts = [];
+var TaskEditModalInstanceCtrl = function ($scope, $rootScope, $modalInstance,
+	$http, alertService, goal, tasks, id)
+{
+	$scope.alerts = alertService.alerts;
+	$scope.goal = goal;
+	/* Do a deep copy, else below unshift operation will add to original tasks */
+	$scope.tasks = angular.copy(tasks);
+	$scope.tasks.unshift({'id': 0, 'title': '(None)'});
+	$scope.id = id;
 	$scope.formdata = [];
-	$scope.goaldata = goaldata;
-	$scope.taskid = id;
-	alertService.alerts = [];
+	$scope.modalAlerts = [];
 
-	/* Copy from parent */
-	$scope.modalCalendar = {
-		opened: {},
-		dateFormat: $rootScope.dateFormat,
-		dateOptions: {},
-
-		open: function($event, which) {
-			$event.preventDefault();
-			$event.stopPropagation();
-			$scope.modalCalendar.opened[which] = true;
-		}
-	};
-
-	/* Copy from parent - return actual javascript date */
-	$scope.modaldateToJSDate = function(input) {
-		if (!input) {
-			return '';
-		}
-		jsdate = new Date(input.replace(/(.+) (.+)/, "$1T$2Z"));
-		return jsdate;
-	}
-
-	/* Copy from parent */
-	$scope.modalDateToSQL = function(input) {
-		if (!input) {
-			return '';
-		}
-		return input.toString("yyyy-MM-dd HH:mm:ss");
-	}
-
-	$scope.reminders = SelectService.reminders;
-
-	var found = false;
-	var task = [];
-	for (var c = 0, len = goaldata.Task.length; c < len; c++) {
-		if (goaldata.Task[c].id == id) {
-			found = true;
-			var task = goaldata.Task[c];
+	/* Locate task */
+	var task;
+	var prev_id = 0;
+	for (var c = 0, len = tasks.length; c < len; c++) {
+		if (tasks[c].id == id) {
+			task = tasks[c];
 			break;
 		}
+		prev_id = tasks[c].id;
 	}
 
-	if (found) {
-			/**
-			 * BUG : There is some issue in modal edit window - modaldateToJSDate() has to return
-			 * a javascript date and not the string format as in parent. It throws a 'undefined a'
-			 * in the browser console and the date is NAN if no other changes are made and the
-			 * modal window is submitted. Ouch !
-			 */
-			$scope.formdata.Title = task.title;
-			$scope.formdata.Prev = task.prev_id;
-			$scope.formdata.Startdate = $scope.modaldateToJSDate(task.start_date);
-			$scope.formdata.Duedate = $scope.modaldateToJSDate(task.due_date);
-			$scope.formdata.Reminder = task.reminder_time;
-			$scope.formdata.Completed = task.is_completed;
-			$scope.formdata.Completiondate = $scope.modaldateToJSDate(task.completion_date);
-			$scope.formdata.Notes = task.notes;
+	if (task) {
+		$scope.formdata.Title = task.title;
+		$scope.formdata.Prev = prev_id;
+		$scope.formdata.Startdate = $scope.dateToJS(task.start_date);
+		$scope.formdata.Duedate = $scope.dateToJS(task.due_date);
+		if (task.is_completed == 1) {
+			$scope.formdata.Completed = true;
+			$scope.formdata.Completiondate = $scope.dateToJS(task.completion_date);
+		} else {
+			$scope.formdata.Completed = false;
+			$scope.formdata.Completiondate = new Date();
+		}
+		$scope.formdata.Notes = task.notes;
 	} else {
 		$scope.formdata = [];
-		alertService.alerts.push({type: 'danger', msg: 'Task not found'});
+		alertService.add('Task not found.', 'danger');
 		$modalInstance.dismiss();
 	}
 
 	$scope.editTask = function () {
-		$scope.alerts = [];
+		alertService.clear();
 
 		var data = {
-			'Task' : {
-				goal_id: goaldata.Goal.id,
+			'task' : {
 				title: $scope.formdata.Title,
-				start_date: $scope.modalDateToSQL($scope.formdata.Startdate),
-				due_date: $scope.modalDateToSQL($scope.formdata.Duedate),
-				prev_id: $scope.formdata.Prev,
-				reminder_time: $scope.formdata.Reminder,
+				start_date: $scope.dateToSQLNoTime($scope.formdata.Startdate),
+				due_date: $scope.dateToSQLNoTime($scope.formdata.Duedate),
+				prev: $scope.formdata.Prev,
 				is_completed: $scope.formdata.Completed,
-				completion_date: $scope.modalDateToSQL($scope.formdata.Completiondate),
+				completion_date: $scope.dateToSQLNoTime($scope.formdata.Completiondate),
 				notes: $scope.formdata.Notes,
 			}
 		};
 
-		$http.post("tasks/edit/" + id + ".json", data).
+		$http.put("api/tasks/update/" + id, data).
 		success(function (data, status, headers) {
-			if (data['message']['type'] == 'error') {
-				$scope.alerts.push({type: 'danger', msg: data['message']['text']});
-			}
-			if (data['message']['type'] == 'success') {
-				alertService.alerts.push({type: 'success', msg: data['message']['text']});
+			if (data.status == 'success') {
+				alertService.add(data.message, 'success');
 				$modalInstance.close();
+			} else {
+				for (var key in data.message) {
+					var eachmsg = data.message[key];
+					for (var index in eachmsg) {
+						$scope.modalAlerts.push({'msg': eachmsg[index]});
+					}
+				}
 			}
 		}).
 		error(function (data, status, headers) {
-			$scope.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
+			$scope.modalAlerts.push({'msg' : 'Oh snap! Change a few things up and try submitting again.'});
 		});
 	};
 

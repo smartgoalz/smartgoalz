@@ -21,7 +21,7 @@ class Goal extends Eloquent
 		'due_date', 'difficulty', 'priority', 'reason');
 
 	protected $guarded = array('id', 'user_id', 'task_total', 'task_completed',
-		'task_reweight', 'is_completed', 'completion_date');
+		'is_completed', 'completion_date');
 
 	use SoftDeletingTrait;
 

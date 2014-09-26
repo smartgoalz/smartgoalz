@@ -78,4 +78,5 @@ h3.modal-title-confirm {
 	border: 2px solid #FFFFFF;
 	border-radius: 15px;
 	box-shadow: 10px 10px 5px #888888;
+	font-style: italic;
 }
