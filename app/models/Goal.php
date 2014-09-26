@@ -1,6 +1,7 @@
 <?php
 
-class Goal extends Eloquent {
+class Goal extends Eloquent
+{
 
 	/**
 	 * The database table used by the model.

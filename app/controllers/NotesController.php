@@ -1,12 +1,15 @@
 <?php
 
-use Smartgoalz\Gateways\NoteGateway;
+use Smartgoalz\Services\Validators\NoteValidator;
 
-class NotesController extends BaseController {
+class NotesController extends BaseController
+{
 
-	public function __construct(NoteGateway $noteGateway)
+	protected $noteValidator;
+
+	public function __construct(NoteValidator $noteValidator)
 	{
-		$this->noteGateway = $noteGateway;
+		$this->noteValidator = $noteValidator;
 	}
 
 	/**
@@ -16,7 +19,20 @@ class NotesController extends BaseController {
 	 */
 	public function getIndex()
 	{
-		return Response::json($this->noteGateway->getAll());
+		$data = Note::curUser()->orderBy('created_at', 'DESC')->get();
+
+		if ($data)
+		{
+			return Response::json(array(
+				'status' => 'success',
+				'data' => array('notes' => $data)
+			));
+		} else {
+			return Response::json(array(
+				'status' => 'error',
+				'message' => 'Notes not found.'
+			));
+		}
 	}
 
 	/**
@@ -27,7 +43,20 @@ class NotesController extends BaseController {
 	 */
 	public function getShow($id)
 	{
-		return Response::json($this->noteGateway->get($id));
+		$data = Note::curUser()->find($id);
+
+		if ($data)
+		{
+			return Response::json(array(
+				'status' => 'success',
+				'data' => array('note' => $data)
+			));
+		} else {
+			return Response::json(array(
+				'status' => 'error',
+				'message' => 'Note not found.'
+			));
+		}
 	}
 
 	/**
@@ -37,7 +66,30 @@ class NotesController extends BaseController {
 	 */
 	public function postCreate()
 	{
-		return Response::json($this->noteGateway->create(Input::all()));
+		$data = Input::get('note');
+
+		$this->noteValidator->with($data);
+
+		if ($this->noteValidator->passes())
+		{
+			if (Note::create($data))
+			{
+				return Response::json(array(
+					'status' => 'success',
+					'message' => 'Note created.'
+				));
+			} else {
+				return Response::json(array(
+					'status' => 'error',
+					'message' => 'Oops ! Failed to create note.'
+				));
+			}
+		} else {
+			return Response::json(array(
+				'status' => 'error',
+				'message' => $this->noteValidator->getErrors()
+			));
+		}
 	}
 
 	/**
@@ -48,7 +100,45 @@ class NotesController extends BaseController {
 	 */
 	public function putUpdate($id)
 	{
-		return Response::json($this->noteGateway->update($id, Input::all()));
+                $note = Note::curUser()->find($id);
+                if (!$note)
+		{
+			return Response::json(array(
+				'status' => 'error',
+				'message' => 'Oops ! Note not found.'
+			));
+                }
+
+		$data = Input::get('note');
+
+		$this->noteValidator->with($data);
+
+		if ($this->noteValidator->passes())
+		{
+			/* Update data */
+	                $note->title = $data['title'];
+	                $note->pin_dashboard = $data['pin_dashboard'];
+	                $note->pin_top = $data['pin_top'];
+	                $note->note = $data['note'];
+
+			if ($note->save())
+			{
+				return Response::json(array(
+					'status' => 'success',
+					'message' => 'Note updated.'
+				));
+			} else {
+				return Response::json(array(
+					'status' => 'error',
+					'message' => 'Oops ! Failed to update note.'
+				));
+			}
+		} else {
+			return Response::json(array(
+				'status' => 'error',
+				'message' => $this->noteValidator->getErrors()
+			));
+		}
 	}
 
 	/**
@@ -59,6 +149,26 @@ class NotesController extends BaseController {
 	 */
 	public function deleteDestroy($id)
 	{
-		return Response::json($this->noteGateway->destroy($id));
+                $note = Note::curUser()->find($id);
+                if (!$note)
+		{
+			return Response::json(array(
+				'status' => 'error',
+				'message' => 'Oops ! Note not found.'
+			));
+                }
+
+                if ($note->delete())
+		{
+			return Response::json(array(
+				'status' => 'success',
+				'message' => 'Note deleted.'
+			));
+		} else {
+			return Response::json(array(
+				'status' => 'error',
+				'message' => 'Oops ! Failed to delete note.'
+			));
+		}
 	}
 }

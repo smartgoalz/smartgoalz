@@ -1,6 +1,7 @@
 <?php
 
-class Category extends Eloquent {
+class Category extends Eloquent
+{
 
 	/**
 	 * The database table used by the model.

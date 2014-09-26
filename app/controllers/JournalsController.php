@@ -1,12 +1,15 @@
 <?php
 
-use Smartgoalz\Gateways\JournalGateway;
+use Smartgoalz\Services\Validators\JournalValidator;
 
-class JournalsController extends BaseController {
+class JournalsController extends BaseController
+{
 
-	public function __construct(JournalGateway $journalGateway)
+	protected $journalValidator;
+
+	public function __construct(JournalValidator $journalValidator)
 	{
-		$this->journalGateway = $journalGateway;
+		$this->journalValidator = $journalValidator;
 	}
 
 	/**
@@ -16,7 +19,20 @@ class JournalsController extends BaseController {
 	 */
 	public function getIndex()
 	{
-		return Response::json($this->journalGateway->getAll());
+		$data = Journal::curUser()->orderBy('created_at', 'DESC')->get();
+
+		if ($data)
+		{
+			return Response::json(array(
+				'status' => 'success',
+				'data' => array('journals' => $data)
+			));
+		} else {
+			return Response::json(array(
+				'status' => 'error',
+				'message' => 'Journal entries not found.'
+			));
+		}
 	}
 
 	/**
@@ -27,7 +43,20 @@ class JournalsController extends BaseController {
 	 */
 	public function getShow($id)
 	{
-		return Response::json($this->journalGateway->get($id));
+		$data = Journal::curUser()->find($id);
+
+		if ($data)
+		{
+			return Response::json(array(
+				'status' => 'success',
+				'data' => array('journal' => $data)
+			));
+		} else {
+			return Response::json(array(
+				'status' => 'error',
+				'message' => 'Journal entry not found.'
+			));
+		}
 	}
 
 	/**
@@ -37,7 +66,30 @@ class JournalsController extends BaseController {
 	 */
 	public function postCreate()
 	{
-		return Response::json($this->journalGateway->create(Input::all()));
+		$data = Input::get('journal');
+
+		$this->journalValidator->with($data);
+
+		if ($this->journalValidator->passes())
+		{
+			if (Journal::create($data))
+			{
+				return Response::json(array(
+					'status' => 'success',
+					'message' => 'Journal entry created.'
+				));
+			} else {
+				return Response::json(array(
+					'status' => 'error',
+					'message' => 'Oops ! Failed to create journal entry.'
+				));
+			}
+		} else {
+			return Response::json(array(
+				'status' => 'error',
+				'message' => $this->journalValidator->getErrors()
+			));
+		}
 	}
 
 	/**
@@ -48,7 +100,44 @@ class JournalsController extends BaseController {
 	 */
 	public function putUpdate($id)
 	{
-		return Response::json($this->journalGateway->update($id, Input::all()));
+                $journal = Journal::curUser()->find($id);
+                if (!$journal)
+		{
+			return Response::json(array(
+				'status' => 'error',
+				'message' => 'Oops ! Journal entry not found.'
+			));
+                }
+
+		$data = Input::get('journal');
+
+		$this->journalValidator->with($data);
+
+		if ($this->journalValidator->passes())
+		{
+			/* Update data */
+	                $journal->title = $data['title'];
+	                $journal->date = $data['date'];
+	                $journal->entry = $data['entry'];
+
+			if ($journal->save())
+			{
+				return Response::json(array(
+					'status' => 'success',
+					'message' => 'Journal entry updated.'
+				));
+			} else {
+				return Response::json(array(
+					'status' => 'error',
+					'message' => 'Oops ! Failed to update journal entry.'
+				));
+			}
+		} else {
+			return Response::json(array(
+				'status' => 'error',
+				'message' => $this->journalValidator->getErrors()
+			));
+		}
 	}
 
 	/**
@@ -59,6 +148,26 @@ class JournalsController extends BaseController {
 	 */
 	public function deleteDestroy($id)
 	{
-		return Response::json($this->journalGateway->destroy($id));
+                $journal = Journal::curUser()->find($id);
+                if (!$journal)
+		{
+			return Response::json(array(
+				'status' => 'error',
+				'message' => 'Oops ! Journal entry not found.'
+			));
+                }
+
+                if ($journal->delete())
+		{
+			return Response::json(array(
+				'status' => 'success',
+				'message' => 'Journal entry deleted.'
+			));
+		} else {
+			return Response::json(array(
+				'status' => 'error',
+				'message' => 'Oops ! Failed to delete journal entry.'
+			));
+		}
 	}
 }

@@ -469,9 +469,23 @@ goalApp.controller('GoalManageCtrl', function ($scope, $rootScope, $http,
 		$location.path('/goals');
 	});
 
+	$http.get('api/tasks/index/' + $routeParams['id']).
+	success(function(data, status, headers, config) {
+		if (data.status == 'success') {
+			$scope.tasks = data.data.tasks;
+		} else {
+			alertService.add(data.message, 'danger');
+			$location.path('/goals');
+		}
+	}).
+	error(function(data, status, headers, config) {
+		alertService.add('Oh snap ! Something went wrong, please try again.', 'danger');
+		$location.path('/goals');
+	});
+
 	/* Add task action */
 	$scope.addTask = function() {
-		alertService.alerts = [];
+		alertService.clear();
 
 		/* Open modal window */
 		var TaskAddModalInstance = $modal.open({
@@ -492,7 +506,7 @@ goalApp.controller('GoalManageCtrl', function ($scope, $rootScope, $http,
 
 	/* Edit task action */
 	$scope.editTask = function(id) {
-		alertService.alerts = [];
+		alertService.clear();
 
 		/* Open modal window */
 		var TaskEditModalInstance = $modal.open({
@@ -516,7 +530,7 @@ goalApp.controller('GoalManageCtrl', function ($scope, $rootScope, $http,
 
 	/* Delete task action */
 	$scope.deleteTask = function(id) {
-		alertService.alerts = [];
+		alertService.clear();
 
 		/* Open modal window */
 		var modalDefaults = {
@@ -554,7 +568,7 @@ goalApp.controller('GoalManageCtrl', function ($scope, $rootScope, $http,
 
 	/* Mark task completed action */
 	$scope.doneTask = function(id) {
-		alertService.alerts = [];
+		alertService.clear();
 
 		$http.post('api/tasks/done/' + id).
 		success(function (data, status, headers) {

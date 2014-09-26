@@ -27,10 +27,10 @@
 		<a href="#/goals" class="btn btn-info">Cancel</a>
 	</div>
 
-	<div class="col-xs-12" ng-hide="goaldata.Task.length">
+	<div class="col-xs-12" ng-hide="tasks.length">
 		<div>No tasks found. Please add a task to get started.</div>
 	</div>
-	<div class="col-xs-12" ng-show="goaldata.Task.length">
+	<div class="col-xs-12" ng-show="tasks.length">
 		<table class="table table-hover">
 			<thead>
 				<tr>
@@ -43,7 +43,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr ng-repeat="task in goaldata.Task" ui:sortable ng:model="goaldata.Task">
+				<tr ng-repeat="task in tasks">
 					<td class="text-left">{{ $index + 1 }}</td>
 					<td class="text-left">{{ task.title }}</td>
 					<td class="text-center">{{ task.start_date | showDate }}</td>
@@ -53,12 +53,12 @@
 						<button class="btn-mini btn-xmini btn-default" ng-click="doneTask(task.id)">Done</button>
 					</td>
 					<td class="text-center">
-						<a href="" ng-click="editTask(task.id)"><span class="glyphicon glyphicon-pencil"></span></a>&nbsp;&nbsp;
+						<a href="" ng-click="editTask(task.id)"><span class="glyphicon glyphicon-pencil"></span></a>
+						<span class="small-margin"></span>
 						<a href="" ng-click="deleteTask(task.id)"><span class="glyphicon glyphicon-trash"></span></a>
 					</td>
 				</tr>
 			</tbody>
 		</table>
 	</div>
-</div><!-- END col-md-6 -->
 </div><!-- END row -->
