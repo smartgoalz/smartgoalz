@@ -53,9 +53,9 @@
 				<div class="row" ng-show="tasks.length > 1">
 					<div class="col-xs-12">
 						<div>
-							<label for="inputPrev">After task</label>
-							<select class="form-control" id="inputPrev" ng-model="formdata.Prev">
-								<option ng-repeat="prevtask in tasks" value="{{prevtask.id}}" ng-if="prevtask.id != id" ng-selected="{{prevtask.id == formdata.Prev}}">{{prevtask.title}}</option>
+							<label for="inputPrevID">After task</label>
+							<select class="form-control" id="inputPrevID" ng-model="formdata.PrevID">
+								<option ng-repeat="prevtask in tasks" value="{{prevtask.id}}" ng-if="prevtask.id != id" ng-selected="{{prevtask.id == formdata.PrevID}}">{{prevtask.title}}</option>
 							</select>
 						</div>
 					</div>

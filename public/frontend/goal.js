@@ -604,7 +604,7 @@ var TaskAddModalInstanceCtrl = function ($scope, $rootScope, $modalInstance,
 	/* Initial values of form items */
 	$scope.formdata = [];
 	$scope.formdata.Title = '';
-	$scope.formdata.Prev = 0;
+	$scope.formdata.PrevID = 0;
 	$scope.formdata.Startdate = new Date();
 	$scope.formdata.Duedate = new Date();
 	$scope.formdata.Completed = 0;
@@ -618,7 +618,7 @@ var TaskAddModalInstanceCtrl = function ($scope, $rootScope, $modalInstance,
 			'task' : {
 				goal_id: goal.id,
 				title: $scope.formdata.Title,
-				prev: $scope.formdata.Prev,
+				prev_id: $scope.formdata.PrevID,
 				start_date: $scope.dateToSQLNoTime($scope.formdata.Startdate),
 				due_date: $scope.dateToSQLNoTime($scope.formdata.Duedate),
 				is_completed: $scope.formdata.Completed,
@@ -677,7 +677,7 @@ var TaskEditModalInstanceCtrl = function ($scope, $rootScope, $modalInstance,
 
 	if (task) {
 		$scope.formdata.Title = task.title;
-		$scope.formdata.Prev = prev_id;
+		$scope.formdata.PrevID = prev_id;
 		$scope.formdata.Startdate = $scope.dateToJS(task.start_date);
 		$scope.formdata.Duedate = $scope.dateToJS(task.due_date);
 		if (task.is_completed == 1) {
@@ -700,9 +700,9 @@ var TaskEditModalInstanceCtrl = function ($scope, $rootScope, $modalInstance,
 		var data = {
 			'task' : {
 				title: $scope.formdata.Title,
+				prev_id: $scope.formdata.PrevID,
 				start_date: $scope.dateToSQLNoTime($scope.formdata.Startdate),
 				due_date: $scope.dateToSQLNoTime($scope.formdata.Duedate),
-				prev: $scope.formdata.Prev,
 				is_completed: $scope.formdata.Completed,
 				completion_date: $scope.dateToSQLNoTime($scope.formdata.Completiondate),
 				notes: $scope.formdata.Notes,

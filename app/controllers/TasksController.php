@@ -61,8 +61,8 @@ class TasksController extends BaseController
 		}
 
 		/* Calculate weight for current task */
-		list($weight, $recalculate) = $this->calculateWeight($goal_id, NULL, $data['prev']);
-		unset($data['prev']);
+		list($weight, $recalculate) = $this->calculateWeight($goal_id, NULL, $data['prev_id']);
+		unset($data['prev_id']);
 		$data['weight'] = $weight;
 
 		if (empty($data['is_completed']))
@@ -129,8 +129,8 @@ class TasksController extends BaseController
 		}
 
 		/* Calculate weight */
-		list($weight, $recalculate) = $this->calculateWeight($goal_id, $id, $data['prev']);
-		unset($data['prev']);
+		list($weight, $recalculate) = $this->calculateWeight($goal_id, $id, $data['prev_id']);
+		unset($data['prev_id']);
 
 		if (empty($data['is_completed']))
 		{
