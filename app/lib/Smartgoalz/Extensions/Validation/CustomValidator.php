@@ -10,8 +10,8 @@ class CustomValidator extends \Illuminate\Validation\Validator
                 $dt2 = $this->getValue($parameters[0]);
 
                 /* Convert to PHP DateTime class */
-		$phpDt1 = DateTime::createFromFormat('Y-m-d H:m:s', $dt1);
-		$phpDt2 = DateTime::createFromFormat('Y-m-d H:m:s', $dt2);
+		$phpDt1 = DateTime::createFromFormat('Y-m-d H:i:s', $dt1);
+		$phpDt2 = DateTime::createFromFormat('Y-m-d H:i:s', $dt2);
 
                 /* Check if above DateTime conversion failed */
                 if (!$phpDt1) {

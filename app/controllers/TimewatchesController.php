@@ -248,6 +248,84 @@ class TimewatchesController extends BaseController
 	}
 
 	/**
+	 * Create a new resource in storage.
+	 *
+	 * @return Response
+	 */
+	public function postCreate()
+	{
+		$data = Input::get('timewatch');
+
+		if (empty($data['goal_id'])) {
+			return Response::json(array(
+				'status' => 'error',
+				'message' => 'Please select a goal.'
+			));
+		}
+		if (empty($data['task_id'])) {
+			return Response::json(array(
+				'status' => 'error',
+				'message' => 'Please select a task.'
+			));
+		}
+
+		$task = Task::find($data['task_id']);
+		if (!$task) {
+			return Response::json(array(
+				'status' => 'error',
+				'message' => 'Task not found.'
+			));
+		}
+
+		if ($data['goal_id'] != $task->goal_id) {
+			return Response::json(array(
+				'status' => 'error',
+				'message' => 'Task does not belong to the goal.'
+			));
+		}
+
+		$goal = Goal::curUser()->find($data['goal_id']);
+		if (!$goal) {
+			return Response::json(array(
+				'status' => 'error',
+				'message' => 'Goal not found.'
+			));
+		}
+		unset($data['goal_id']);
+
+		if ($data['is_active']) {
+			$data['is_active'] = 1;
+			$data['stop_time'] = NULL;
+		} else {
+			$data['is_active'] = 0;
+		}
+
+		$this->timewatchValidator->with($data);
+
+		if ($this->timewatchValidator->passes())
+		{
+			$timewatch = Timewatch::create($data);
+			if ($timewatch)
+			{
+				return Response::json(array(
+					'status' => 'success',
+					'message' => 'Timewatch added.'
+				));
+			} else {
+				return Response::json(array(
+					'status' => 'error',
+					'message' => 'Oops ! Failed to add timewatch.'
+				));
+			}
+		} else {
+			return Response::json(array(
+				'status' => 'error',
+				'message' => $this->timewatchValidator->getErrors()
+			));
+		}
+	}
+
+	/**
 	 * Update the specified resource in storage.
 	 *
 	 * @param  int  $id
@@ -255,43 +333,63 @@ class TimewatchesController extends BaseController
 	 */
 	public function putUpdate($id)
 	{
-                $note = Note::curUser()->find($id);
-                if (!$note)
+		$data = Input::get('timewatch');
+
+                $timewatch = Timewatch::curUser()->find($id);
+                if (!$timewatch)
 		{
 			return Response::json(array(
 				'status' => 'error',
-				'message' => 'Oops ! Note not found.'
+				'message' => 'Oops ! Timewatch not found.'
 			));
                 }
 
-		$data = Input::get('note');
+		$task = Task::find($timewatch->task_id);
+		if (!$task) {
+			return Response::json(array(
+				'status' => 'error',
+				'message' => 'Task not found.'
+			));
+		}
 
-		$this->noteValidator->with($data);
+		$goal = Goal::curUser()->find($task->goal_id);
+		if (!$goal) {
+			return Response::json(array(
+				'status' => 'error',
+				'message' => 'Goal not found.'
+			));
+		}
 
-		if ($this->noteValidator->passes())
+		if ($data['is_active']) {
+			$data['is_active'] = 1;
+			$data['stop_time'] = NULL;
+		} else {
+			$data['is_active'] = 0;
+		}
+
+		$this->timewatchValidator->with($data);
+
+		if ($this->timewatchValidator->passes())
 		{
-			/* Update data */
-	                $note->title = $data['title'];
-	                $note->pin_dashboard = $data['pin_dashboard'];
-	                $note->pin_top = $data['pin_top'];
-	                $note->note = $data['note'];
+			$timewatch->stop_time = $data['stop_time'];
+			$timewatch->is_active = $data['is_active'];
 
-			if ($note->save())
+			if ($timewatch->save())
 			{
 				return Response::json(array(
 					'status' => 'success',
-					'message' => 'Note updated.'
+					'message' => 'Timewatch updated.'
 				));
 			} else {
 				return Response::json(array(
 					'status' => 'error',
-					'message' => 'Oops ! Failed to update note.'
+					'message' => 'Oops ! Failed to update timewatch.'
 				));
 			}
 		} else {
 			return Response::json(array(
 				'status' => 'error',
-				'message' => $this->noteValidator->getErrors()
+				'message' => $this->timewatchValidator->getErrors()
 			));
 		}
 	}

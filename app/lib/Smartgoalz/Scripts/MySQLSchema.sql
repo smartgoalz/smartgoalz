@@ -66,9 +66,26 @@ $$
 CREATE TRIGGER `update_timewatches` BEFORE UPDATE ON `timewatches`
 FOR EACH ROW
 BEGIN
-SET NEW.date = DATE_FORMAT(NEW.start_time, '%Y-%m-%d');
+
+DECLARE local_starttime timestamp;
+DECLARE local_stoptime timestamp;
+
+IF (NEW.start_time IS NULL) THEN
+	SET local_starttime = OLD.start_time;
+ELSE
+	SET NEW.date = DATE_FORMAT(NEW.start_time, '%Y-%m-%d');
+	SET local_starttime = NEW.start_time;
+END IF;
+
+IF (NEW.stop_time IS NULL) THEN
+	SET local_stoptime = OLD.stop_time;
+ELSE
+	SET local_stoptime = NEW.stop_time;
+END IF;
+
 IF NEW.is_active = 0 THEN
-	SET NEW.minutes_count = TIMESTAMPDIFF(MINUTE, NEW.start_time, NEW.stop_time);
+	SET NEW.minutes_count = TIMESTAMPDIFF(MINUTE, local_starttime, local_stoptime);
+
 	IF (NEW.minutes_count < 0) THEN
 		SIGNAL SQLSTATE '12345' SET MESSAGE_TEXT = 'End time cannot be before start time';
 	END IF;

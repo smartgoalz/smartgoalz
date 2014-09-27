@@ -1,6 +1,6 @@
-<div class="row" ng-controller="TimewatchEditCtrl">
+<div class="row" ng-controller="TimewatchAddCtrl">
 	<div class="col-xs-12">
-		<div class="form-title">Edit Timewatch</div>
+		<div class="form-title">Add Timewatch</div>
 	</div>
 
 	<div class="col-xs-12" ng-show="alerts.length">
@@ -8,11 +8,14 @@
 	</div>
 
 	<div>
+	<form method="POST" role="form">
 		<div class="row">
 			<div class="col-xs-8">
 				<div class="form-group">
-					<label for="inputGoal">Selected Goal</label>
-					<input class="form-control" id="inputGoal" ng-disabled="1" ng-model="formdata.GoalTitle">
+					<label for="inputTitle">Select Goal</label>
+					<select class="form-control" id="inputGoal" placeholder="Select Goal" ng-model="formdata.Goal">
+						<option ng-repeat="goal in goals" value="{{ goal.id }}">{{ goal.title }}</option>
+					</select>
 				</div>
 			</div>
 		</div>
@@ -20,8 +23,10 @@
 		<div class="row">
 			<div class="col-xs-8">
 				<div class="form-group">
-					<label for="inputTask">Selected Task</label>
-					<input class="form-control" id="inputTask" ng-disabled="1" ng-model="formdata.TaskTitle">
+					<label for="inputTitle">Select Task</label>
+					<select class="form-control" id="inputTask" placeholder="Select Task" ng-model="formdata.Task" ng-disabled="!formdata.Goal">
+						<option ng-repeat="task in tasks" value="{{ task.id }}">{{ task.title }}</option>
+					</select>
 				</div>
 			</div>
 		</div>
@@ -89,7 +94,7 @@
 		<div class="row">
 			<div class="col-xs-8">
 				<div>
-					<button class="btn btn-primary" ng-click="editTimewatch()">Submit</button>
+					<button class="btn btn-primary" ng-click="addTimewatch(formdata.Goal, formdata.Task)">Submit</button>
 					<a href="#/timewatches" class="btn btn-info">Cancel</a>
 				</div>
 			</div>

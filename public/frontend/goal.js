@@ -26,6 +26,9 @@ goalApp.config(['$routeProvider', function($routeProvider) {
 	when('/timewatches/stop/:id', {
 		templateUrl: 'frontend/timewatches/stop.html',
 	}).
+	when('/timewatches/add', {
+		templateUrl: 'frontend/timewatches/add.html',
+	}).
 	when('/timewatches/edit/:id', {
 		templateUrl: 'frontend/timewatches/edit.html',
 	}).
@@ -229,8 +232,13 @@ goalApp.controller('ContentCtrl', function ($scope, $rootScope, $cookieStore, al
 		if (!input) {
 			return new Date();
 		}
-		// return jsdate.toString($rootScope.dateFormat);
-		return new Date(input.replace(/(.+) (.+)/, "$1T$2Z"));
+		var outputStr = input.replace(/-/g, ' ');
+		outputStr = outputStr.replace(/:/g, ' ');
+		outputArr = outputStr.split(' ');
+		/* Since JS month starts from 0 - 11 */
+		outputArr[1] = outputArr[1] - 1;
+		return new Date(outputArr[0], outputArr[1], outputArr[2],
+			outputArr[3], outputArr[4], outputArr[5]);
 	}
 
 	$scope.dateToSQL = function(input) {
@@ -238,7 +246,7 @@ goalApp.controller('ContentCtrl', function ($scope, $rootScope, $cookieStore, al
 			return '';
 		}
 
-		return input.toString("yyyy-MM-dd HH:mm:ss");
+		return input.toString("yyyy-MM-dd HH:mm:00");
 	}
 
 	$scope.dateToSQLNoTime = function(input) {
@@ -253,8 +261,20 @@ goalApp.controller('ContentCtrl', function ($scope, $rootScope, $cookieStore, al
 		if (!input) {
 			return '';
 		}
-		inputToDate = new Date(input.replace(/(.+) (.+)/, "$1T$2Z"));
+		inputToDate = $scope.dateToJS(input);
 		return inputToDate.toString("dd-MMMM-yyyy h:mm:ss tt");
+	}
+
+	$scope.mergeDateTime = function(inputDate, inputTime) {
+		var outputDatetime = new Date(
+			inputDate.getFullYear(),
+			inputDate.getMonth(),
+			inputDate.getDate(),
+			inputTime.getHours(),
+			inputTime.getMinutes(),
+			inputTime.getSeconds()
+		);
+		return outputDatetime;
 	}
 
 	/* TODO : Fetch data from server */
@@ -269,7 +289,9 @@ goalApp.controller('ContentCtrl', function ($scope, $rootScope, $cookieStore, al
 /***************************** DASHBOARD ****************************/
 /********************************************************************/
 
-goalApp.controller('DashboardCtrl', function ($scope, $rootScope, $cookieStore) {
+goalApp.controller('DashboardCtrl', function ($scope, $rootScope,
+	$cookieStore, alertService)
+{
 	$scope.alerts = alertService.alerts;
 	$rootScope.pageTitle = "Dashboard";
 });
@@ -888,8 +910,6 @@ goalApp.controller('TimewatchStopCtrl', function ($scope, $rootScope,
 	$scope.alerts = alertService.alerts;
 	$rootScope.pageTitle = "Timewatch";
 
-	$scope.timewatch = [];
-
 	$http.get('api/timewatches/show/' + $routeParams['id']).
 	success(function(data, status, headers, config) {
 		if (data.status == 'success') {
@@ -936,60 +956,151 @@ goalApp.controller('TimewatchStopCtrl', function ($scope, $rootScope,
 	}
 });
 
-/* Edit timewatch */
-goalApp.controller('TimewatchEditCtrl', function ($scope, $rootScope, $cookieStore, $http, $route, $routeParams, $location, alertService) {
+/* Add timewatch */
+goalApp.controller('TimewatchAddCtrl', function ($scope, $rootScope,
+	$cookieStore, $http, $route, $routeParams, $location, alertService)
+{
 	$scope.alerts = alertService.alerts;
-	$scope.closeAlert = function(index) {
-		$scope.alerts.splice(index, 1);
-	};
+	$rootScope.pageTitle = "Add Timewatch";
 
-	$scope.timewatch = [];
+	$scope.formdata = [];
+	$scope.goals = [];
+	$scope.tasks = [];
 
-	$rootScope.pageTitle = "Edit Timewatch";
+	/* Intial data */
+	$scope.formdata.Startdate = new Date();
+	$scope.formdata.Stopdate = new Date();
+	$scope.formdata.Starttime = new Date();
+	$scope.formdata.Stoptime = new Date();
+	$scope.formdata.IsStopped = false;
 
-	$http.get('timewatches/' + $routeParams['id'] + '.json').
+	/* Get list of goals and tasks */
+	$http.get('api/goals/index').
 	success(function(data, status, headers, config) {
-		$scope.formdata.Goal = data['timewatch']['Goal']['title'];
-		$scope.formdata.Task = data['timewatch']['Task']['title'];
-		$scope.formdata.Starttime = data['timewatch']['Timewatch']['start_time'];
-		$scope.formdata.IsStopped = !data['timewatch']['Timewatch']['is_active'];
-		if ($scope.formdata.IsStopped) {
-			$scope.formdata.Endtime = data['timewatch']['Timewatch']['end_time'];
+		if (data.status == 'success') {
+			$scope.goals = data.data.goals;
 		} else {
-			$scope.formdata.Endtime = "";
+			alertService.add(data.message, 'danger');
+			$scope.goals = [];
 		}
 	}).
 	error(function(data, status, headers, config) {
-		alertService.alerts = [];
-		alertService.alerts.push({type: 'danger', msg: 'Timewatch not found'});
-		$location.path('/timewatch');
+		alertService.add('Oh snap ! Something went wrong, please try again.', 'danger');
+		$scope.goals = [];
+	});
+	$scope.$watch('formdata.Goal', function(newVal) {
+		if (newVal) {
+			$http.get('api/tasks/index/' + newVal).
+			success(function(data, status, headers, config) {
+				if (data.status == 'success') {
+					$scope.tasks = data.data.tasks;
+				} else {
+					$scope.tasks = [];
+				}
+			}).
+			error(function(data, status, headers, config) {
+				$scope.tasks = [];
+			});
+		}
 	});
 
-	/* Stop timer */
-	$scope.editTimewatch = function() {
-		$scope.alerts = [];
-		alertService.alerts = [];
+	/* Add timewatch */
+	$scope.addTimewatch = function(goal_id, task_id) {
+		alertService.clear();
 
 		var data = {
-			'Timewatch' : {
-				start_time: $scope.formdata.Starttime,
-				end_time: $scope.formdata.Endtime,
+			'timewatch' : {
+				goal_id: goal_id,
+				task_id: task_id,
+				start_time: $scope.dateToSQL(
+					$scope.mergeDateTime($scope.formdata.Startdate, $scope.formdata.Starttime)
+				),
+				stop_time: $scope.dateToSQL(
+					$scope.mergeDateTime($scope.formdata.Stopdate, $scope.formdata.Stoptime)
+				),
 				is_active: !$scope.formdata.IsStopped,
 			}
 		};
 
-		$http.post("timewatches/edit/" + $routeParams['id'] + ".json", data).
+		$http.post("api/timewatches/create", data).
 		success(function (data, status, headers) {
-			if (data['message']['type'] == 'error') {
-				$scope.alerts.push({type: 'danger', msg: data['message']['text']});
-			}
-			if (data['message']['type'] == 'success') {
-				alertService.alerts.push({type: 'success', msg: data['message']['text']});
-				$location.path('/timewatch');
+			if (data.status == 'success') {
+				alertService.add(data.message, 'success');
+				$location.path('/timewatches');
+			} else {
+				alertService.add(data.message, 'danger');
 			}
 		}).
 		error(function (data, status, headers) {
-			$scope.alerts.push({type: 'danger', msg: 'Oh snap! Change a few things up and try submitting again.'});
+			alertService.add('Oh snap ! Something went wrong, please try again.', 'danger');
+		});
+	}
+});
+
+/* Edit timewatch */
+goalApp.controller('TimewatchEditCtrl', function ($scope, $rootScope,
+	$cookieStore, $http, $route, $routeParams, $location, alertService)
+{
+	$scope.alerts = alertService.alerts;
+	$rootScope.pageTitle = "Edit Timewatch";
+
+	$scope.formdata = [];
+	$scope.goals = [];
+	$scope.tasks = [];
+
+	$http.get('api/timewatches/show/' + $routeParams['id']).
+	success(function(data, status, headers, config) {
+		if (data.status == 'success') {
+			$scope.formdata.GoalTitle = data.data.goal.title;
+			$scope.formdata.TaskTitle = data.data.task.title;
+			$scope.formdata.Startdate = $scope.dateToJS(data.data.timewatch.start_time);
+			$scope.formdata.Starttime = $scope.dateToJS(data.data.timewatch.start_time);
+			if (data.data.timewatch.is_active == 0) {
+				$scope.formdata.IsStopped = true;
+				$scope.formdata.Stopdate = $scope.dateToJS(data.data.timewatch.stop_time);
+				$scope.formdata.Stoptime = $scope.dateToJS(data.data.timewatch.stop_time);
+			} else {
+				$scope.formdata.IsStopped = false;
+				$scope.formdata.Stopdate = new Date();
+				$scope.formdata.Stoptime = new Date();
+			}
+		} else {
+			alertService.add(data.message, 'danger');
+			$location.path('/timewatches');
+		}
+	}).
+	error(function(data, status, headers, config) {
+		alertService.add('Oh snap ! Something went wrong, please try again.', 'danger');
+		$location.path('/timewatches');
+	});
+
+	/* Stop timer */
+	$scope.editTimewatch = function() {
+		alertService.clear();
+
+		var data = {
+			'timewatch' : {
+				start_time: $scope.dateToSQL(
+					$scope.mergeDateTime($scope.formdata.Startdate, $scope.formdata.Starttime)
+				),
+				stop_time: $scope.dateToSQL(
+					$scope.mergeDateTime($scope.formdata.Stopdate, $scope.formdata.Stoptime)
+				),
+				is_active: !$scope.formdata.IsStopped,
+			}
+		};
+
+		$http.put("api/timewatches/update/" + $routeParams['id'], data).
+		success(function (data, status, headers) {
+			if (data.status == 'success') {
+				alertService.add(data.message, 'success');
+				$location.path('/timewatches');
+			} else {
+				alertService.add(data.message, 'danger');
+			}
+		}).
+		error(function (data, status, headers) {
+			alertService.add('Oh snap ! Something went wrong, please try again.', 'danger');
 		});
 	}
 });
