@@ -11,8 +11,8 @@
 		<div class="row">
 			<div class="col-xs-8">
 				<div class="form-group">
-					<label for="inputGoal">Selected Goal</label>
-					<input class="form-control" id="inputGoal" ng-disabled="1" ng-model="formdata.Goal">
+					<label for="inputGoalTitle">Selected Goal</label>
+					<input class="form-control" id="inputGoalTitle" ng-disabled="1" ng-model="formdata.GoalTitle">
 				</div>
 			</div>
 		</div>
@@ -20,8 +20,8 @@
 		<div class="row">
 			<div class="col-xs-8">
 				<div class="form-group">
-					<label for="inputTask">Selected Task</label>
-					<input class="form-control" id="inputTask" ng-disabled="1" ng-model="formdata.Task">
+					<label for="inputTaskTitle">Selected Task</label>
+					<input class="form-control" id="inputTaskTitle" ng-disabled="1" ng-model="formdata.TaskTitle">
 				</div>
 			</div>
 		</div>
@@ -39,7 +39,7 @@
 			<div class="col-xs-8">
 				<div class="form-group">
 					<label for="inputTitle">Time Elapsed :</label>
-					<label for="inputTitle">10 Hours</label>
+					<label for="inputTitle">TODO Hours</label>
 				</div>
 			</div>
 		</div>
@@ -48,7 +48,7 @@
 			<div class="col-xs-8">
 				<div>
 					<button class="btn btn-danger btn-lg" ng-click="stopTimer(timewatch.Timewatch.id)">STOP TIMER</button>
-					<a href="#/timewatch" class="btn btn-info" ng-click="clearAlerts()">Cancel</a>
+					<a href="#/timewatches" class="btn btn-info">Cancel</a>
 				</div>
 			</div>
 		</div>

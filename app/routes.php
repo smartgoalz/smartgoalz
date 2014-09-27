@@ -21,6 +21,7 @@ Route::group(array('prefix' => 'api'), function()
 	Route::controller('goals', 'GoalsController');
 	Route::controller('tasks', 'TasksController');
 	Route::controller('categories', 'CategoriesController');
+	Route::controller('timewatches', 'TimewatchesController');
 	Route::controller('notes', 'NotesController');
 	Route::controller('journals', 'JournalsController');
 });

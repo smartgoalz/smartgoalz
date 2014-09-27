@@ -1,0 +1,114 @@
+<div class="row" ng-controller="TimewatchStartCtrl">
+	<div class="col-xs-12">
+		<div class="form-title">Track time spent on completing tasks</div>
+	</div>
+	<div class="col-xs-12" ng-show="alerts.length">
+		<alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+	</div>
+
+	<div>
+	<form method="POST" role="form">
+		<div class="row">
+			<div class="col-xs-8">
+				<div class="form-group">
+					<label for="inputTitle">Select Goal</label>
+					<select class="form-control" id="inputGoal" placeholder="Select Goal" ng-model="formdata.Goal">
+						<option ng-repeat="goal in goals" value="{{ goal.id }}">{{ goal.title }}</option>
+					</select>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-8">
+				<div class="form-group">
+					<label for="inputTitle">Select Task</label>
+					<select class="form-control" id="inputTask" placeholder="Select Task" ng-model="formdata.Task" ng-disabled="!formdata.Goal">
+						<option ng-repeat="task in tasks" value="{{ task.id }}">{{ task.title }}</option>
+					</select>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-8">
+				<div>
+					<button class="btn btn-success btn-lg" ng-click="startTimer(formdata.Goal, formdata.Task)">START TIMER</button>
+				</div>
+				<div>
+					<br />
+					<a href="" class="small-text">Manually add start and end time</a>
+				</div>
+			</div>
+		</div>
+	</form>
+	</div>
+
+	<div class="widget" ng-show="active_timewatches.length">
+		<div class="widget-header">
+			<i class="fa fa-clock-o"></i> Active timewatches
+			<div class="clearfix"></div>
+		</div>
+		<div>
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>Date</th>
+						<th>Task</th>
+						<th>Start time</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="timewatch in active_timewatches">
+						<td>{{$index + 1}}</td>
+						<td>{{timewatch.date}}</td>
+						<td>{{timewatch.tasks_title}}</td>
+						<td>{{timewatch.start_time}}</td>
+						<td>
+							<a href='#/timewatches/stop/{{timewatch.id}}'>Stop</a></span>
+							<span class="small-margin"></span>
+							<a href='#/timewatches' ng-click="deleteTimewatch(timewatch.id)"><span class="glyphicon glyphicon-trash"></span></a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<div class="widget" ng-show="timewatches.length">
+		<div class="widget-header">
+			<i class="fa fa-clock-o"></i> Current Timewatches
+			<div class="clearfix"></div>
+		</div>
+		<div>
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th>Date</th>
+						<th>Task</th>
+						<th>Start time</th>
+						<th>Stop time</th>
+						<th>Duration</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="timewatch in timewatches">
+						<td>{{timewatch.date}}</td>
+						<td>{{timewatch.tasks_title}}</td>
+						<td>{{timewatch.start_time}}</td>
+						<td>{{timewatch.stop_time}}</td>
+						<td>{{timewatch.minutes_count}} m</td>
+						<td>
+							<a href='#/timewatches/edit/{{timewatch.id}}'>Edit</a></span>
+							<span class="small-margin"></span>
+							<a href='#/timewatches' ng-click="deleteTimewatch(timewatch.id)"><span class="glyphicon glyphicon-trash"></span></a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
