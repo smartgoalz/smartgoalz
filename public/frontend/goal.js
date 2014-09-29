@@ -17,8 +17,8 @@ goalApp.config(['$routeProvider', function($routeProvider) {
 	when('/goals/edit/:id', {
 		templateUrl: 'frontend/goals/edit.html',
 	}).
-	when('/goals/manage/:id', {
-		templateUrl: 'frontend/goals/manage.html',
+	when('/goals/show/:id', {
+		templateUrl: 'frontend/goals/show.html',
 	}).
 	when('/timewatches', {
 		templateUrl: 'frontend/timewatches/start.html',
@@ -31,6 +31,18 @@ goalApp.config(['$routeProvider', function($routeProvider) {
 	}).
 	when('/timewatches/edit/:id', {
 		templateUrl: 'frontend/timewatches/edit.html',
+	}).
+	when('/monitors', {
+		templateUrl: 'frontend/monitors/index.html',
+	}).
+	when('/monitors/show/:id', {
+		templateUrl: 'frontend/monitors/show.html',
+	}).
+	when('/monitors/add', {
+		templateUrl: 'frontend/monitors/add.html',
+	}).
+	when('/monitors/edit/:id', {
+		templateUrl: 'frontend/monitors/edit.html',
 	}).
 	when('/notes', {
 		templateUrl: 'frontend/notes/index.html',
@@ -100,10 +112,22 @@ goalApp.factory('SelectService', function($http, $q, $cookieStore) {
 		return {1: 'Very Hard', 2: 'Hard', 3: 'Normal', 4: 'Easy', 5: 'Very Easy'};
 	}
 
+	var monitortypes = function() {
+		return {'INT': 'Integer', 'FLOAT': 'Decimal Number',
+			'CHAR': 'Character', 'BOOL': 'True / False'};
+	}
+
+	var monitorfrequencies = function() {
+		return {'DAILY': 'Daily', 'WEEKLY': 'Weekly', 'MONTHLY': 'Monthly',
+			'QUATERLY': 'Quaterly', 'YEARLY': 'Yearly'};
+	}
+
 	return {
 		priorities : priorities(),
 		difficulties : difficulties(),
 		categories: categories(),
+		monitortypes: monitortypes(),
+		monitorfrequencies: monitorfrequencies(),
 	};
 });
 
@@ -467,12 +491,12 @@ goalApp.controller('GoalEditCtrl', function ($scope, $rootScope, $http,
 	}
 });
 
-goalApp.controller('GoalManageCtrl', function ($scope, $rootScope, $http,
+goalApp.controller('GoalShowCtrl', function ($scope, $rootScope, $http,
 	$modal, $routeParams, $location, $route, alertService, modalService,
 	SelectService)
 {
 	$scope.alerts = alertService.alerts;
-	$rootScope.pageTitle = "Manage Goal";
+	$rootScope.pageTitle = "Show Goal";
 
 	$scope.priorities = SelectService.priorities;
 	$scope.difficulties = SelectService.difficulties;
@@ -619,6 +643,11 @@ goalApp.controller('GoalManageCtrl', function ($scope, $rootScope, $http,
 		});
 	};
 });
+
+
+/********************************************************************/
+/****************************** TASKS *******************************/
+/********************************************************************/
 
 /* Task add modal */
 var TaskAddModalInstanceCtrl = function ($scope, $rootScope, $modalInstance,
@@ -1470,3 +1499,433 @@ goalApp.controller('JournalEditCtrl', function ($scope, $rootScope, $http,
 		});
 	}
 });
+
+/********************************************************************/
+/**************************** MONITORS ******************************/
+/********************************************************************/
+
+/* Index monitors */
+goalApp.controller('MonitorsIndexCtrl', function ($scope, $rootScope, $http,
+	$location, $modal, $window, $route, alertService, modalService, SelectService)
+{
+	$scope.alerts = alertService.alerts;
+	$rootScope.pageTitle = "Monitors";
+
+	$scope.monitortypes = SelectService.monitortypes;
+	$scope.monitorfrequencies = SelectService.monitorfrequencies;
+	$scope.monitors = [];
+
+	/* Fetch all monitors */
+	$http.get('api/monitors/index').
+	success(function(data, status, headers, config) {
+		if (data.status == 'success') {
+			$scope.monitors = data.data.monitors;
+		} else {
+			$scope.monitors = [];
+		}
+	}).
+	error(function(data, status, headers, config) {
+		alertService.add('Oh snap ! Something went wrong, please try again.', 'danger');
+		$scope.monitors = [];
+	});
+
+	/* Delete monitor action */
+	$scope.deleteMonitor = function(id) {
+		/* Open modal window */
+		var modalDefaults = {
+			backdrop: true,
+			keyboard: true,
+			modalFade: true,
+			templateUrl: 'frontend/partials/confirm.html'
+		};
+
+		var modalOptions = {
+			closeButtonText: 'No',
+			actionButtonText: 'Yes',
+			headerText: 'Please confirm',
+			bodyText: 'Are you sure you want to delete the monitor ?'
+		};
+
+		modalService.showModal(modalDefaults, modalOptions).then(function (result) {
+			alertService.clear();
+			$http.delete('api/monitors/destroy/' + id).
+			success(function(data, status, headers, config) {
+				if (data.status == 'success') {
+					alertService.add(data.message, 'success');
+				} else {
+					alertService.add(data.message, 'danger');
+				}
+				$route.reload();
+			}).
+			error(function(data, status, headers, config) {
+				alertService.add('Oh snap! Change a few things up and try submitting again.', 'danger');
+				$route.reload();
+			});
+		});
+	};
+});
+
+/* Show monitor */
+goalApp.controller('MonitorShowCtrl', function ($scope, $rootScope, $http,
+	$modal, $routeParams, $location, $route, alertService, modalService,
+	SelectService)
+{
+	$scope.alerts = alertService.alerts;
+	$rootScope.pageTitle = "Show Monitor";
+
+	$scope.monitortypes = SelectService.monitortypes;
+	$scope.monitorfrequencies = SelectService.monitorfrequencies;
+
+	$scope.monitor = [];
+
+	$http.get('api/monitors/show/' + $routeParams['id']).
+	success(function(data, status, headers, config) {
+		if (data.status == 'success') {
+			$scope.monitor = data.data.monitor;
+		} else {
+			alertService.add(data.message, 'danger');
+			$location.path('/monitors');
+		}
+	}).
+	error(function(data, status, headers, config) {
+		alertService.add('Oh snap ! Something went wrong, please try again.', 'danger');
+		$location.path('/monitors');
+	});
+
+	$http.get('api/monitorvalues/index/' + $routeParams['id']).
+	success(function(data, status, headers, config) {
+		if (data.status == 'success') {
+			$scope.monitorvalues = data.data.monitorvalues;
+		} else {
+			alertService.add(data.message, 'danger');
+			$location.path('/monitors');
+		}
+	}).
+	error(function(data, status, headers, config) {
+		alertService.add('Oh snap ! Something went wrong, please try again.', 'danger');
+		$location.path('/monitors');
+	});
+
+	/* Add value action */
+	$scope.addMonitorvalue = function() {
+		alertService.clear();
+
+		/* Open modal window */
+		var MonitorvalueAddModalInstance = $modal.open({
+			templateUrl: 'frontend/monitors/values/add.html',
+			controller: MonitorvalueAddModalInstanceCtrl,
+			scope: $scope,
+			resolve: {
+				monitor: function () {
+					return $scope.monitor;
+				}
+			}
+		});
+
+		MonitorvalueAddModalInstance.result.then(function (result) {
+			$route.reload();
+		}, function () {
+		});
+	};
+
+	/* Edit value action */
+	$scope.editMonitorvalue = function(id) {
+		alertService.clear();
+
+		/* Open modal window */
+		var MonitorvalueEditModalInstance = $modal.open({
+			templateUrl: 'frontend/monitors/values/edit.html',
+			controller: MonitorvalueEditModalInstanceCtrl,
+			scope: $scope,
+			resolve: {
+				monitor: function () {
+					return $scope.monitor;
+				},
+				id: function () {
+					return id;
+				},
+			}
+		});
+
+		MonitorvalueEditModalInstance.result.then(function (result) {
+			$route.reload();
+		}, function () {
+		});
+	};
+
+	/* Delete value action */
+	$scope.deleteMonitorvalue = function(id) {
+		alertService.clear();
+
+		/* Open modal window */
+		var modalDefaults = {
+			backdrop: true,
+			keyboard: true,
+			modalFade: true,
+			templateUrl: 'frontend/partials/confirm.html'
+		};
+
+		var modalOptions = {
+			closeButtonText: 'No',
+			actionButtonText: 'Yes',
+			headerText: 'Please confirm',
+			bodyText: 'Are you sure you want to delete the value ?'
+		};
+
+		modalService.showModal(modalDefaults, modalOptions).then(function (result) {
+			alertService.clear();
+			$http.delete('api/monitorvalues/destroy/' + id).
+			success(function(data, status, headers, config) {
+				if (data.status == 'success') {
+					alertService.add(data.message, 'success');
+				} else {
+					alertService.add(data.message, 'danger');
+				}
+				$route.reload();
+			}).
+			error(function(data, status, headers, config) {
+				alertService.add('Oh snap! Change a few things up and try submitting again.', 'danger');
+				$route.reload();
+			});
+		});
+	};
+
+});
+
+/* Add monitor */
+goalApp.controller('MonitorAddCtrl', function ($scope, $rootScope, $http,
+	$location, alertService, SelectService)
+{
+	$scope.alerts = alertService.alerts;
+	$rootScope.pageTitle = "Add Monitor";
+
+	$scope.monitortypes = SelectService.monitortypes;
+	$scope.monitorfrequencies = SelectService.monitorfrequencies;
+
+	$scope.formdata = [];
+
+	$scope.addMonitor = function() {
+		alertService.clear();
+
+		var data = {
+			'monitor' : {
+				title: $scope.formdata.Title,
+				type: $scope.formdata.Type,
+				minimum: $scope.formdata.Minimum,
+				maximum: $scope.formdata.Minimum,
+				minimum_threshold: $scope.formdata.MinimumThreshold,
+				maximum_threshold: $scope.formdata.MaximumThreshold,
+				units: $scope.formdata.Units,
+				frequency: $scope.formdata.Frequency,
+				description: $scope.formdata.Description,
+			}
+		};
+		if ($scope.formdata.LowerBetter == true)
+			data.monitor.is_lower_better = 1;
+		else
+			data.monitor.is_lower_better = 0;
+
+		$http.post("api/monitors/create", data).
+		success(function (data, status, headers) {
+			if (data.status == 'success') {
+				alertService.add(data.message, 'success');
+				$location.path('/monitors');
+			} else {
+				alertService.add(data.message, 'danger');
+			}
+		}).
+		error(function (data, status, headers) {
+			alertService.add('Oh snap ! Something went wrong, please try again.', 'danger');
+		});
+	}
+});
+
+/* Edit monitor */
+goalApp.controller('MonitorEditCtrl', function ($scope, $rootScope, $http,
+	$routeParams, $location, alertService, SelectService)
+{
+	$scope.alerts = alertService.alerts;
+	$rootScope.pageTitle = "Edit Monitor";
+
+	$scope.monitortypes = SelectService.monitortypes;
+	$scope.monitorfrequencies = SelectService.monitorfrequencies;
+
+	$scope.formdata = [];
+
+	$http.get('api/monitors/show/' + $routeParams['id']).
+	success(function(data, status, headers, config) {
+		if (data.status == 'success') {
+			$scope.formdata.Title = data.data.monitor.title;
+			$scope.formdata.Type = data.data.monitor.type;
+			$scope.formdata.Minimum = data.data.monitor.minimum;
+			$scope.formdata.Maximum = data.data.monitor.maximum;
+			$scope.formdata.MinimumThreshold = data.data.monitor.minimum_threshold;
+			$scope.formdata.MaximumThreshold = data.data.monitor.maximum_threshold;
+			if (data.data.monitor.is_lower_better == 0)
+				$scope.formdata.LowerBetter = false;
+			else
+				$scope.formdata.LowerBetter = true;
+			$scope.formdata.Units = data.data.monitor.units;
+			$scope.formdata.Frequency = data.data.monitor.frequency;
+			$scope.formdata.Description = data.data.monitor.description;
+		} else {
+			alertService.add(data.message, 'danger');
+			$location.path('/monitors');
+		}
+	}).
+	error(function(data, status, headers, config) {
+		alertService.add('Oh snap ! Something went wrong, please try again.', 'danger');
+		$location.path('/monitors');
+	});
+
+	$scope.editMonitor = function() {
+		alertService.clear();
+
+		var data = {
+			'monitor' : {
+				title: $scope.formdata.Title,
+				type: $scope.formdata.Type,
+				minimum: $scope.formdata.Minimum,
+				maximum: $scope.formdata.Maximum,
+				minimum_threshold: $scope.formdata.MinimumThreshold,
+				maximum_threshold: $scope.formdata.MaximumThreshold,
+				units: $scope.formdata.Units,
+				frequency: $scope.formdata.Frequency,
+				description: $scope.formdata.Description,
+			}
+		};
+		if ($scope.formdata.LowerBetter == true)
+			data.monitor.is_lower_better = 1;
+		else
+			data.monitor.is_lower_better = 0;
+
+		$http.put("api/monitors/update/" + $routeParams['id'], data).
+		success(function (data, status, headers) {
+			if (data.status == 'success') {
+				alertService.add(data.message, 'success');
+				$location.path('/monitors');
+			} else {
+				alertService.add(data.message, 'danger');
+			}
+		}).
+		error(function (data, status, headers) {
+			alertService.add('Oh snap ! Something went wrong, please try again.', 'danger');
+		});
+	}
+});
+
+/********************************************************************/
+/********************** MONITORS VALUES *****************************/
+/********************************************************************/
+
+/* Monitorvalue add modal */
+var MonitorvalueAddModalInstanceCtrl = function ($scope, $rootScope, $modalInstance,
+	$http, alertService, monitor)
+{
+	$scope.alerts = alertService.alerts;
+	$scope.monitor = monitor;
+	$scope.modalAlerts = [];
+
+	/* Initial values of form items */
+	$scope.formdata = [];
+	$scope.formdata.Value = '';
+	$scope.formdata.Date = new Date();
+	$scope.formdata.Valuetime = new Date();
+
+	$scope.addMonitorvalue = function () {
+		alertService.clear();
+
+		var data = {
+			'monitorvalue' : {
+				monitor_id: monitor.id,
+				value: $scope.formdata.Value,
+				date: $scope.dateToSQL(
+					$scope.mergeDateTime($scope.formdata.Date, $scope.formdata.Valuetime)
+				),
+			}
+		};
+
+		$http.post("api/monitorvalues/create", data).
+		success(function (data, status, headers) {
+			if (data.status == 'success') {
+				alertService.add(data.message, 'success');
+				$modalInstance.close();
+			} else {
+				for (var key in data.message) {
+					var eachmsg = data.message[key];
+					for (var index in eachmsg) {
+						$scope.modalAlerts.push({'msg': eachmsg[index]});
+					}
+				}
+			}
+		}).
+		error(function (data, status, headers) {
+			$scope.modalAlerts.push({'msg' : 'Oh snap! Change a few things up and try submitting again.'});
+		});
+	};
+
+	$scope.cancel = function () {
+		$modalInstance.dismiss();
+	};
+};
+
+/* Monitorvalue edit modal */
+var MonitorvalueEditModalInstanceCtrl = function ($scope, $rootScope, $modalInstance,
+	$http, alertService, monitor, id)
+{
+	$scope.alerts = alertService.alerts;
+	$scope.monitor = monitor;
+	$scope.modalAlerts = [];
+
+	$http.get('api/monitorvalues/show/' + id).
+	success(function(data, status, headers, config) {
+		if (data.status == 'success') {
+			$scope.formdata.Value = data.data.monitorvalue.value;
+			$scope.formdata.Date = $scope.dateToJS(data.data.monitorvalue.date);
+			$scope.formdata.Valuetime = $scope.dateToJS(data.data.monitorvalue.date);
+		} else {
+			alertService.add(data.message, 'danger');
+			$location.path('/monitorvalues');
+		}
+	}).
+	error(function(data, status, headers, config) {
+		alertService.add('Oh snap ! Something went wrong, please try again.', 'danger');
+		$location.path('/monitorvalues');
+	});
+
+	$scope.editMonitorvalue = function () {
+		alertService.clear();
+
+		var data = {
+			'monitorvalue' : {
+				monitor_id: monitor.id,
+				value: $scope.formdata.Value,
+				date: $scope.dateToSQL(
+					$scope.mergeDateTime($scope.formdata.Date, $scope.formdata.Valuetime)
+				),
+			}
+		};
+
+		$http.put("api/monitorvalues/update/" + id, data).
+		success(function (data, status, headers) {
+			if (data.status == 'success') {
+				alertService.add(data.message, 'success');
+				$modalInstance.close();
+			} else {
+				for (var key in data.message) {
+					var eachmsg = data.message[key];
+					for (var index in eachmsg) {
+						$scope.modalAlerts.push({'msg': eachmsg[index]});
+					}
+				}
+			}
+		}).
+		error(function (data, status, headers) {
+			$scope.modalAlerts.push({'msg' : 'Oh snap! Change a few things up and try submitting again.'});
+		});
+	};
+
+	$scope.cancel = function () {
+		$modalInstance.dismiss();
+	};
+};

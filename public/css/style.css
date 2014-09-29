@@ -10,6 +10,10 @@
 	padding-right: 15px;
 }
 
+.small-offset {
+	padding-left: 15px;
+}
+
 .small-text {
 	font-size: 11px;
 	color: #AAAAAA;
@@ -79,4 +83,29 @@ h3.modal-title-confirm {
 	border-radius: 15px;
 	box-shadow: 10px 10px 5px #888888;
 	font-style: italic;
+}
+
+.bold-text {
+	font-weight: bold;
+}
+
+.details {
+	text-decoration:none;
+	color:#000;
+	background:#ffc;
+	display:block;
+	padding:1em 1em 1em 1em;
+	margin-top: 1em;
+	margin-bottom: 2em;
+	-moz-box-shadow:5px 5px 7px rgba(33,33,33,1);
+	-webkit-box-shadow: 5px 5px 7px rgba(33,33,33,.7);
+	box-shadow: 5px 5px 7px rgba(33,33,33,.7);
+	-moz-transition:-moz-transform .15s linear;
+	-o-transition:-o-transform .15s linear;
+	-webkit-transition:-webkit-transform .15s linear;
+}
+
+.date-field {
+	padding-bottom: 28px;
+	padding-right: 10px;
 }

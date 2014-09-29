@@ -25,7 +25,7 @@
 				</thead>
 				<tbody>
 					<tr ng-repeat="goal in goals">
-						<td><a href='#/goals/manage/{{goal.id}}'>{{ goal.title }}</a></td>
+						<td><a href='#/goals/show/{{goal.id}}'>{{ goal.title }}</a></td>
 						<td ng-if="goal.is_completed == false" class="text-center">{{ goal.task_completed }} / {{ goal.task_total }}</td>
 						<td ng-if="goal.is_completed == true" class="text-center"><span class="glyphicon glyphicon-ok"></span></td>
 						<td class="text-center">{{ categories[goal.category_id] }}</td>

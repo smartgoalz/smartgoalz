@@ -1,0 +1,116 @@
+<div class="row" ng-controller="MonitorEditCtrl">
+	<div class="col-xs-12">
+		<div class="form-title">Create a Monitor</div>
+	</div>
+
+	<div class="col-xs-12" ng-show="alerts.length">
+		<alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+	</div>
+
+	<div>
+	<form method="POST" role="form" name="appForm">
+		<div class="row">
+			<div class="col-xs-8">
+				<div class="form-group">
+					<label for="inputTitle">Title</label>
+					<input type="text" class="form-control" id="inputTitle" placeholder="Title" ng-model="formdata.Title" ng-required="true">
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-3">
+				<div class="form-group">
+					<label for="inputType">Type</label>
+					<select class="form-control" id="inputType" ng-model="formdata.Type" ng-required="true">
+						<option ng-repeat="(id, type) in monitortypes" value="{{id}}">{{type}}</option>
+					</select>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-2">
+				<div class="form-group">
+					<label for="inputMinimum">Minimum Value</label>
+					<input type="text" class="form-control" id="inputMinimum" placeholder="Minimum value" ng-model="formdata.Minimum" ng-required="true">
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-2">
+				<div class="form-group">
+					<label for="inputMaximum">Maximum Value</label>
+					<input type="text" class="form-control" id="inputMaximum" placeholder="Maximum value" ng-model="formdata.Maximum" ng-required="true">
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-2">
+				<div class="form-group">
+					<label for="inputMinimumThreshold">Minimum Threshold</label>
+					<input type="text" class="form-control" id="inputMinimumThreshold" placeholder="Minimum Threshold" ng-model="formdata.MinimumThreshold" ng-required="true">
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-2">
+				<div class="form-group">
+					<label for="inputMaximumThreshold">Maximum Threshold</label>
+					<input type="text" class="form-control" id="inputMaximumThreshold" placeholder="Maximum Threshold" ng-model="formdata.MaximumThreshold" ng-required="true">
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-4">
+				<div class="form-group">
+					<label for="inputLowerBetter" class="checkbox">
+					<input type="checkbox" class="form-control" id="inputLowerBetter" ng-model="formdata.LowerBetter"> Lower value is better</label>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-2">
+				<div class="form-group">
+					<label for="inputUnits">Units</label>
+					<input type="text" class="form-control" id="inputUnits" placeholder="Units" ng-model="formdata.Units" ng-required="true">
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-3">
+				<div class="form-group">
+					<label for="inputFrequency">Frequency</label>
+					<select class="form-control" id="inputFrequency" ng-model="formdata.Frequency" ng-required="true">
+						<option ng-repeat="(id, frequency) in monitorfrequencies" value="{{id}}">{{frequency}}</option>
+					</select>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-8">
+				<div>
+					<label for="inputDescription">Description</label>
+					<textarea class="form-control" id="inputDescription" ng-model="formdata.Description"></textarea>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-8">
+				<div>
+					<button class="btn btn-primary" ng-click="editMonitor()">Submit</button>
+					<a href="#/monitors" class="btn btn-info">Cancel</a>
+				</div>
+			</div>
+		</div>
+	</form>
+	</div>
+</div><!-- END row -->

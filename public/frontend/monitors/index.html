@@ -1,0 +1,53 @@
+<div class="row" ng-controller="MonitorsIndexCtrl">
+	<div class="col-xs-12">
+		<div class="header-button">
+			<a href="#/monitors/add" class="btn btn-info">Add Monitor</a>
+		</div>
+
+		<div ng-show="alerts.length">
+			<alert ng-repeat="alert in alerts" type="{{alert.type}}">{{alert.msg}}</alert>
+		</div>
+
+		<div ng-hide="monitors.length">No monitors found. Please add one to get started.</div>
+
+		<div>
+			<table class="table table-hover" ng-show="monitors.length">
+				<thead>
+					<tr>
+						<th>Title</th>
+						<th>Type</th>
+						<th>Min</th>
+						<th>Max</th>
+						<th>Min Thres</th>
+						<th>Max Thres</th>
+						<th>Lower Better</th>
+						<th>Units</th>
+						<th>Frequency</th>
+						<th class="col-sm-1">Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="monitor in monitors">
+						<td>
+							<a href='#/monitors/show/{{monitor.id}}'>{{monitor.title}}</a>
+						</td>
+						<td>{{monitortypes[monitor.type]}}</td>
+						<td>{{monitor.minimum}}</td>
+						<td>{{monitor.maximum}}</td>
+						<td>{{monitor.minimum_threshold}}</td>
+						<td>{{monitor.maximum_threshold}}</td>
+						<td ng-if="monitor.is_lower_better == 0">No</td>
+						<td ng-if="monitor.is_lower_better != 0">Yes</td>
+						<td>{{monitor.units}}</td>
+						<td>{{monitorfrequencies[monitor.frequency]}}</td>
+						<td class="text-left">
+							<a href='#/monitors/edit/{{monitor.id}}'>Edit</a>
+							<span class="small-margin"></span>
+							<a href='#/monitors' ng-click="deleteMonitor(monitor.id)"><span class="glyphicon glyphicon-trash"></span></a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>

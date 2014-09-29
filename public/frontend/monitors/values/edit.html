@@ -1,0 +1,63 @@
+<div>
+	<div class="modal-header">
+		<h3 class="modal-title"><span class="glyphicon glyphicon-plus-sign"></span>&nbsp;Edit a Value</h3>
+	</div>
+        <div class="modal-body">
+		<div>
+			<form method="POST" role="form">
+				<div class="row" ng-show="modalAlerts.length">
+					<div class="col-xs-12">
+						<div>
+							<div ng-repeat="alert in modalAlerts" type="danger" class="modal-alert">{{alert.msg}}</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-xs-6">
+						<div>
+							<label for="inputValue">Value</label>
+							<div class="input-group">
+							<input type="text" class="form-control" id="inputValue" placeholder="Value" ng-model="formdata.Value">
+							<span class="input-group-addon">{{monitor.units}}</span>
+							</div>
+							<div class="small-text">Note: {{monitortypes[monitor.type]}} from {{monitor.minimum}} to {{monitor.maximum}}.
+							<span ng-if="monitor.is_lower_better == 0">Higher is better.</span>
+							<span ng-if="monitor.is_lower_better != 0">Lower is better.</span>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-xs-12">
+						<div class="form-group">
+							<table>
+							<tr>
+							<td class="date-field">
+							<label for="inputDate">Date</label>
+							<div class="input-group">
+								<input type="text" class="form-control" datepicker-popup="{{calendar.dateFormat}}" ng-model="formdata.Date" is-open="calendar.opened.Date" datepicker-options="calendar.dateOptions" close-text="Close" placeholder="Date" id="inputDate" ng-click="calendar.open($event, 'Date')" ng-required="true">
+								<span class="input-group-btn">
+									<button type="button" class="btn btn-default" ng-click="calendar.open($event, 'Date')"><i class="glyphicon glyphicon-calendar"></i></button>
+								</span>
+							</div>
+							</td>
+							<td>
+							<div>
+								<timepicker ng-model="formdata.Valuetime" hour-step="1" minute-step="1" show-meridian="true"></timepicker>
+							</div>
+							</td>
+							</tr>
+							</table>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-primary" ng-click="editMonitorvalue(formdata)">Submit</button>
+		<button class="btn btn-info" ng-click="cancel()">Cancel</button>
+	</div>
+</div>
