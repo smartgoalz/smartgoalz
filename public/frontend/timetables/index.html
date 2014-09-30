@@ -1,0 +1,48 @@
+<div class="row" ng-controller="TimetablesIndexCtrl">
+	<div class="col-xs-12">
+		<div>
+			<span class="view-title">Timetable for Today</span>
+		</div>
+
+		<div>
+			<div>Current time is : {{curTime}}</div>
+		</div>
+		<br />
+
+		<div ng-show="alerts.length">
+			<alert ng-repeat="alert in alerts" type="{{alert.type}}">{{alert.msg}}</alert>
+		</div>
+
+		<div ng-hide="timetables.length">No activities found. Please add one to get started.</div>
+
+		<div>
+			<table class="table table-hover" ng-show="timetables.length">
+				<thead>
+					<tr>
+						<th>From</th>
+						<th>To</th>
+						<th>Activity</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="timetable in timetables">
+						<td>{{timetable.from_time}}</td>
+						<td>{{timetable.to_time}}</td>
+						<td>{{timetable.activity}}</td>
+						<td>
+							<span ng-show="timetable.track == 1">
+								<button class="btn-mini btn-xmini btn-default" ng-click="doneActivity(timetable.id)">Done</button>
+							</span>
+							<span ng-hide="timetable.track == 0"></span>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div>
+			<a href="#/timetables/manage" class="btn btn-info">Manage Timetable</a>
+		</div>
+	</div>
+</div>

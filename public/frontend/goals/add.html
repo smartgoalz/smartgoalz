@@ -3,7 +3,7 @@
 		<div class="form-title">Create a SMART Goal</div>
 	</div>
 	<div class="col-xs-12" ng-show="alerts.length">
-		<alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+		<alert ng-repeat="alert in alerts" type="{{alert.type}}">{{alert.msg}}</alert>
 	</div>
 
 	<div>
@@ -90,7 +90,7 @@
 			<div class="col-xs-8">
 				<div>
 					<button class="btn btn-primary" ng-click="addGoal()">Submit</button>
-					<a href="#/goals" class="btn btn-info">Cancel</a>
+					<a href="#/goals" class="btn btn-info" ng-click="clearAlerts()">Cancel</a>
 				</div>
 			</div>
 		</div>

@@ -1,7 +1,7 @@
 <div class="row" ng-controller="JournalShowCtrl">
 	<div class="col-xs-12">
 		<div ng-show="alerts.length">
-			<alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+			<alert ng-repeat="alert in alerts" type="{{alert.type}}">{{alert.msg}}</alert>
 		</div>
 
 		<div>
@@ -15,7 +15,7 @@
 
 		<div class="view-actions">
 			<a href='#/journals/edit/{{journal.id}}' class="btn btn-primary">Edit Entry</a>
-			<a href="#/journals" class="btn btn-info">Cancel</a>
+			<a href="#/journals" class="btn btn-info" ng-click="clearAlerts()">Cancel</a>
 		</div>
 	</div>
 </div>

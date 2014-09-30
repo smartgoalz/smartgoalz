@@ -32,6 +32,18 @@ goalApp.config(['$routeProvider', function($routeProvider) {
 	when('/timewatches/edit/:id', {
 		templateUrl: 'frontend/timewatches/edit.html',
 	}).
+	when('/timetables', {
+		templateUrl: 'frontend/timetables/index.html',
+	}).
+	when('/timetables/add', {
+		templateUrl: 'frontend/timetables/add.html',
+	}).
+	when('/timetables/edit/:id', {
+		templateUrl: 'frontend/timetables/edit.html',
+	}).
+	when('/timetables/manage', {
+		templateUrl: 'frontend/timetables/manage.html',
+	}).
 	when('/monitors', {
 		templateUrl: 'frontend/monitors/index.html',
 	}).
@@ -112,6 +124,12 @@ goalApp.factory('SelectService', function($http, $q, $cookieStore) {
 		return {1: 'Very Hard', 2: 'Hard', 3: 'Normal', 4: 'Easy', 5: 'Very Easy'};
 	}
 
+	var weekdays = function() {
+		return {'ALL': '(All Days)', 'SUNDAY': 'Sunday', 'MONDAY': 'Monday',
+			'TUESDAY': 'Tuesday', 'WEDNESDAY': 'Wednesday', 'THURSDAY': 'Thursday',
+			'FRIDAY': 'Friday', 'SATURDAY': 'Saturday'};
+	}
+
 	var monitortypes = function() {
 		return {'INT': 'Integer', 'FLOAT': 'Decimal Number',
 			'CHAR': 'Character', 'BOOL': 'True / False'};
@@ -125,6 +143,7 @@ goalApp.factory('SelectService', function($http, $q, $cookieStore) {
 	return {
 		priorities : priorities(),
 		difficulties : difficulties(),
+		weekdays : weekdays(),
 		categories: categories(),
 		monitortypes: monitortypes(),
 		monitorfrequencies: monitorfrequencies(),
@@ -192,7 +211,7 @@ goalApp.filter('showDate', function() {
 
 /******************* CONTROLLERS *******************/
 
-goalApp.controller('BodyCtrl', function ($scope, $rootScope, $cookieStore) {
+goalApp.controller('BodyCtrl', function ($scope, $rootScope, $cookieStore, alertService) {
 	$scope.formdata = [];
 
 	$rootScope.pageTitle = "";
@@ -225,6 +244,10 @@ goalApp.controller('BodyCtrl', function ($scope, $rootScope, $cookieStore) {
 	window.onresize = function() {
 		$scope.$apply();
 	};
+
+	$scope.clearAlerts = function() {
+		alertService.clear();
+	}
 });
 
 goalApp.controller('ContentCtrl', function ($scope, $rootScope, $cookieStore, alertService) {
@@ -232,13 +255,6 @@ goalApp.controller('ContentCtrl', function ($scope, $rootScope, $cookieStore, al
 	$scope.formdata = [];
 
 	$rootScope.pageTitle = "";
-
-	$scope.alerts = [];
-
-	$scope.clearAlerts = function() {
-		alertService.alerts = [];
-		$scope.alerts = [];
-	}
 
 	$scope.calendar = {
 		opened: {},
@@ -265,12 +281,31 @@ goalApp.controller('ContentCtrl', function ($scope, $rootScope, $cookieStore, al
 			outputArr[3], outputArr[4], outputArr[5]);
 	}
 
+	$scope.timeToJS = function(input) {
+		if (!input) {
+			return new Date();
+		}
+		var outputStr = input.replace(/:/g, ' ');
+		outputArr = outputStr.split(' ');
+		return new Date('2000', '0', '1',
+			outputArr[0], outputArr[1], outputArr[2]);
+	}
+
+
 	$scope.dateToSQL = function(input) {
 		if (!input) {
 			return '';
 		}
 
 		return input.toString("yyyy-MM-dd HH:mm:00");
+	}
+
+	$scope.toSQLTime = function(input) {
+		if (!input) {
+			return '';
+		}
+
+		return input.toString("h:mm:00");
 	}
 
 	$scope.dateToSQLNoTime = function(input) {
@@ -350,6 +385,8 @@ goalApp.controller('GoalsIndexCtrl', function ($scope, $rootScope, $http,
 
 	/* Delete goal action */
 	$scope.deleteGoal = function(id) {
+		alertService.clear();
+
 		/* Open modal window */
 		var modalDefaults = {
 			backdrop: true,
@@ -367,7 +404,7 @@ goalApp.controller('GoalsIndexCtrl', function ($scope, $rootScope, $http,
 
 		modalService.showModal(modalDefaults, modalOptions).then(function (result) {
 			alertService.clear();
-			/* Send DELETE request to delete the goal */
+
 			$http.delete('api/goals/destroy/' + id).
 			success(function(data, status, headers, config) {
 				if (data.status == 'success') {
@@ -607,7 +644,7 @@ goalApp.controller('GoalShowCtrl', function ($scope, $rootScope, $http,
 
 		modalService.showModal(modalDefaults, modalOptions).then(function (result) {
 			alertService.clear();
-			/* Send DELETE request to delete the task */
+
 			$http.delete('api/tasks/destroy/' + id).
 			success(function(data, status, headers, config) {
 				if (data.status == 'success') {
@@ -898,6 +935,8 @@ goalApp.controller('TimewatchStartCtrl', function ($scope, $rootScope, $location
 
 	/* Delete timewatch action */
 	$scope.deleteTimewatch = function(id) {
+		alertService.clear();
+
 		/* Open modal window */
 		var modalDefaults = {
 			backdrop: true,
@@ -915,6 +954,7 @@ goalApp.controller('TimewatchStartCtrl', function ($scope, $rootScope, $location
 
 		modalService.showModal(modalDefaults, modalOptions).then(function (result) {
 			alertService.clear();
+
 			$http.delete('api/timewatches/destroy/' + id).
 			success(function(data, status, headers, config) {
 				if (data.status == 'success') {
@@ -1162,6 +1202,8 @@ goalApp.controller('NotesIndexCtrl', function ($scope, $rootScope, $http,
 
 	/* Delete note action */
 	$scope.deleteNote = function(id) {
+		alertService.clear();
+
 		/* Open modal window */
 		var modalDefaults = {
 			backdrop: true,
@@ -1179,7 +1221,7 @@ goalApp.controller('NotesIndexCtrl', function ($scope, $rootScope, $http,
 
 		modalService.showModal(modalDefaults, modalOptions).then(function (result) {
 			alertService.clear();
-			/* Send DELETE request to delete the note */
+
 			$http.delete('api/notes/destroy/' + id).
 			success(function(data, status, headers, config) {
 				if (data.status == 'success') {
@@ -1329,7 +1371,7 @@ goalApp.controller('NoteEditCtrl', function ($scope, $rootScope, $http,
 /***************************** JOURNAL ******************************/
 /********************************************************************/
 
-/* Show journal */
+/* Index journal */
 goalApp.controller('JournalsIndexCtrl', function ($scope, $rootScope, $http,
 	$location, $modal, $window, $route, alertService, modalService)
 {
@@ -1353,6 +1395,8 @@ goalApp.controller('JournalsIndexCtrl', function ($scope, $rootScope, $http,
 
 	/* Delete journal entry action */
 	$scope.deleteJournal = function(id) {
+		alertService.clear();
+
 		/* Open modal window */
 		var modalDefaults = {
 			backdrop: true,
@@ -1370,7 +1414,7 @@ goalApp.controller('JournalsIndexCtrl', function ($scope, $rootScope, $http,
 
 		modalService.showModal(modalDefaults, modalOptions).then(function (result) {
 			alertService.clear();
-			/* Send DELETE request to delete the journal entry */
+
 			$http.delete('api/journals/destroy/' + id).
 			success(function(data, status, headers, config) {
 				if (data.status == 'success') {
@@ -1531,6 +1575,8 @@ goalApp.controller('MonitorsIndexCtrl', function ($scope, $rootScope, $http,
 
 	/* Delete monitor action */
 	$scope.deleteMonitor = function(id) {
+		alertService.clear();
+
 		/* Open modal window */
 		var modalDefaults = {
 			backdrop: true,
@@ -1548,6 +1594,7 @@ goalApp.controller('MonitorsIndexCtrl', function ($scope, $rootScope, $http,
 
 		modalService.showModal(modalDefaults, modalOptions).then(function (result) {
 			alertService.clear();
+
 			$http.delete('api/monitors/destroy/' + id).
 			success(function(data, status, headers, config) {
 				if (data.status == 'success') {
@@ -1674,6 +1721,7 @@ goalApp.controller('MonitorShowCtrl', function ($scope, $rootScope, $http,
 
 		modalService.showModal(modalDefaults, modalOptions).then(function (result) {
 			alertService.clear();
+
 			$http.delete('api/monitorvalues/destroy/' + id).
 			success(function(data, status, headers, config) {
 				if (data.status == 'success') {
@@ -1929,3 +1977,244 @@ var MonitorvalueEditModalInstanceCtrl = function ($scope, $rootScope, $modalInst
 		$modalInstance.dismiss();
 	};
 };
+
+/********************************************************************/
+/************************** TIME TABLES *****************************/
+/********************************************************************/
+
+/* Index timetables */
+goalApp.controller('TimetablesIndexCtrl', function ($scope, $rootScope, $http,
+	$location, $modal, $window, $route, alertService, modalService, SelectService)
+{
+	$scope.alerts = alertService.alerts;
+	$rootScope.pageTitle = "Timetable";
+
+	$scope.timetables = [];
+	curTime = new Date();
+	$scope.curTime = curTime.toString();
+
+	/* Fetch all timetable entries */
+	$http.get('api/timetables/index').
+	success(function(data, status, headers, config) {
+		if (data.status == 'success') {
+			$scope.timetables = data.data.timetables;
+		} else {
+			$scope.timetables = [];
+		}
+	}).
+	error(function(data, status, headers, config) {
+		alertService.add('Oh snap ! Something went wrong, please try again.', 'danger');
+		$scope.timetables = [];
+	});
+});
+
+/* Manage timetables */
+goalApp.controller('TimetableManageCtrl', function ($scope, $rootScope, $http,
+	$location, $modal, $window, $route, alertService, modalService, SelectService)
+{
+	$scope.alerts = alertService.alerts;
+	$rootScope.pageTitle = "Manage Timetable";
+
+	$scope.timetables = [];
+	$scope.timetables.sunday = [];
+	$scope.timetables.monday = [];
+	$scope.timetables.tuesday = [];
+	$scope.timetables.wednesday = [];
+	$scope.timetables.thursday = [];
+	$scope.timetables.friday = [];
+	$scope.timetables.saturday = [];
+
+	/* Fetch all timetable entries */
+	$http.get('api/timetables/index').
+	success(function(data, status, headers, config) {
+		if (data.status == 'success') {
+			timetables = data.data.timetables;
+			for (var c = 0; c < timetables.length; c++) {
+				if (timetables[c].days.indexOf("SUNDAY") != -1) {
+					$scope.timetables.sunday.push(timetables[c]);
+				}
+				if (timetables[c].days.indexOf("MONDAY") != -1) {
+					$scope.timetables.monday.push(timetables[c]);
+				}
+				if (timetables[c].days.indexOf("TUESDAY") != -1) {
+					$scope.timetables.tuesday.push(timetables[c]);
+				}
+				if (timetables[c].days.indexOf("WEDNESDAY") != -1) {
+					$scope.timetables.wednesday.push(timetables[c]);
+				}
+				if (timetables[c].days.indexOf("THURSDAY") != -1) {
+					$scope.timetables.thursday.push(timetables[c]);
+				}
+				if (timetables[c].days.indexOf("FRIDAY") != -1) {
+					$scope.timetables.friday.push(timetables[c]);
+				}
+				if (timetables[c].days.indexOf("SATURDAY") != -1) {
+					$scope.timetables.saturday.push(timetables[c]);
+				}
+			}
+		} else {
+			$scope.timetables = [];
+		}
+	}).
+	error(function(data, status, headers, config) {
+		alertService.add('Oh snap ! Something went wrong, please try again.', 'danger');
+		$scope.timetables = [];
+	});
+
+	/* Delete activity */
+	$scope.deleteActivity = function(id) {
+		/* Open modal window */
+		var modalDefaults = {
+			backdrop: true,
+			keyboard: true,
+			modalFade: true,
+			templateUrl: 'frontend/partials/confirm.html'
+		};
+
+		var modalOptions = {
+			closeButtonText: 'No',
+			actionButtonText: 'Yes',
+			headerText: 'Please confirm',
+			bodyText: 'Are you sure you want to delete the activity for all days ?'
+		};
+
+		modalService.showModal(modalDefaults, modalOptions).then(function (result) {
+			alertService.clear();
+
+			$http.delete('api/timetables/destroy/' + id).
+			success(function(data, status, headers, config) {
+				if (data.status == 'success') {
+					alertService.add(data.message, 'success');
+				} else {
+					alertService.add(data.message, 'danger');
+				}
+				$route.reload();
+			}).
+			error(function(data, status, headers, config) {
+				alertService.add('Oh snap! Change a few things up and try submitting again.', 'danger');
+				$route.reload();
+			});
+		});
+	};
+});
+
+/* Add timetable */
+goalApp.controller('TimetableAddCtrl', function ($scope, $rootScope, $http,
+	$location, alertService, SelectService)
+{
+	$scope.alerts = alertService.alerts;
+	$rootScope.pageTitle = "Add Activity";
+
+	$scope.weekdays = SelectService.weekdays;
+
+	$scope.formdata = [];
+	$scope.formdata.FromTime = new Date();
+	$scope.formdata.ToTime = new Date();
+
+	$scope.addActivity = function() {
+		alertService.clear();
+
+		var data = {
+			'timetable' : {
+				activity: $scope.formdata.Activity,
+				from_time: $scope.toSQLTime($scope.formdata.FromTime),
+				to_time: $scope.toSQLTime($scope.formdata.ToTime),
+			}
+		};
+		if ($scope.formdata.Track == true)
+			data.timetable.track = 1;
+		else
+			data.timetable.track = 0;
+		if ($scope.formdata.Days.indexOf("ALL") == -1) {
+			data.timetable.days = $scope.formdata.Days.join();
+		} else {
+			data.timetable.days = 'SUNDAY,MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY,SATURDAY';
+		}
+
+		$http.post("api/timetables/create", data).
+		success(function (data, status, headers) {
+			if (data.status == 'success') {
+				alertService.add(data.message, 'success');
+				$location.path('/timetables/manage');
+			} else {
+				alertService.add(data.message, 'danger');
+			}
+		}).
+		error(function (data, status, headers) {
+			alertService.add('Oh snap ! Something went wrong, please try again.', 'danger');
+		});
+	}
+});
+
+/* Edit timetable */
+goalApp.controller('TimetableEditCtrl', function ($scope, $rootScope, $http,
+	$routeParams, $location, alertService, SelectService)
+{
+	$scope.alerts = alertService.alerts;
+	$rootScope.pageTitle = "Edit Activity";
+
+	$scope.weekdays = SelectService.weekdays;
+
+	$scope.formdata = [];
+
+	$http.get('api/timetables/show/' + $routeParams['id']).
+	success(function(data, status, headers, config) {
+		if (data.status == 'success') {
+			$scope.formdata.Activity = data.data.timetable.activity;
+			$scope.formdata.FromTime = $scope.timeToJS(data.data.timetable.from_time);
+			$scope.formdata.ToTime = $scope.timeToJS(data.data.timetable.to_time);
+			if (data.data.timetable.track == 0) {
+				$scope.formdata.Track = false;
+			} else {
+				$scope.formdata.Track = true;
+			}
+			if (data.data.timetable.days == 'SUNDAY,MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY,SATURDAY') {
+				$scope.formdata.Days = ['ALL'];
+			} else {
+				$scope.formdata.Days = data.data.timetable.days.split(',');
+			}
+		} else {
+			alertService.add(data.message, 'danger');
+			$location.path('/timetables/manage');
+		}
+	}).
+	error(function(data, status, headers, config) {
+		alertService.add('Oh snap ! Something went wrong, please try again.', 'danger');
+		$location.path('/timetables/manage');
+	});
+
+	$scope.editActivity = function() {
+		alertService.clear();
+
+		var data = {
+			'timetable' : {
+				activity: $scope.formdata.Activity,
+				from_time: $scope.toSQLTime($scope.formdata.FromTime),
+				to_time: $scope.toSQLTime($scope.formdata.ToTime),
+			}
+		};
+		if ($scope.formdata.Track == true) {
+			data.timetable.track = 1;
+		} else {
+			data.timetable.track = 0;
+		}
+		if ($scope.formdata.Days.indexOf("ALL") == -1) {
+			data.timetable.days = $scope.formdata.Days.join();
+		} else {
+			data.timetable.days = 'SUNDAY,MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY,SATURDAY';
+		}
+
+		$http.put("api/timetables/update/" + $routeParams['id'], data).
+		success(function (data, status, headers) {
+			if (data.status == 'success') {
+				alertService.add(data.message, 'success');
+				$location.path('/timetables/manage');
+			} else {
+				alertService.add(data.message, 'danger');
+			}
+		}).
+		error(function (data, status, headers) {
+			alertService.add('Oh snap ! Something went wrong, please try again.', 'danger');
+		});
+	}
+});

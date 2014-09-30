@@ -1,0 +1,256 @@
+<div class="row" ng-controller="TimetableManageCtrl">
+	<div class="col-xs-12">
+
+		<div class="header-button">
+			<a href="#/timetables/add" class="btn btn-primary">Add Activity</a>
+			<span class="small-margin"></span>
+			<a href="#/timetables" class="btn btn-info" ng-click="clearAlerts()">Cancel</a>
+		</div>
+
+		<div ng-show="alerts.length">
+			<alert ng-repeat="alert in alerts" type="{{alert.type}}">{{alert.msg}}</alert>
+		</div>
+
+		<tabset>
+			<tab>
+				<tab-heading>Sunday</tab-heading>
+				<div class="timetable-day">Timetable for Sunday</div>
+				<div ng-hide="timetables.sunday.length">No entries found. Please add one to get started.</div>
+				<div>
+					<table class="table table-hover" ng-show="timetables.sunday.length">
+						<thead>
+							<tr>
+								<th>From</th>
+								<th>To</th>
+								<th>Activity</th>
+								<th class="text-center">Track</th>
+								<th>Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="timetable in timetables.sunday">
+								<td>{{timetable.from_time}}</td>
+								<td>{{timetable.to_time}}</td>
+								<td>{{timetable.activity}}</td>
+								<td class="text-center">
+									<span ng-show="timetable.track == 1">Yes</span>
+									<span ng-show="timetable.track == 0">No</span>
+								</td>
+								<td class="text-left">
+									<a href='#/timetables/edit/{{timetable.id}}' ng-click="clearAlerts()">Edit</a>
+									<span class="small-margin"></span>
+									<a href='#/timetables/manage' ng-click="deleteActivity(timetable.id)"><span class="glyphicon glyphicon-trash"></span></a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</tab>
+			<tab>
+				<tab-heading>Monday</tab-heading>
+				<div class="timetable-day">Timetable for Monday</div>
+				<div ng-hide="timetables.monday.length">No entries found. Please add one to get started.</div>
+				<div>
+					<table class="table table-hover" ng-show="timetables.monday.length">
+						<thead>
+							<tr>
+								<th>From</th>
+								<th>To</th>
+								<th>Activity</th>
+								<th class="text-center">Track</th>
+								<th>Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="timetable in timetables.monday">
+								<td>{{timetable.from_time}}</td>
+								<td>{{timetable.to_time}}</td>
+								<td>{{timetable.activity}}</td>
+								<td class="text-center">
+									<span ng-show="timetable.track == 1">Yes</span>
+									<span ng-show="timetable.track == 0">No</span>
+								</td>
+								<td class="text-left">
+									<a href='#/timetables/edit/{{timetable.id}}' ng-click="clearAlerts()">Edit</a>
+									<span class="small-margin"></span>
+									<a href='#/timetables/manage' ng-click="deleteActivity(timetable.id)"><span class="glyphicon glyphicon-trash"></span></a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</tab>
+			<tab>
+				<tab-heading>Tuesday</tab-heading>
+				<div class="timetable-day">Timetable for Tuesday</div>
+				<div ng-hide="timetables.tuesday.length">No entries found. Please add one to get started.</div>
+				<div>
+					<table class="table table-hover" ng-show="timetables.tuesday.length">
+						<thead>
+							<tr>
+								<th>From</th>
+								<th>To</th>
+								<th>Activity</th>
+								<th class="text-center">Track</th>
+								<th>Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="timetable in timetables.tuesday">
+								<td>{{timetable.from_time}}</td>
+								<td>{{timetable.to_time}}</td>
+								<td>{{timetable.activity}}</td>
+								<td class="text-center">
+									<span ng-show="timetable.track == 1">Yes</span>
+									<span ng-show="timetable.track == 0">No</span>
+								</td>
+								<td class="text-left">
+									<a href='#/timetables/edit/{{timetable.id}}' ng-click="clearAlerts()">Edit</a>
+									<span class="small-margin"></span>
+									<a href='#/timetables/manage' ng-click="deleteActivity(timetable.id)"><span class="glyphicon glyphicon-trash"></span></a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</tab>
+			<tab>
+				<tab-heading>Wednesday</tab-heading>
+				<div class="timetable-day">Timetable for Wednesday</div>
+				<div ng-hide="timetables.wednesday.length">No entries found. Please add one to get started.</div>
+				<div>
+					<table class="table table-hover" ng-show="timetables.wednesday.length">
+						<thead>
+							<tr>
+								<th>From</th>
+								<th>To</th>
+								<th>Activity</th>
+								<th class="text-center">Track</th>
+								<th>Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="timetable in timetables.wednesday">
+								<td>{{timetable.from_time}}</td>
+								<td>{{timetable.to_time}}</td>
+								<td>{{timetable.activity}}</td>
+								<td class="text-center">
+									<span ng-show="timetable.track == 1">Yes</span>
+									<span ng-show="timetable.track == 0">No</span>
+								</td>
+								<td class="text-left">
+									<a href='#/timetables/edit/{{timetable.id}}' ng-click="clearAlerts()">Edit</a>
+									<span class="small-margin"></span>
+									<a href='#/timetables/manage' ng-click="deleteActivity(timetable.id)"><span class="glyphicon glyphicon-trash"></span></a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</tab>
+			<tab>
+				<tab-heading>Thursday</tab-heading>
+				<div class="timetable-day">Timetable for Thursday</div>
+				<div ng-hide="timetables.thursday.length">No entries found. Please add one to get started.</div>
+				<div>
+					<table class="table table-hover" ng-show="timetables.thursday.length">
+						<thead>
+							<tr>
+								<th>From</th>
+								<th>To</th>
+								<th>Activity</th>
+								<th class="text-center">Track</th>
+								<th>Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="timetable in timetables.thursday">
+								<td>{{timetable.from_time}}</td>
+								<td>{{timetable.to_time}}</td>
+								<td>{{timetable.activity}}</td>
+								<td class="text-center">
+									<span ng-show="timetable.track == 1">Yes</span>
+									<span ng-show="timetable.track == 0">No</span>
+								</td>
+								<td class="text-left">
+									<a href='#/timetables/edit/{{timetable.id}}' ng-click="clearAlerts()">Edit</a>
+									<span class="small-margin"></span>
+									<a href='#/timetables/manage' ng-click="deleteActivity(timetable.id)"><span class="glyphicon glyphicon-trash"></span></a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</tab>
+			<tab>
+				<tab-heading>Friday</tab-heading>
+				<div class="timetable-day">Timetable for Friday</div>
+				<div ng-hide="timetables.friday.length">No entries found. Please add one to get started.</div>
+				<div>
+					<table class="table table-hover" ng-show="timetables.friday.length">
+						<thead>
+							<tr>
+								<th>From</th>
+								<th>To</th>
+								<th>Activity</th>
+								<th class="text-center">Track</th>
+								<th>Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="timetable in timetables.friday">
+								<td>{{timetable.from_time}}</td>
+								<td>{{timetable.to_time}}</td>
+								<td>{{timetable.activity}}</td>
+								<td class="text-center">
+									<span ng-show="timetable.track == 1">Yes</span>
+									<span ng-show="timetable.track == 0">No</span>
+								</td>
+								<td class="text-left">
+									<a href='#/timetables/edit/{{timetable.id}}' ng-click="clearAlerts()">Edit</a>
+									<span class="small-margin"></span>
+									<a href='#/timetables/manage' ng-click="deleteActivity(timetable.id)"><span class="glyphicon glyphicon-trash"></span></a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</tab>
+			<tab>
+				<tab-heading>Saturday</tab-heading>
+				<div class="timetable-day">Timetable for Saturday</div>
+				<div ng-hide="timetables.saturday.length">No entries found. Please add one to get started.</div>
+				<div>
+					<table class="table table-hover" ng-show="timetables.saturday.length">
+						<thead>
+							<tr>
+								<th>From</th>
+								<th>To</th>
+								<th>Activity</th>
+								<th class="text-center">Track</th>
+								<th>Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="timetable in timetables.saturday">
+								<td>{{timetable.from_time}}</td>
+								<td>{{timetable.to_time}}</td>
+								<td>{{timetable.activity}}</td>
+								<td class="text-center">
+									<span ng-show="timetable.track == 1">Yes</span>
+									<span ng-show="timetable.track == 0">No</span>
+								</td>
+								<td class="text-left">
+									<a href='#/timetables/edit/{{timetable.id}}' ng-click="clearAlerts()">Edit</a>
+									<span class="small-margin"></span>
+									<a href='#/timetables/manage' ng-click="deleteActivity(timetable.id)"><span class="glyphicon glyphicon-trash"></span></a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</tab>
+		</tabset>
+
+	</div>
+</div><!-- END row -->

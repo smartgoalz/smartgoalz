@@ -1,0 +1,68 @@
+<div class="row" ng-controller="TimetableAddCtrl">
+	<div class="col-xs-12">
+		<div class="form-title">Create a Activity</div>
+	</div>
+
+	<div class="col-xs-12" ng-show="alerts.length">
+		<alert ng-repeat="alert in alerts" type="{{alert.type}}">{{alert.msg}}</alert>
+	</div>
+
+	<div>
+	<form method="POST" role="form" name="appForm">
+		<div class="row">
+			<div class="col-xs-8">
+				<div class="form-group">
+					<label for="inputTitle">Activity</label>
+					<input type="text" class="form-control" id="inputActivity" placeholder="Activity" ng-model="formdata.Activity" ng-required="true">
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-8">
+				<div class="form-group">
+					<label for="inputFromTime">From time</label>
+					<timepicker ng-model="formdata.FromTime" hour-step="1" minute-step="1" show-meridian="true"></timepicker>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-8">
+				<div class="form-group">
+					<label for="inputToTime">To time</label>
+					<timepicker ng-model="formdata.ToTime" hour-step="1" minute-step="1" show-meridian="true"></timepicker>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-3">
+				<div class="form-group">
+					<label for="inputDays">Days</label>
+					<select class="form-control" id="inputDays" ng-model="formdata.Days" ng-required="true" multiple="true">
+						<option ng-repeat="(id, weekday) in weekdays" value="{{id}}">{{weekday}}</option>
+					</select>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-4">
+				<div class="form-group">
+					 <label for="inputTrack" class="checkbox"><input type="checkbox" class="form-control" id="inputTrack" placeholder="" ng-model="formdata.Track"> Track activity</label>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-8">
+				<div>
+					<button class="btn btn-primary" ng-click="addActivity()">Submit</button>
+					<a href="#/timetables/manage" class="btn btn-info" ng-click="clearAlerts()">Cancel</a>
+				</div>
+			</div>
+		</div>
+	</form>
+	</div>
+</div><!-- END row -->

@@ -23,13 +23,13 @@
 		</div>
 
 		<div ng-show="alerts.length">
-			<alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+			<alert ng-repeat="alert in alerts" type="{{alert.type}}">{{alert.msg}}</alert>
 		</div>
 
 		<div class="view-actions">
 			<button class="btn btn-primary" ng-click="addMonitorvalue()">Add Value</button>
 			<span class="small-margin"></span>
-			<a href="#/monitors" class="btn btn-info">Cancel</a>
+			<a href="#/monitors" class="btn btn-info" ng-click="clearAlerts()">Cancel</a>
 		</div>
 
 		<div class="view-content" ng-hide="monitorvalues.length">
