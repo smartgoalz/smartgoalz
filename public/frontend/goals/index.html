@@ -1,7 +1,7 @@
 <div class="row" ng-controller="GoalsIndexCtrl">
 	<div class="col-xs-12">
 		<div class="header-button">
-			<a href="#/goals/add" class="btn btn-info">Add Goal</a>
+			<a href="#/goals/add" class="btn btn-info" ng-click="clearAlerts()">Add Goal</a>
 		</div>
 
 		<div ng-show="alerts.length">

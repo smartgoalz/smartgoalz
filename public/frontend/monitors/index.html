@@ -1,7 +1,7 @@
 <div class="row" ng-controller="MonitorsIndexCtrl">
 	<div class="col-xs-12">
 		<div class="header-button">
-			<a href="#/monitors/add" class="btn btn-info">Add Monitor</a>
+			<a href="#/monitors/add" class="btn btn-info" ng-click="clearAlerts()">Add Monitor</a>
 		</div>
 
 		<div ng-show="alerts.length">
