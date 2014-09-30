@@ -209,6 +209,18 @@ goalApp.filter('showDate', function() {
 	};
 });
 
+goalApp.filter('showTime', function() {
+	return function(input) {
+		if (!input) {
+			return '';
+		}
+		inputArr = input.split(':');
+		jsdate = new Date('2000', '01', '01', inputArr[0], inputArr[1], 0);
+		return jsdate.toString('hh:mm tt');
+	};
+});
+
+
 /******************* CONTROLLERS *******************/
 
 goalApp.controller('BodyCtrl', function ($scope, $rootScope, $cookieStore, alertService) {
@@ -2016,6 +2028,7 @@ goalApp.controller('TimetableManageCtrl', function ($scope, $rootScope, $http,
 	$rootScope.pageTitle = "Manage Timetable";
 
 	$scope.timetables = [];
+	$scope.timetables.all = [];
 	$scope.timetables.sunday = [];
 	$scope.timetables.monday = [];
 	$scope.timetables.tuesday = [];
@@ -2051,6 +2064,19 @@ goalApp.controller('TimetableManageCtrl', function ($scope, $rootScope, $http,
 				if (timetables[c].days.indexOf("SATURDAY") != -1) {
 					$scope.timetables.saturday.push(timetables[c]);
 				}
+				temp = timetables[c];
+				if (temp.days == "SUNDAY,MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY,SATURDAY") {
+					temp.days = 'All';
+				} else {
+					temp.days = temp.days.replace(/SUNDAY/, 'Sun');
+					temp.days = temp.days.replace(/MONDAY/, 'Mon');
+					temp.days = temp.days.replace(/TUESDAY/, 'Tue');
+					temp.days = temp.days.replace(/WEDNESDAY/, 'Wed');
+					temp.days = temp.days.replace(/THURSDAY/, 'Thus');
+					temp.days = temp.days.replace(/FRIDAY/, 'Fri');
+					temp.days = temp.days.replace(/SATURDAY/, 'Sat');
+				}
+				$scope.timetables.all.push(temp);
 			}
 		} else {
 			$scope.timetables = [];

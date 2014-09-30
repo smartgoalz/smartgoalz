@@ -22,20 +22,13 @@
 						<th>From</th>
 						<th>To</th>
 						<th>Activity</th>
-						<th>Actions</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr ng-repeat="timetable in timetables">
-						<td>{{timetable.from_time}}</td>
-						<td>{{timetable.to_time}}</td>
+						<td>{{timetable.from_time | showTime }}</td>
+						<td>{{timetable.to_time | showTime }}</td>
 						<td>{{timetable.activity}}</td>
-						<td>
-							<span ng-show="timetable.track == 1">
-								<button class="btn-mini btn-xmini btn-default" ng-click="doneActivity(timetable.id)">Done</button>
-							</span>
-							<span ng-hide="timetable.track == 0"></span>
-						</td>
 					</tr>
 				</tbody>
 			</table>

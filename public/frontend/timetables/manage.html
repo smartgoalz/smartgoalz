@@ -13,6 +13,42 @@
 
 		<tabset>
 			<tab>
+				<tab-heading>All</tab-heading>
+				<div class="timetable-day">All Timetables</div>
+				<div ng-hide="timetables.all.length">No entries found. Please add one to get started.</div>
+				<div>
+					<table class="table table-hover" ng-show="timetables.all.length">
+						<thead>
+							<tr>
+								<th>From</th>
+								<th>To</th>
+								<th>Activity</th>
+								<th>Days</th>
+								<th class="text-center">Track</th>
+								<th>Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="timetable in timetables.all">
+								<td>{{timetable.from_time | showTime }}</td>
+								<td>{{timetable.to_time | showTime }}</td>
+								<td>{{timetable.activity}}</td>
+								<td>{{timetable.days}}</td>
+								<td class="text-center">
+									<span ng-show="timetable.track == 1">Yes</span>
+									<span ng-show="timetable.track == 0">No</span>
+								</td>
+								<td class="text-left">
+									<a href='#/timetables/edit/{{timetable.id}}' ng-click="clearAlerts()">Edit</a>
+									<span class="small-margin"></span>
+									<a href='#/timetables/manage' ng-click="deleteActivity(timetable.id)"><span class="glyphicon glyphicon-trash"></span></a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</tab>
+			<tab>
 				<tab-heading>Sunday</tab-heading>
 				<div class="timetable-day">Timetable for Sunday</div>
 				<div ng-hide="timetables.sunday.length">No entries found. Please add one to get started.</div>
@@ -29,8 +65,8 @@
 						</thead>
 						<tbody>
 							<tr ng-repeat="timetable in timetables.sunday">
-								<td>{{timetable.from_time}}</td>
-								<td>{{timetable.to_time}}</td>
+								<td>{{timetable.from_time | showTime }}</td>
+								<td>{{timetable.to_time | showTime }}</td>
 								<td>{{timetable.activity}}</td>
 								<td class="text-center">
 									<span ng-show="timetable.track == 1">Yes</span>
@@ -63,8 +99,8 @@
 						</thead>
 						<tbody>
 							<tr ng-repeat="timetable in timetables.monday">
-								<td>{{timetable.from_time}}</td>
-								<td>{{timetable.to_time}}</td>
+								<td>{{timetable.from_time | showTime }}</td>
+								<td>{{timetable.to_time | showTime }}</td>
 								<td>{{timetable.activity}}</td>
 								<td class="text-center">
 									<span ng-show="timetable.track == 1">Yes</span>
@@ -97,8 +133,8 @@
 						</thead>
 						<tbody>
 							<tr ng-repeat="timetable in timetables.tuesday">
-								<td>{{timetable.from_time}}</td>
-								<td>{{timetable.to_time}}</td>
+								<td>{{timetable.from_time | showTime }}</td>
+								<td>{{timetable.to_time | showTime }}</td>
 								<td>{{timetable.activity}}</td>
 								<td class="text-center">
 									<span ng-show="timetable.track == 1">Yes</span>
@@ -131,8 +167,8 @@
 						</thead>
 						<tbody>
 							<tr ng-repeat="timetable in timetables.wednesday">
-								<td>{{timetable.from_time}}</td>
-								<td>{{timetable.to_time}}</td>
+								<td>{{timetable.from_time | showTime }}</td>
+								<td>{{timetable.to_time | showTime }}</td>
 								<td>{{timetable.activity}}</td>
 								<td class="text-center">
 									<span ng-show="timetable.track == 1">Yes</span>
@@ -165,8 +201,8 @@
 						</thead>
 						<tbody>
 							<tr ng-repeat="timetable in timetables.thursday">
-								<td>{{timetable.from_time}}</td>
-								<td>{{timetable.to_time}}</td>
+								<td>{{timetable.from_time | showTime }}</td>
+								<td>{{timetable.to_time | showTime }}</td>
 								<td>{{timetable.activity}}</td>
 								<td class="text-center">
 									<span ng-show="timetable.track == 1">Yes</span>
@@ -199,8 +235,8 @@
 						</thead>
 						<tbody>
 							<tr ng-repeat="timetable in timetables.friday">
-								<td>{{timetable.from_time}}</td>
-								<td>{{timetable.to_time}}</td>
+								<td>{{timetable.from_time | showTime }}</td>
+								<td>{{timetable.to_time | showTime }}</td>
 								<td>{{timetable.activity}}</td>
 								<td class="text-center">
 									<span ng-show="timetable.track == 1">Yes</span>
@@ -233,8 +269,8 @@
 						</thead>
 						<tbody>
 							<tr ng-repeat="timetable in timetables.saturday">
-								<td>{{timetable.from_time}}</td>
-								<td>{{timetable.to_time}}</td>
+								<td>{{timetable.from_time | showTime }}</td>
+								<td>{{timetable.to_time | showTime }}</td>
 								<td>{{timetable.activity}}</td>
 								<td class="text-center">
 									<span ng-show="timetable.track == 1">Yes</span>
