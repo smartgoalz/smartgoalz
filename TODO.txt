@@ -1,2 +1,4 @@
 Change all boolean to 1/0 in the angular js itself
 Pagination
+Dashboard
+User
