@@ -5,7 +5,8 @@
 		</div>
 
 		<div>
-			<div>Current time is : {{curTime}}</div>
+			<br />
+			<div>Current time : {{curTime}}</div>
 		</div>
 		<br />
 
@@ -13,10 +14,10 @@
 			<alert ng-repeat="alert in alerts" type="{{alert.type}}">{{alert.msg}}</alert>
 		</div>
 
-		<div ng-hide="timetables.length">No activities found. Please add one to get started.</div>
+		<div ng-hide="activities.length">No activities found. Please add one to get started.</div>
 
 		<div>
-			<table class="table table-hover" ng-show="timetables.length">
+			<table class="table table-hover" ng-show="activities.length">
 				<thead>
 					<tr>
 						<th>From</th>
@@ -25,10 +26,10 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr ng-repeat="timetable in timetables">
-						<td>{{timetable.from_time | showTime }}</td>
-						<td>{{timetable.to_time | showTime }}</td>
-						<td>{{timetable.activity}}</td>
+					<tr ng-repeat="activity in activities">
+						<td>{{activity.from_time | showTime }}</td>
+						<td>{{activity.to_time | showTime }}</td>
+						<td>{{activity.activity_name}}</td>
 					</tr>
 				</tbody>
 			</table>

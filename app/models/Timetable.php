@@ -15,28 +15,17 @@ class Timetable extends Eloquent
 	 *
 	 * @var array
 	 */
-        protected $hidden = ['user_id', 'created_at', 'updated_at', 'deleted_at'];
+        protected $hidden = [];
 
-	protected $fillable = array('activity', 'from_time', 'to_time', 'days', 'track');
+	/**
+	 * Model doesnt use timestamps.
+	 *
+	 * @var string
+	 */
+	public $timestamps = false;
 
-	protected $guarded = array('id', 'user_id');
+	protected $fillable = array('activity_id', 'from_time', 'to_time', 'days');
 
-	use SoftDeletingTrait;
+	protected $guarded = array('id');
 
-	public static function boot()
-	{
-		parent::boot();
-
-		/* Hook into save event, setup event bindings */
-		Timetable::saving(function($content)
-		{
-			/* Set user id on save */
-			$content->user_id = Auth::id();
-		});
-	}
-
-	public function scopeCurUser($query)
-	{
-		return $query->where('user_id', '=', Auth::id());
-	}
 }

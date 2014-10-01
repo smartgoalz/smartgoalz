@@ -60,6 +60,42 @@ class TimetablesController extends BaseController
 	}
 
 	/**
+	 * Display the specified resource.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function getSchedule($id)
+	{
+		$activity = Activity::curUser()->find($id);
+		if (!$activity)
+		{
+			return Response::json(array(
+				'status' => 'error',
+				'message' => 'Activity not found.'
+			));
+		}
+
+		$data = Timetable::where('activity_id', $id)->orderBy('from_time', 'DESC')->get();
+
+		if ($data)
+		{
+			return Response::json(array(
+				'status' => 'success',
+				'data' => array(
+					'activity' => $activity,
+					'timetables' => $data
+				)
+			));
+		} else {
+			return Response::json(array(
+				'status' => 'error',
+				'message' => 'Schedule not found.'
+			));
+		}
+	}
+
+	/**
 	 * Create a new resource in storage.
 	 *
 	 * @return Response
@@ -67,6 +103,15 @@ class TimetablesController extends BaseController
 	public function postCreate()
 	{
 		$data = Input::get('timetable');
+
+		$activity = Activity::curUser()->find($data['activity_id']);
+		if (!$activity)
+		{
+			return Response::json(array(
+				'status' => 'error',
+				'message' => 'Activity not found.'
+			));
+		}
 
 		$this->timetableValidator->with($data);
 
@@ -76,12 +121,12 @@ class TimetablesController extends BaseController
 			{
 				return Response::json(array(
 					'status' => 'success',
-					'message' => 'Activity created.'
+					'message' => 'Schedule created.'
 				));
 			} else {
 				return Response::json(array(
 					'status' => 'error',
-					'message' => 'Oops ! Failed to create activity.'
+					'message' => 'Oops ! Failed to create schedule.'
 				));
 			}
 		} else {
@@ -100,38 +145,44 @@ class TimetablesController extends BaseController
 	 */
 	public function putUpdate($id)
 	{
-                $timetable = Timetable::curUser()->find($id);
+                $timetable = Timetable::find($id);
                 if (!$timetable)
 		{
 			return Response::json(array(
 				'status' => 'error',
-				'message' => 'Oops ! Activity not found.'
+				'message' => 'Oops ! Schedule not found.'
 			));
                 }
 
 		$data = Input::get('timetable');
+
+		$activity = Activity::curUser()->find($timetable->activity_id);
+		if (!$activity) {
+			return Response::json(array(
+				'status' => 'error',
+				'message' => 'Activity not found.'
+			));
+		}
 
 		$this->timetableValidator->with($data);
 
 		if ($this->timetableValidator->passes())
 		{
 			/* Update data */
-	                $timetable->activity = $data['activity'];
 	                $timetable->from_time = $data['from_time'];
 	                $timetable->to_time = $data['to_time'];
 	                $timetable->days = $data['days'];
-	                $timetable->track = $data['track'];
 
 			if ($timetable->save())
 			{
 				return Response::json(array(
 					'status' => 'success',
-					'message' => 'Activity updated.'
+					'message' => 'Schedule updated.'
 				));
 			} else {
 				return Response::json(array(
 					'status' => 'error',
-					'message' => 'Oops ! Failed to update activity.'
+					'message' => 'Oops ! Failed to update schedule.'
 				));
 			}
 		} else {
@@ -150,25 +201,34 @@ class TimetablesController extends BaseController
 	 */
 	public function deleteDestroy($id)
 	{
-                $timetable = Timetable::curUser()->find($id);
+                $timetable = Timetable::find($id);
                 if (!$timetable)
 		{
 			return Response::json(array(
 				'status' => 'error',
-				'message' => 'Oops ! Activity not found.'
+				'message' => 'Oops ! Schedule not found.'
 			));
                 }
+
+		$activity = Activity::curUser()->find($timetable->activity_id);
+		if (!$activity)
+		{
+			return Response::json(array(
+				'status' => 'error',
+				'message' => 'Activity not found.'
+			));
+		}
 
                 if ($timetable->delete())
 		{
 			return Response::json(array(
 				'status' => 'success',
-				'message' => 'Activity deleted.'
+				'message' => 'Schedule deleted.'
 			));
 		} else {
 			return Response::json(array(
 				'status' => 'error',
-				'message' => 'Oops ! Failed to delete activity.'
+				'message' => 'Oops ! Failed to delete schedule.'
 			));
 		}
 	}

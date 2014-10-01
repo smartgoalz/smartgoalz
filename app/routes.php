@@ -23,6 +23,7 @@ Route::group(array('prefix' => 'api'), function()
 	Route::controller('categories', 'CategoriesController');
 	Route::controller('timewatches', 'TimewatchesController');
 	Route::controller('timetables', 'TimetablesController');
+	Route::controller('activities', 'ActivitiesController');
 	Route::controller('monitors', 'MonitorsController');
 	Route::controller('monitorvalues', 'MonitorvaluesController');
 	Route::controller('notes', 'NotesController');
