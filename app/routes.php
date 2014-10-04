@@ -18,6 +18,7 @@ Route::get('/', function()
 
 Route::group(array('prefix' => 'api'), function()
 {
+	Route::controller('users', 'UsersController');
 	Route::controller('goals', 'GoalsController');
 	Route::controller('tasks', 'TasksController');
 	Route::controller('categories', 'CategoriesController');

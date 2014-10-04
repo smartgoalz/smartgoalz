@@ -86,6 +86,9 @@ goalApp.config(['$routeProvider', function($routeProvider) {
 	when('/journals/edit/:id', {
 		templateUrl: 'frontend/journals/edit.html',
 	}).
+	when('/users/profile', {
+		templateUrl: 'frontend/users/profile.html',
+	}).
 	otherwise({
 		redirectTo: '/dashboard'
 	});
@@ -222,7 +225,14 @@ goalApp.filter('showTime', function() {
 
 /******************* CONTROLLERS *******************/
 
-goalApp.controller('BodyCtrl', function ($scope, $rootScope, $cookieStore, alertService) {
+goalApp.controller('BodyCtrl', function ($scope, $rootScope, $cookieStore,
+	$window, alertService)
+{
+	/* Check if user is logged in */
+	if ($cookieStore.get('logged_in') == false) {
+		$window.location.href = 'user.html';
+	}
+
 	$scope.formdata = [];
 
 	$rootScope.pageTitle = "";
@@ -2533,4 +2543,18 @@ goalApp.controller('ActivityEditCtrl', function ($scope, $rootScope, $http,
 			alertService.add('Oh snap ! Something went wrong, please try again.', 'danger');
 		});
 	}
+});
+
+/********************************************************************/
+/*************************** PROFILE ********************************/
+/********************************************************************/
+
+/* Edit activity */
+goalApp.controller('ProfileEditCtrl', function ($scope, $rootScope, $http,
+	$routeParams, $location, alertService, SelectService)
+{
+	$scope.alerts = alertService.alerts;
+	$rootScope.pageTitle = "Edit Profile";
+
+	$scope.formdata = [];
 });

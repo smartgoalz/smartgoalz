@@ -1,0 +1,25 @@
+#login-box {
+        margin-top: 50px;
+}
+
+#signup-box {
+        margin-top: 50px;
+}
+
+#signup-link {
+        border-top: 1px solid#888;
+        padding-top: 15px;
+        font-size: 85%;
+}
+
+.panel-link {
+        font-size: 80%;
+}
+
+.panel-body {
+        padding-top: 30px;
+}
+
+.input-group {
+        margin-bottom: 20px;
+}

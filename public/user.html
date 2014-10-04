@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html ng-app="userApp">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<title>SMARTGoalz.org</title>
+	<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+
+	<link rel="shortcut icon" type="image/png" href="favicon.ico" />
+
+	<!-- Angular JS version v1.2.10 -->
+	<script src="js/angular.min.js"></script>
+	<script src="js/angular-cookies.min.js"></script>
+	<script src="js/angular-route.min.js"></script>
+	<script src="js/angular-resource.min.js"></script>
+	<script src="js/angular-sanitize.js"></script>
+
+	<!-- Angular UI version v0.11.0 -->
+	<script src="js/ui-bootstrap-tpls-0.11.0.min.js"></script>
+
+	<!-- Angular UI Router v0.2.10 -->
+	<script src="js/angular-ui-router.js"></script>
+
+	<!-- Bootstrap version 3.1.1 -->
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+	<link rel="stylesheet" type="text/css" href="css/bootstrap-theme.min.css" />
+
+	<!-- Font awesome version 4.2.0 -->
+	<link rel="stylesheet" type="text/css" href="css/font-awesome.min.css" />
+
+	<!-- Angular JS App -->
+	<script src="frontend/user.js?6"></script>
+
+	<!-- Custom stylesheet -->
+	<link rel="stylesheet" type="text/css" href="css/user.css?1" />
+
+</head>
+
+<body ng-controller="BodyCtrl">
+
+<!-- Page Wrapper -->
+<div id="page-wrapper">
+
+	<!-- Content Wrapper -->
+	<div id="content-wrapper">
+
+		<!-- Page Content -->
+		<div class="page-content">
+
+			<div class="row">
+				<div class="col-xs-12">
+					<div ng-controller="ContentCtrl">
+						<div ng-view></div>
+					</div>
+				</div>
+			</div>
+			<!-- End Main Content -->
+
+		</div>
+		<!-- End Page Content -->
+
+	</div>
+	<!-- End Content Wrapper -->
+
+</div>
+<!-- End Page Wrapper -->
+
+</body>
+
+</html>

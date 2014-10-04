@@ -42,7 +42,6 @@ class Journal extends Eloquent
 
 	public function scopeCurUser($query)
 	{
-		Auth::loginUsingId(1);
 		return $query->where('user_id', '=', Auth::id());
 	}
 }
