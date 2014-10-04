@@ -13,7 +13,7 @@
 			<div class="col-xs-8">
 				<div class="form-group">
 					<label for="inputTitle">Title</label>
-					<input type="text" class="form-control" id="inputTitle" placeholder="Title" ng-model="formdata.Title" ng-required="true">
+					<input type="text" class="form-control" id="inputTitle" placeholder="Title" ng-model="formdata.Title">
 				</div>
 			</div>
 		</div>
@@ -22,7 +22,7 @@
 			<div class="col-xs-3">
 				<div class="form-group">
 					<label for="inputType">Type</label>
-					<select class="form-control" id="inputType" ng-model="formdata.Type" ng-required="true">
+					<select class="form-control" id="inputType" ng-model="formdata.Type">
 						<option ng-repeat="(id, type) in monitortypes" value="{{id}}">{{type}}</option>
 					</select>
 				</div>
@@ -33,7 +33,7 @@
 			<div class="col-xs-2">
 				<div class="form-group">
 					<label for="inputMinimum">Minimum Value</label>
-					<input type="text" class="form-control" id="inputMinimum" placeholder="Minimum value" ng-model="formdata.Minimum" ng-required="true">
+					<input type="text" class="form-control" id="inputMinimum" placeholder="Minimum value" ng-model="formdata.Minimum">
 				</div>
 			</div>
 		</div>
@@ -42,7 +42,7 @@
 			<div class="col-xs-2">
 				<div class="form-group">
 					<label for="inputMaximum">Maximum Value</label>
-					<input type="text" class="form-control" id="inputMaximum" placeholder="Maximum value" ng-model="formdata.Maximum" ng-required="true">
+					<input type="text" class="form-control" id="inputMaximum" placeholder="Maximum value" ng-model="formdata.Maximum">
 				</div>
 			</div>
 		</div>
@@ -51,7 +51,7 @@
 			<div class="col-xs-2">
 				<div class="form-group">
 					<label for="inputMinimumThreshold">Minimum Threshold</label>
-					<input type="text" class="form-control" id="inputMinimumThreshold" placeholder="Minimum Threshold" ng-model="formdata.MinimumThreshold" ng-required="true">
+					<input type="text" class="form-control" id="inputMinimumThreshold" placeholder="Minimum Threshold" ng-model="formdata.MinimumThreshold" ="true">
 				</div>
 			</div>
 		</div>
@@ -60,7 +60,7 @@
 			<div class="col-xs-2">
 				<div class="form-group">
 					<label for="inputMaximumThreshold">Maximum Threshold</label>
-					<input type="text" class="form-control" id="inputMaximumThreshold" placeholder="Maximum Threshold" ng-model="formdata.MaximumThreshold" ng-required="true">
+					<input type="text" class="form-control" id="inputMaximumThreshold" placeholder="Maximum Threshold" ng-model="formdata.MaximumThreshold">
 				</div>
 			</div>
 		</div>
@@ -78,7 +78,7 @@
 			<div class="col-xs-2">
 				<div class="form-group">
 					<label for="inputUnits">Units</label>
-					<input type="text" class="form-control" id="inputUnits" placeholder="Units" ng-model="formdata.Units" ng-required="true">
+					<input type="text" class="form-control" id="inputUnits" placeholder="Units" ng-model="formdata.Units">
 				</div>
 			</div>
 		</div>
@@ -87,7 +87,7 @@
 			<div class="col-xs-3">
 				<div class="form-group">
 					<label for="inputFrequency">Frequency</label>
-					<select class="form-control" id="inputFrequency" ng-model="formdata.Frequency" ng-required="true">
+					<select class="form-control" id="inputFrequency" ng-model="formdata.Frequency">
 						<option ng-repeat="(id, frequency) in monitorfrequencies" value="{{id}}">{{frequency}}</option>
 					</select>
 				</div>

@@ -37,7 +37,7 @@
 							<td class="date-field">
 							<label for="inputDate">Date</label>
 							<div class="input-group">
-								<input type="text" class="form-control" datepicker-popup="{{calendar.dateFormat}}" ng-model="formdata.Date" is-open="calendar.opened.Date" datepicker-options="calendar.dateOptions" close-text="Close" placeholder="Date" id="inputDate" ng-click="calendar.open($event, 'Date')" ng-required="true">
+								<input type="text" class="form-control" datepicker-popup="{{calendar.dateFormat}}" ng-model="formdata.Date" is-open="calendar.opened.Date" datepicker-options="calendar.dateOptions" close-text="Close" placeholder="Date" id="inputDate" ng-click="calendar.open($event, 'Date')">
 								<span class="input-group-btn">
 									<button type="button" class="btn btn-default" ng-click="calendar.open($event, 'Date')"><i class="glyphicon glyphicon-calendar"></i></button>
 								</span>

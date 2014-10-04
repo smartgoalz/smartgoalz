@@ -39,7 +39,7 @@
 					<tr>
 					<td>
 					<div class="input-group">
-						<input type="text" class="form-control" datepicker-popup="{{calendar.dateFormat}}" ng-model="formdata.Startdate" is-open="calendar.opened.Startdate" datepicker-options="calendar.dateOptions" close-text="Close" placeholder="Start time" id="inputStartdate" ng-click="calendar.open($event, 'Startdate')" ng-required="true">
+						<input type="text" class="form-control" datepicker-popup="{{calendar.dateFormat}}" ng-model="formdata.Startdate" is-open="calendar.opened.Startdate" datepicker-options="calendar.dateOptions" close-text="Close" placeholder="Start time" id="inputStartdate" ng-click="calendar.open($event, 'Startdate')">
 						<span class="input-group-btn">
 							<button type="button" class="btn btn-default" ng-click="calendar.open($event, 'Startdate')"><i class="glyphicon glyphicon-calendar"></i></button>
 						</span>
@@ -74,7 +74,7 @@
 					<tr>
 					<td>
 					<div class="input-group">
-						<input type="text" class="form-control" datepicker-popup="{{calendar.dateFormat}}" ng-model="formdata.Stopdate" is-open="calendar.opened.Stopdate" datepicker-options="calendar.dateOptions" close-text="Close" placeholder="Stop time" id="inputStopdate" ng-click="calendar.open($event, 'Stopdate')" ng-required="true">
+						<input type="text" class="form-control" datepicker-popup="{{calendar.dateFormat}}" ng-model="formdata.Stopdate" is-open="calendar.opened.Stopdate" datepicker-options="calendar.dateOptions" close-text="Close" placeholder="Stop time" id="inputStopdate" ng-click="calendar.open($event, 'Stopdate')">
 						<span class="input-group-btn">
 							<button type="button" class="btn btn-default" ng-click="calendar.open($event, 'Stopdate')"><i class="glyphicon glyphicon-calendar"></i></button>
 						</span>
