@@ -160,4 +160,26 @@ class UsersController extends BaseController
 		}
 	}
 
+	/**
+	 * Logout user
+	 *
+	 * @return Response
+	 */
+	public function getProfile()
+	{
+		$data = User::where('id', '=', Auth::id())->get();
+
+		if ($data)
+		{
+			return Response::json(array(
+				'status' => 'success',
+				'data' => array('user' => $data)
+			));
+		} else {
+			return Response::json(array(
+				'status' => 'error',
+				'message' => 'User not found.'
+			));
+		}
+	}
 }

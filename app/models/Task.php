@@ -36,4 +36,11 @@ class Task extends Eloquent
 			$task->save();
 		}
 	}
+
+	public function scopeWithGoals($query)
+	{
+		return $query->leftJoin('goals', 'tasks.goal_id', '=', 'goals.id')
+			->where('goals.user_id', '=', Auth::id())
+			->select('tasks.*', 'goals.id as goal_id', 'goals.user_id as goals_user_id');
+	}
 }

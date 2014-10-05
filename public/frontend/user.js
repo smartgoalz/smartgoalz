@@ -104,7 +104,7 @@ userApp.controller('UserLogoutCtrl', function ($scope, $rootScope, $http,
 {
 	$http.get("api/users/logout").
 	success(function (data, status, headers) {
-
+		$cookieStore.put('logged_in', false);
 	}).
 	error(function (data, status, headers) {
 		alertService.add('Oh snap ! Something went wrong, please try again.', 'danger');

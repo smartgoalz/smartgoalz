@@ -89,6 +89,9 @@ goalApp.config(['$routeProvider', function($routeProvider) {
 	when('/users/profile', {
 		templateUrl: 'frontend/users/profile.html',
 	}).
+	when('/users/profile/edit', {
+		templateUrl: 'frontend/users/editprofile.html',
+	}).
 	otherwise({
 		redirectTo: '/dashboard'
 	});
@@ -370,10 +373,27 @@ goalApp.controller('ContentCtrl', function ($scope, $rootScope, $cookieStore, al
 /********************************************************************/
 
 goalApp.controller('DashboardCtrl', function ($scope, $rootScope,
-	$cookieStore, alertService)
+	$http, $cookieStore, alertService, $sce)
 {
 	$scope.alerts = alertService.alerts;
 	$rootScope.pageTitle = "Dashboard";
+
+	$http.get('api/dashboard/index').
+	success(function(data, status, headers, config) {
+		if (data.status == 'success') {
+			$scope.dashboard = data.data.dashboard;
+		} else {
+			$scope.dashboard = [];
+		}
+	}).
+	error(function(data, status, headers, config) {
+		alertService.add('Oh snap ! Something went wrong, please try again.', 'danger');
+		$scope.dashboard = [];
+	});
+
+	$scope.skipFilter = function(value) {
+		return $sce.trustAsHtml(value);
+	};
 });
 
 /********************************************************************/
@@ -2549,7 +2569,29 @@ goalApp.controller('ActivityEditCtrl', function ($scope, $rootScope, $http,
 /*************************** PROFILE ********************************/
 /********************************************************************/
 
-/* Edit activity */
+/* Show profile */
+goalApp.controller('ProfileShowCtrl', function ($scope, $rootScope, $http,
+	$routeParams, $location, alertService, SelectService)
+{
+	$scope.alerts = alertService.alerts;
+	$rootScope.pageTitle = "Profile";
+
+	$http.get('api/users/profile').
+	success(function(data, status, headers, config) {
+		if (data.status == 'success') {
+			$scope.user = data.data.user[0];
+		} else {
+			alertService.add(data.message, 'danger');
+			$location.path('/dashboard');
+		}
+	}).
+	error(function(data, status, headers, config) {
+		alertService.add('Oh snap ! Something went wrong, please try again.', 'danger');
+		$location.path('/dashboard');
+	});
+});
+
+/* Edit profile */
 goalApp.controller('ProfileEditCtrl', function ($scope, $rootScope, $http,
 	$routeParams, $location, alertService, SelectService)
 {

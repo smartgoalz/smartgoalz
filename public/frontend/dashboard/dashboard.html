@@ -9,7 +9,7 @@
 							<i class="fa fa-cubes"></i>
 						</div>
 					<div class="widget-content pull-left">
-						<div class="title">80</div>
+						<div class="title">{{dashboard.active_goals}}</div>
 							<div class="comment">Active Goals</div>
 						</div>
 						<div class="clearfix"></div>
@@ -23,7 +23,7 @@
 							<i class="fa fa-tasks"></i>
 						</div>
 					<div class="widget-content pull-left">
-						<div class="title">80</div>
+						<div class="title">{{dashboard.pending_tasks}}</div>
 							<div class="comment">Pending Tasks</div>
 						</div>
 						<div class="clearfix"></div>
@@ -37,8 +37,8 @@
 							<i class="fa fa-bell"></i>
 						</div>
 					<div class="widget-content pull-left">
-						<div class="title">2</div>
-							<div class="comment">Upcoming Events</div>
+						<div class="title">0</div>
+							<div class="comment">Upcoming Tasks</div>
 						</div>
 						<div class="clearfix"></div>
 					</div>
@@ -51,8 +51,8 @@
 							<i class="fa fa-clock-o"></i>
 						</div>
 					<div class="widget-content pull-left">
-						<div class="title">1</div>
-							<div class="comment">Active Timewatch</div>
+						<div class="title">{{dashboard.active_timewatches}}</div>
+							<div class="comment">Active Timewatches</div>
 						</div>
 						<div class="clearfix"></div>
 					</div>
@@ -64,11 +64,30 @@
 			<div class="col-lg-6">
 				<div class="widget">
 					<div class="widget-header">
+						<i class="fa fa-info-circle"></i> Alerts
+						<div class="clearfix"></div>
+					</div>
+					<div class="widget-body">
+						<div class="message">
+
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-lg-6">
+				<div class="widget">
+					<div class="widget-header">
 						<i class="fa fa-edit"></i> Notes
 						<div class="clearfix"></div>
 					</div>
 					<div class="widget-body">
-					<div class="message"></div>
+						<div class="message">
+							<div class="widget-item" ng-repeat="note in dashboard.notes_dashboard">
+								<div class="widget-title">{{note.title}}</div>
+								<div ng-bind-html="skipFilter(note.note)"></div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
