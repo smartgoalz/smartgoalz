@@ -113,51 +113,70 @@ class UsersController extends BaseController
 	}
 
 	/**
+	 * Change password
+	 *
+	 * @return Response
+	 */
+	public function putChangepassword()
+	{
+		$data = Input::get('user');
+
+		$user = User::find(Auth::id());
+
+		if (!$user)
+		{
+			return Response::json(array(
+				'status' => 'error',
+				'message' => 'User not found.'
+			));
+		}
+
+		if (!Hash::check($data['old_password'], $user->password))
+		{
+			return Response::json(array(
+				'status' => 'error',
+				'message' => 'Old password does not match.'
+			));
+		}
+
+		$user->password = Hash::make($data['new_password']);
+
+		if ($user->save())
+		{
+			return Response::json(array(
+				'status' => 'success',
+				'message' => 'Password updated.'
+			));
+		} else {
+			return Response::json(array(
+				'status' => 'error',
+				'message' => 'Oops ! Failed to update password.'
+			));
+		}
+	}
+
+	/**
 	 * Forgot password
 	 *
 	 * @return Response
 	 */
 	public function forgot($id)
 	{
-                $user = Note::curUser()->find($id);
-                if (!$user)
-		{
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Oops ! Note not found.'
-			));
-                }
-
 		$data = Input::get('user');
 
-		$this->userValidator->with($data);
-
-		if ($this->userValidator->passes())
+                $user = User::where('username', '=', $data['input'])->first();
+                if (!$user)
 		{
-			/* Update data */
-	                $user->title = $data['title'];
-	                $user->pin_dashboard = $data['pin_dashboard'];
-	                $user->pin_top = $data['pin_top'];
-	                $user->user = $data['user'];
-
-			if ($user->save())
+	                $user = User::where('email', '=', $data['input'])->first();
+	                if (!$user)
 			{
 				return Response::json(array(
-					'status' => 'success',
-					'message' => 'Note updated.'
-				));
-			} else {
-				return Response::json(array(
 					'status' => 'error',
-					'message' => 'Oops ! Failed to update user.'
+					'message' => 'Oops ! User not found.'
 				));
-			}
-		} else {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => $this->userValidator->getErrors()
-			));
-		}
+	                }
+                }
+
 	}
 
 	/**

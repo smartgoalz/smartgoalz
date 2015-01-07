@@ -5,6 +5,10 @@
 			<span class="view-title">Your Profile</span>
 		</div>
 
+		<div ng-show="alerts.length">
+			<alert ng-repeat="alert in alerts" type="{{alert.type}}">{{alert.msg}}</alert>
+		</div>
+
 		<div class="view-content">
 			<table class="profile-info">
 				<tr><td class="bold-text pull-right">Username</td><td>{{user.username}}</td></tr>
@@ -12,7 +16,7 @@
 				<tr><td class="bold-text pull-right">Email</td><td>{{user.email}}</td></tr>
 				<tr>
 					<td class="bold-text pull-right">Password</td>
-					<td><a href="#/users/password" ng-click="clearAlerts()">Change Password</a></td>
+					<td><a href="#/users/profile/changepassword" ng-click="clearAlerts()">Change Password</a></td>
 				</tr>
 				<tr><td class="bold-text pull-right">Timezone</td><td>{{user.timezone}}</td></tr>
 				<tr><td class="bold-text pull-right">Date format</td><td>{{user.dateformat}}</td></tr>
@@ -20,7 +24,7 @@
 		</div>
 
 		<div class="view-actions">
-			<a href='#/users/editprofile' class="btn btn-primary">Edit Profile</a>
+			<a href='#/users/profile/edit' class="btn btn-primary">Edit Profile</a>
 		</div>
 
 	</div>

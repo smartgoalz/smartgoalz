@@ -40,14 +40,23 @@
 	<script src='js/textangular/textAngular-sanitize.min.js'></script>
 	<script src='js/textangular/textAngular.min.js'></script>
 
+	<!-- Angular UI Calendar -->
+	<link rel="stylesheet" href="js/uicalendar/fullcalendar.min.css">
+	<script src="js/uicalendar/jquery.min.js"></script>
+	<script src="js/uicalendar/jquery-ui.js"></script>
+	<script src="js/uicalendar/moment.js"></script>
+	<script src="js/uicalendar/fullcalendar.min.js"></script>
+	<script src="js/uicalendar/gcal.js"></script>
+	<script src="js/uicalendar/calendar.js"></script>
+
 	<!-- Dashboard -->
 	<link rel="stylesheet" type="text/css" href="css/dashboard.css" />
 
 	<!-- Angular JS App -->
-	<script src="frontend/goal.js?21"></script>
+	<script src="frontend/goal.js?14"></script>
 
 	<!-- Custom stylesheet -->
-	<link rel="stylesheet" type="text/css" href="css/style.css?23" />
+	<link rel="stylesheet" type="text/css" href="css/style.css?10" />
 
 
 </head>
@@ -92,7 +101,7 @@
 				<a href="#" ng-click="clearAlerts()">Upcoming Tasks <span class="menu-icon fa fa-info-circle"></span></a>
 			</li>
 			<li class="sidebar-list">
-				<a href="#" ng-click="clearAlerts()">Calendar <span class="menu-icon fa fa-calendar"></span></a>
+				<a href="#/calendar" ng-click="clearAlerts()">Calendar <span class="menu-icon fa fa-calendar"></span></a>
 			</li>
 		</ul>
 		<!-- End Sidebar Navigation -->

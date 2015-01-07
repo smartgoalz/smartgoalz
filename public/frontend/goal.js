@@ -1,5 +1,5 @@
 var goalApp = angular.module('goalApp', ['ngResource', 'ngRoute', 'ui.bootstrap',
-	'ui.router', 'ngCookies', 'ngSanitize', 'textAngular']);
+	'ui.router', 'ngCookies', 'ngSanitize', 'textAngular', 'ui.calendar']);
 
 /******************* ROUTES *******************/
 
@@ -86,11 +86,17 @@ goalApp.config(['$routeProvider', function($routeProvider) {
 	when('/journals/edit/:id', {
 		templateUrl: 'frontend/journals/edit.html',
 	}).
+	when('/calendar', {
+		templateUrl: 'frontend/calendar/calendar.html',
+	}).
 	when('/users/profile', {
 		templateUrl: 'frontend/users/profile.html',
 	}).
 	when('/users/profile/edit', {
 		templateUrl: 'frontend/users/editprofile.html',
+	}).
+	when('/users/profile/changepassword', {
+		templateUrl: 'frontend/users/changepassword.html',
 	}).
 	otherwise({
 		redirectTo: '/dashboard'
@@ -146,12 +152,18 @@ goalApp.factory('SelectService', function($http, $q, $cookieStore) {
 			'QUATERLY': 'Quaterly', 'YEARLY': 'Yearly'};
 	}
 
+	var dateFormats = function() {
+		return {'dd-MMMM-yyyy': 'Day-Month-Year', 'yyyy-MMMM-dd': 'Year-Month-Day',
+			'MMMM-dd-yyyy': 'Month-Day-Year'};
+	}
+
 	return {
 		priorities : priorities(),
 		difficulties : difficulties(),
 		categories: categories(),
 		monitortypes: monitortypes(),
 		monitorfrequencies: monitorfrequencies(),
+		dateFormats: dateFormats(),
 	};
 });
 
@@ -2598,5 +2610,171 @@ goalApp.controller('ProfileEditCtrl', function ($scope, $rootScope, $http,
 	$scope.alerts = alertService.alerts;
 	$rootScope.pageTitle = "Edit Profile";
 
+	$scope.dateFormats = SelectService.dateFormats;
 	$scope.formdata = [];
+
+	$http.get('api/users/profile').
+	success(function(data, status, headers, config) {
+		if (data.status == 'success') {
+			var user = data.data.user[0];
+			$scope.formdata.Fullname = user.fullname;
+			$scope.formdata.Email = user.email;
+			$scope.formdata.Timezone = user.timezone;
+			$scope.formdata.DateFormat = user.dateformat;
+		} else {
+			alertService.add(data.message, 'danger');
+			$location.path('/users/profile');
+		}
+	}).
+	error(function(data, status, headers, config) {
+		alertService.add('Oh snap ! Something went wrong, please try again.', 'danger');
+		$location.path('/users/profile');
+	});
+});
+
+/* Change password */
+goalApp.controller('ChangePasswordCtrl', function ($scope, $rootScope, $http,
+	$routeParams, $location, alertService, SelectService)
+{
+	$scope.alerts = alertService.alerts;
+	$rootScope.pageTitle = "Change Password";
+
+	$scope.formdata = [];
+
+	$scope.changePassword = function() {
+		alertService.clear();
+
+		var data = {
+			'user' : {
+				old_password: $scope.formdata.OldPassword,
+				new_password: $scope.formdata.NewPassword,
+			}
+		};
+
+		$http.put("api/users/changepassword", data).
+		success(function (data, status, headers) {
+			if (data.status == 'success') {
+				alertService.add(data.message, 'success');
+				$location.path('/users/profile');
+			} else {
+				alertService.add(data.message, 'danger');
+			}
+		}).
+		error(function (data, status, headers) {
+			alertService.add('Oh snap ! Something went wrong, please try again.', 'danger');
+		});
+	}
+});
+
+/********************************************************************/
+/*************************** CALENDAR *******************************/
+/********************************************************************/
+
+/* Show calendar */
+goalApp.controller('CalendarCtrl', function ($scope, $rootScope, $http,
+	$routeParams, $location, alertService, SelectService)
+{
+	var date = new Date();
+	var d = date.getDate();
+	var m = date.getMonth();
+	var y = date.getFullYear();
+
+	$scope.changeTo = 'Hungarian';
+
+	// /* event source that pulls from google.com */
+	// $scope.eventSource = {
+	// 	url: "http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic",
+	// 	className: 'gcal-event',           // an option!
+	// 	currentTimezone: 'America/Chicago' // an option!
+	// };
+
+    /* event source that contains custom events on the scope */
+	$scope.events = [
+	{title: 'All Day Event',start: new Date(y, m, 1)},
+	{title: 'Long Event',start: new Date(y, m, d - 5),end: new Date(y, m, d - 2)},
+	{id: 999,title: 'Repeating Event',start: new Date(y, m, d - 3, 16, 0),allDay: false},
+	{id: 999,title: 'Repeating Event',start: new Date(y, m, d + 4, 16, 0),allDay: false},
+	{title: 'Birthday Party',start: new Date(y, m, d + 1, 19, 0),end: new Date(y, m, d + 1, 22, 30),allDay: false},
+	{title: 'Click for Google',start: new Date(y, m, 28),end: new Date(y, m, 29),url: 'http://google.com/'}
+	];
+
+	// /* event source that calls a function on every view switch */
+	// $scope.eventsF = function (start, end, timezone, callback) {
+	// 	var s = new Date(start).getTime() / 1000;
+	// 	var e = new Date(end).getTime() / 1000;
+	// 	var m = new Date(start).getMonth();
+	// 	var events = [{title: 'Feed Me ' + m,start: s + (50000),end: s + (100000),allDay: false, className: ['customFeed']}];
+	// 	callback(events);
+	// };
+
+	// $scope.calEventsExt = {
+	// color: '#f00',
+	// textColor: 'yellow',
+	// events: [
+	// 	{type:'party',title: 'Lunch',start: new Date(y, m, d, 12, 0),end: new Date(y, m, d, 14, 0),allDay: false},
+	// 	{type:'party',title: 'Lunch 2',start: new Date(y, m, d, 12, 0),end: new Date(y, m, d, 14, 0),allDay: false},
+	// 	{type:'party',title: 'Click for Google',start: new Date(y, m, 28),end: new Date(y, m, 29),url: 'http://google.com/'}
+	// ]
+	// };
+
+	/* alert on eventClick */
+	$scope.alertOnEventClick = function( event, allDay, jsEvent, view ){
+		$scope.alertMessage = (event.title + ' was clicked ');
+	};
+	/* alert on Drop */
+	$scope.alertOnDrop = function( event, revertFunc, jsEvent, ui, view){
+		$scope.alertMessage = ('Event Droped on ' + event.start.format());
+	};
+	/* alert on Resize */
+	$scope.alertOnResize = function( event, jsEvent, ui, view){
+		$scope.alertMessage = ('Event end date was moved to ' + event.end.format());
+	};
+
+	/* Change View */
+	$scope.changeView = function(view,calendar) {
+		calendar.fullCalendar('changeView',view);
+	};
+	/* Change View */
+	$scope.renderCalender = function(calendar) {
+		if (calendar) {
+			calendar.fullCalendar('render');
+		}
+	};
+
+	/* config object */
+	$scope.uiConfig = {
+		calendar:{
+			height: 450,
+			editable: true,
+			header: {
+				left: 'title',
+				center: '',
+				right: 'today prev,next'
+			},
+			eventClick: $scope.alertOnEventClick,
+			eventDrop: $scope.alertOnDrop,
+			eventResize: $scope.alertOnResize
+		}
+	};
+
+	$scope.changeLang = function() {
+		if ($scope.changeTo === 'Hungarian') {
+			$scope.uiConfig.calendar.dayNames = ["Vasárnap", "Hétfő",
+				"Kedd", "Szerda", "Csütörtök", "Péntek", "Szombat"];
+			$scope.uiConfig.calendar.dayNamesShort = ["Vas", "Hét",
+				"Kedd", "Sze", "Csüt", "Pén", "Szo"];
+			$scope.changeTo= 'English';
+		} else {
+			$scope.uiConfig.calendar.dayNames = ["Sunday", "Monday",
+				"Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+			$scope.uiConfig.calendar.dayNamesShort = ["Sun", "Mon",
+				"Tue", "Wed", "Thu", "Fri", "Sat"];
+			$scope.changeTo = 'Hungarian';
+		}
+	};
+
+	/* event sources array*/
+	$scope.eventSources = [$scope.events];
+	// $scope.eventSources = [$scope.events, $scope.eventSource, $scope.eventsF];
+	// $scope.eventSources2 = [$scope.calEventsExt, $scope.eventsF, $scope.events];
 });

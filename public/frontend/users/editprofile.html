@@ -28,9 +28,29 @@
 
 		<div class="row">
 			<div class="col-xs-8">
+				<div class="form-group">
+					<label for="inputTimezone">Timezone</label>
+					<input type="text" class="form-control" id="inputTimezone" placeholder="Fullname" ng-model="formdata.Timezone">
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-8">
+				<div class="form-group">
+					<label for="inputDateFormat">Date Format</label>
+					<select class="form-control" id="inputDateFormat" ng-model="formdata.DateFormat">
+						<option ng-repeat="(id, format) in dateFormats" value="{{id}}" ng-selected="{{id == formdata.DateFormat}}">{{format}}</option>
+					</select>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-8">
 				<div>
-					<button class="btn btn-primary" ng-click="edit Profile()">Submit</button>
-					<a href="#/dashboard" class="btn btn-info" ng-click="clearAlerts()">Cancel</a>
+					<button class="btn btn-primary" ng-click="editProfile()">Submit</button>
+					<a href="#/users/profile" class="btn btn-info" ng-click="clearAlerts()">Cancel</a>
 				</div>
 			</div>
 		</div>
