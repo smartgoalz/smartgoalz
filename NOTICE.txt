@@ -1,6 +1,6 @@
-SMARTGoalz - Easy to use web based application for managing your goals
+SMARTGoalz - SMART Goals made easier
 
-Copyright (c) 2014 Prashant Shah <pshah.me@gmail.com>
+Copyright (c) 2014 Prashant Shah <pshah.smartgoalz@gmail.com>
 
 SMARTGoalz includes the following open source software under other copyright
 notices and distributed according to the terms of their own licenses.
