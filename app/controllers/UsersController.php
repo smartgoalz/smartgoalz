@@ -1,4 +1,31 @@
 <?php
+/**
+ * The MIT License (MIT)
+ *
+ * SMARTGoalz - SMART Goals made easier
+ *
+ * http://smartgoalz.github.io
+ *
+ * Copyright (c) 2015 Prashant Shah <pshah.smartgoalz@gmail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 
 use Smartgoalz\Services\Validators\UserValidator;
 
@@ -12,193 +39,135 @@ class UsersController extends BaseController
 		$this->userValidator = $userValidator;
 	}
 
-	/**
-	 * Login user
-	 *
-	 * @return Response
-	 */
-	public function postLogin()
+	public function getIndex()
 	{
-		$data = Input::get('user');
-
-		if (empty($data['username'])) {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Username is required.'
-			));
-		}
-		if (empty($data['password'])) {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Passowrd is required.'
-			));
-		}
-
-		$remember_me = false;
-		if ($data['remember_me'] == TRUE) {
-			$remember_me = true;
-		} else {
-			$remember_me = false;
-		}
-
-		if (Auth::attempt(array(
-				'username' => $data['username'],
-				'password' => $data['password']
-			),
-			$remember_me))
-		{
-			return Response::json(array(
-				'status' => 'success',
-				'data' => array('user' => array())
-			));
-		} else {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Login failed.'
-			));
-		}
-
+		return Redirect::action('UsersController@getLogin');
 	}
 
-	/**
-	 * Logout user
-	 *
-	 * @return Response
-	 */
+	public function getLogin()
+	{
+		return View::make('users.login');
+	}
+
+	public function postLogin()
+	{
+		$input = Input::all();
+
+		$login_data = array(
+			'username' => $input['username'],
+			'password' => $input['password'],
+		);
+
+		if (Auth::attempt($login_data))
+		{
+			/* Update last login datetime */
+			$user = User::find(Auth::id());
+			$user->last_login = date('Y-m-d H:i:s', time());
+			$user->reset_password_key = NULL;
+			$user->reset_password_date = NULL;
+			$user->save();
+
+			$user_info = '';
+			if (strlen(Auth::user()->fullname) > 0)
+			{
+				$user_info = Auth::user()->fullname;
+			}
+			else
+			{
+				$user_info = Auth::user()->username;
+			}
+
+			return Redirect::intended('dashboard')
+				->with('alert-success', 'Hi ' . $user_info . ', welcome back !');
+		}
+
+		return Redirect::action('UsersController@getLogin')
+			->with('alert-danger', 'Login failed.');
+	}
+
 	public function getLogout()
 	{
 		Auth::logout();
+		Session::flush();
 
-		return Response::json(array(
-			'status' => 'success',
-			'data' => array('user' => array())
-		));
+                return Redirect::action('UsersController@getLogin')
+                        ->with('alert-success', 'You have logged out successfully.');
 	}
 
-	/**
-	 * Regsiter user
-	 *
-	 * @return Response
-	 */
+	public function getRegister()
+	{
+		return View::make('users.register');
+	}
+
 	public function postRegister()
 	{
-		$input = Input::get('user');
+                $input = Input::all();
 
-		$data['username'] = $input['username'];
-		$data['password'] = Hash::make($input['password']);
-		$data['email'] = $input['email'];
+                $rules = array(
+                        'username' => 'required|min:3|max:100|unique:users,username',
+			'email' => 'required|email|unique:users,email',
+			'password' => 'required|min:3',
+                );
 
-		$this->userValidator->with($data);
+                $validator = Validator::make($input, $rules);
 
-		if ($this->userValidator->passes())
-		{
-			if (User::create($data))
-			{
-				return Response::json(array(
-					'status' => 'success',
-					'message' => 'User registered. Please login to continue.'
-				));
-			} else {
-				return Response::json(array(
-					'status' => 'error',
-					'message' => 'Oops ! Failed to register user.'
-				));
-			}
-		} else {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => $this->userValidator->getErrors()
-			));
-		}
-	}
-
-	/**
-	 * Change password
-	 *
-	 * @return Response
-	 */
-	public function putChangepassword()
-	{
-		$data = Input::get('user');
-
-		$user = User::find(Auth::id());
-
-		if (!$user)
-		{
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'User not found.'
-			));
-		}
-
-		if (!Hash::check($data['old_password'], $user->password))
-		{
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Old password does not match.'
-			));
-		}
-
-		$user->password = Hash::make($data['new_password']);
-
-		if ($user->save())
-		{
-			return Response::json(array(
-				'status' => 'success',
-				'message' => 'Password updated.'
-			));
-		} else {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Oops ! Failed to update password.'
-			));
-		}
-	}
-
-	/**
-	 * Forgot password
-	 *
-	 * @return Response
-	 */
-	public function forgot($id)
-	{
-		$data = Input::get('user');
-
-                $user = User::where('username', '=', $data['input'])->first();
-                if (!$user)
-		{
-	                $user = User::where('email', '=', $data['input'])->first();
-	                if (!$user)
-			{
-				return Response::json(array(
-					'status' => 'error',
-					'message' => 'Oops ! User not found.'
-				));
-	                }
+                if ($validator->fails())
+                {
+                        return Redirect::back()->withInput()->withErrors($validator);
                 }
-
-	}
-
-	/**
-	 * Logout user
-	 *
-	 * @return Response
-	 */
-	public function getProfile()
-	{
-		$data = User::where('id', '=', Auth::id())->get();
-
-		if ($data)
+		else
 		{
-			return Response::json(array(
-				'status' => 'success',
-				'data' => array('user' => $data)
-			));
-		} else {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'User not found.'
-			));
-		}
+
+                        /* Create a symptom */
+                        $user_data = array(
+                                'username' => $input['username'],
+				'password' => Hash::make($input['password']),
+				'fullname' => '',
+				'email' => $input['email'],
+				'dateformat' => 'd-M-Y|dd-M-yy',
+				'timezone' => 'UTC',
+				'status' => 1,
+				'verification_key' =>
+					substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyz"), 0, 20),
+				'email_verified' => 0,
+				'admin_verified' => 0,
+				'retry_count' => 0,
+				'reset_password_key' => NULL,
+				'reset_password_date' => NULL,
+                        );
+                        $user = User::create($user_data);
+			if (!$user)
+			{
+			        return Redirect::back()->withInput()
+                                        ->with('alert-danger', 'Failed to create user.');
+			}
+
+			/* Send email on successful registration */
+			try
+			{
+				Mail::send('emails.users.register', Input::all(), function($message) {
+					$message
+						->to(Input::get('email'), Input::get('username'))
+						->subject('Welcome to ' . Config::get('smartgoalz.SITE_NAME') .
+							' - Your account has been created'
+						);
+				});
+			}
+			catch (Exception $e)
+			{
+	                        return Redirect::action('UsersController@getLogin')
+					->with('alert-success', 'User created. Please login below.')
+					->with('alert-danger', 'Error sending email.');
+			}
+
+                        return Redirect::action('UsersController@getLogin')
+                                ->with('alert-success', 'User created. Please login below.');
+                }
 	}
+
+	public function getForgot()
+	{
+		return View::make('users.forgot');
+	}
+
 }

@@ -16,6 +16,8 @@ Route::get('/', function()
 	return View::make('hello');
 });
 
+Route::controller('users', 'UsersController');
+
 Route::group(array('prefix' => 'api'), function()
 {
 	Route::controller('dashboard', 'DashboardController');

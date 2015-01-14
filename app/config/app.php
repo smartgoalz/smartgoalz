@@ -106,7 +106,7 @@ return array(
 		'Illuminate\Encryption\EncryptionServiceProvider',
 		'Illuminate\Filesystem\FilesystemServiceProvider',
 		'Illuminate\Hashing\HashServiceProvider',
-		'Illuminate\Html\HtmlServiceProvider',
+		// 'Illuminate\Html\HtmlServiceProvider',
 		'Illuminate\Log\LogServiceProvider',
 		'Illuminate\Mail\MailServiceProvider',
 		'Illuminate\Database\MigrationServiceProvider',
@@ -125,6 +125,9 @@ return array(
 		'Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider',
 		'McCool\LaravelAutoPresenter\LaravelAutoPresenterServiceProvider',
 		'Smartgoalz\ServiceProviders\ValidationServiceProvider',
+		'Manavo\BootstrapForms\BootstrapFormsServiceProvider',
+		'Barryvdh\Debugbar\ServiceProvider',
+
 	),
 
 	/*

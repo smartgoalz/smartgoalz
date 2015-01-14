@@ -79,3 +79,12 @@ App::down(function()
 */
 
 require app_path().'/filters.php';
+
+/*
+|--------------------------------------------------------------------------
+| SMARTGOALZ NOTICE : Custom includes
+|--------------------------------------------------------------------------
+*/
+
+require app_path().'/libraries/extensions.php';
+require app_path().'/libraries/timezone.php';
