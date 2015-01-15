@@ -1,4 +1,31 @@
 <?php
+/**
+ * The MIT License (MIT)
+ *
+ * SMARTGoalz - SMART Goals made easier
+ *
+ * http://smartgoalz.github.io
+ *
+ * Copyright (c) 2015 Prashant Shah <pshah.smartgoalz@gmail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 
 use Smartgoalz\Services\Validators\JournalValidator;
 
@@ -10,164 +37,177 @@ class JournalsController extends BaseController
 	public function __construct(JournalValidator $journalValidator)
 	{
 		$this->journalValidator = $journalValidator;
+
+                $user = User::find(Auth::id());
+                $this->dateformat = $user->dateformat;
 	}
 
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return Response
-	 */
 	public function getIndex()
 	{
-		$data = Journal::curUser()->orderBy('created_at', 'DESC')->get();
+		$journals = Journal::curUser()->orderBy('created_at', 'DESC')->get();
 
-		if ($data)
+		if (!$journals)
 		{
-			return Response::json(array(
-				'status' => 'success',
-				'data' => array('journals' => $data)
-			));
-		} else {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Journal entries not found.'
-			));
+			return Redirect::action('DashboardController@getIndex')
+				->with('alert-danger', 'Journal entries not found.');
 		}
+
+		return View::make('journals.index')
+			->with('journals', $journals)
+			->with('dateformat', $this->dateformat);
 	}
 
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
 	public function getShow($id)
 	{
-		$data = Journal::curUser()->find($id);
+		$journal = Journal::curUser()->find($id);
 
-		if ($data)
+		if (!$journal)
 		{
-			return Response::json(array(
-				'status' => 'success',
-				'data' => array('journal' => $data)
-			));
-		} else {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Journal entry not found.'
-			));
+			return Redirect::action('JournalsController@getIndex')
+				->with('alert-danger', 'Journal entry not found.');
 		}
+
+		return View::make('journals.show')
+			->with('journal', $journal)
+			->with('dateformat', $this->dateformat);
 	}
 
-	/**
-	 * Create a new resource in storage.
-	 *
-	 * @return Response
-	 */
+	public function getCreate()
+	{
+		return View::make('journals.create')
+			->with('dateformat', $this->dateformat);
+	}
+
 	public function postCreate()
 	{
-		$data = Input::get('journal');
+		$input = Input::all();
 
-		$this->journalValidator->with($data);
+		/* Format date */
+                $date_temp = date_create_from_format(
+                        explode('|', $this->dateformat)[0] . ' H:i:s',
+                        $input['date'] . ' 00:00:00'
+                );
+                if (!$date_temp)
+                {
+                        return Redirect::back()->withInput()
+                                ->with('alert-danger', 'Invalid date.');
+                }
+                $date = date_format($date_temp, 'Y-m-d H:i:s');
 
-		if ($this->journalValidator->passes())
+		$input['date'] = $date;
+
+		$this->journalValidator->with($input);
+
+		if ($this->journalValidator->fails())
 		{
-			if (Journal::create($data))
+			return Redirect::back()->withInput()->withErrors($this->goalValidator->getErrors());
+		}
+		else
+		{
+			if (!Journal::create($input))
 			{
-				return Response::json(array(
-					'status' => 'success',
-					'message' => 'Journal entry created.'
-				));
-			} else {
-				return Response::json(array(
-					'status' => 'error',
-					'message' => 'Oops ! Failed to create journal entry.'
-				));
+			        return Redirect::back()->withInput()
+                                        ->with('alert-danger', 'Failed to create journal entry.');
 			}
-		} else {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => $this->journalValidator->getErrors()
-			));
+
+                        return Redirect::action('JournalsController@getIndex')
+                                ->with('alert-success', 'Journal entry created.');
 		}
 	}
 
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function putUpdate($id)
+	public function getEdit($id)
 	{
-                $journal = Journal::curUser()->find($id);
-                if (!$journal)
+		$journal = Journal::curUser()->find($id);
+
+		if (!$journal)
 		{
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Oops ! Journal entry not found.'
-			));
+			return Redirect::action('JournalsController@getIndex')
+				->with('alert-danger', 'Journal entry not found.');
+		}
+
+		/* Format date */
+                $date_temp = date_create_from_format('Y-m-d H:i:s', $journal->date);
+                if (!$date_temp)
+                {
+                        $date = '';
                 }
+		else
+		{
+			$date = date_format($date_temp, explode('|', $this->dateformat)[0]);
+		}
 
-		$data = Input::get('journal');
+		return View::make('journals.edit')
+			->with('journal', $journal)
+			->with('date', $date)
+			->with('dateformat', $this->dateformat);
+	}
 
-		$this->journalValidator->with($data);
+	public function postEdit($id)
+	{
+		$journal = Journal::curUser()->find($id);
 
-		if ($this->journalValidator->passes())
+		if (!$journal)
+		{
+			return Redirect::action('JournalsController@getIndex')
+				->with('alert-danger', 'Journal entry not found.');
+		}
+
+		$input = Input::all();
+
+		/* Format date */
+                $date_temp = date_create_from_format(
+                        explode('|', $this->dateformat)[0] . ' H:i:s',
+                        $input['date'] . ' 00:00:00'
+                );
+                if (!$date_temp)
+                {
+                        return Redirect::back()->withInput()
+                                ->with('alert-danger', 'Invalid date.');
+                }
+                $date = date_format($date_temp, 'Y-m-d H:i:s');
+
+		$input['date'] = $date;
+
+		$this->journalValidator->with($input);
+
+		if ($this->journalValidator->fails())
+		{
+			return Redirect::back()->withInput()->withErrors($this->goalValidator->getErrors());
+		}
+		else
 		{
 			/* Update data */
-	                $journal->title = $data['title'];
-	                $journal->date = $data['date'];
-	                $journal->entry = $data['entry'];
+	                $journal->title = $input['title'];
+	                $journal->date = $input['date'];
+	                $journal->entry = $input['entry'];
 
-			if ($journal->save())
+			if (!$journal->save())
 			{
-				return Response::json(array(
-					'status' => 'success',
-					'message' => 'Journal entry updated.'
-				));
-			} else {
-				return Response::json(array(
-					'status' => 'error',
-					'message' => 'Oops ! Failed to update journal entry.'
-				));
+			        return Redirect::back()->withInput()
+                                        ->with('alert-danger', 'Failed to update journal entry.');
 			}
-		} else {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => $this->journalValidator->getErrors()
-			));
+
+                        return Redirect::action('JournalsController@getIndex')
+                                ->with('alert-success', 'Journal entry updated.');
 		}
 	}
 
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
 	public function deleteDestroy($id)
 	{
                 $journal = Journal::curUser()->find($id);
                 if (!$journal)
 		{
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Oops ! Journal entry not found.'
-			));
+			return Redirect::action('JournalsController@getIndex')
+				->with('alert-danger', 'Journal entry not found.');
                 }
 
-                if ($journal->delete())
+                if (!$journal->delete())
 		{
-			return Response::json(array(
-				'status' => 'success',
-				'message' => 'Journal entry deleted.'
-			));
-		} else {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Oops ! Failed to delete journal entry.'
-			));
+			return Redirect::action('JournalsController@getIndex')
+				->with('alert-danger', 'Oops ! Failed to delete journal entry.');
 		}
+
+		return Redirect::action('JournalsController@getIndex')
+			->with('alert-success', 'Journal entry deleted.');
 	}
 }
