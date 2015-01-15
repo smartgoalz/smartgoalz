@@ -41,6 +41,10 @@ class TasksController extends BaseController
 		}
 	}
 
+	public function getCreate()
+	{
+	}
+
 	/**
 	 * Create a new resource in storage.
 	 *

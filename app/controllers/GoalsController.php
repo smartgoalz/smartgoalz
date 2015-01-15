@@ -1,4 +1,31 @@
 <?php
+/**
+ * The MIT License (MIT)
+ *
+ * SMARTGoalz - SMART Goals made easier
+ *
+ * http://smartgoalz.github.io
+ *
+ * Copyright (c) 2015 Prashant Shah <pshah.smartgoalz@gmail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 
 use Smartgoalz\Services\Validators\GoalValidator;
 
@@ -10,180 +37,267 @@ class GoalsController extends BaseController
 	public function __construct(GoalValidator $goalValidator)
 	{
 		$this->goalValidator = $goalValidator;
+
+                $user = User::find(Auth::id());
+                $this->dateformat = $user->dateformat;
 	}
 
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return Response
-	 */
 	public function getIndex()
 	{
-		$data = Goal::curUser()->orderBy('title', 'DESC')->get();
+		$goals = Goal::curUser()->orderBy('title', 'DESC')->get();
 
-		if ($data)
+		if (!$goals)
 		{
-			return Response::json(array(
-				'status' => 'success',
-				'data' => array('goals' => $data)
-			));
-		} else {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Goals not found.'
-			));
+			return Redirect::action('DashboardController@getIndex')
+				->with('alert-danger', 'Goals not found.');
 		}
+
+		return View::make('goals.index')
+			->with('goals', $goals)
+			->with('dateformat', $this->dateformat);
 	}
 
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
 	public function getShow($id)
 	{
-		$data = Goal::curUser()->find($id);
+		$goal = Goal::curUser()->find($id);
 
-		if ($data)
+		if (!$goal)
 		{
-			return Response::json(array(
-				'status' => 'success',
-				'data' => array('goal' => $data)
-			));
-		} else {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Goal not found.'
-			));
+			return Redirect::action('GoalsController@getIndex')
+				->with('alert-danger', 'Goal not found.');
 		}
+
+		return View::make('goals.show')
+			->with('goal', $goal)
+			->with('dateformat', $this->dateformat);
 	}
 
-	/**
-	 * Create a new resource in storage.
-	 *
-	 * @return Response
-	 */
+	public function getCreate()
+	{
+		$categories_list = array('' => 'Please select...') +
+			Category::curuser()->orderBy('title', 'ASC')
+			->lists('title', 'id');
+
+		return View::make('goals.create')
+			->with('categories_list', $categories_list)
+			->with('dateformat', $this->dateformat);
+	}
+
 	public function postCreate()
 	{
-		$data = Input::get('goal');
+		$input = Input::all();
 
-		$this->goalValidator->with($data);
+		/* Format start date */
+                $start_temp = date_create_from_format(
+                        explode('|', $this->dateformat)[0] . ' H:i:s',
+                        $input['start_date'] . ' 00:00:00'
+                );
+                if (!$start_temp)
+                {
+                        return Redirect::back()->withInput()
+                                ->with('alert-danger', 'Invalid start date.');
+                }
+                $start_date = date_format($start_temp, 'Y-m-d H:i:s');
 
-		if ($this->goalValidator->passes())
+		/* Format due date */
+                $due_temp = date_create_from_format(
+                        explode('|', $this->dateformat)[0] . ' H:i:s',
+                        $input['due_date'] . ' 00:00:00'
+                );
+                if (!$due_temp)
+                {
+                        return Redirect::back()->withInput()
+                                ->with('alert-danger', 'Invalid due date.');
+                }
+                $due_date = date_format($due_temp, 'Y-m-d H:i:s');
+
+		/* Check if start date if before due date */
+		if ($start_temp > $due_temp)
 		{
-			/* Set default values for a new goal */
-			$data['is_completed'] = 0;
-			$data['completion_date'] = NULL;
-			$data['task_total'] = 0;
-			$data['task_completed'] = 0;
-			$data['status'] = 'ACTIVE';
+                        return Redirect::back()->withInput()
+                                ->with('alert-danger', 'Start date cannot be after due date.');
+		}
 
-			if (Goal::create($data))
+		$input['start_date'] = $start_date;
+		$input['due_date'] = $due_date;
+
+		/* Check for valid category */
+		if (!Category::curuser()->find($input['category']))
+		{
+                        return Redirect::back()->withInput()
+                                ->with('alert-danger', 'Invalid category selected.');
+		}
+
+		$this->goalValidator->with($input);
+
+		if ($this->goalValidator->fails())
+		{
+			return Redirect::back()->withInput()->withErrors($this->goalValidator->getErrors());
+		}
+		else
+		{
+			$input['category_id'] = $input['category'];
+
+			/* Set default values for a new goal */
+			$input['is_completed'] = 0;
+			$input['completion_date'] = NULL;
+			$input['task_total'] = 0;
+			$input['task_completed'] = 0;
+			$input['status'] = 'ACTIVE';
+
+			if (!Goal::create($input))
 			{
-				return Response::json(array(
-					'status' => 'success',
-					'message' => 'Congratulations ! Goal created.'
-				));
-			} else {
-				return Response::json(array(
-					'status' => 'error',
-					'message' => 'Oops ! Failed to create goal.'
-				));
+			        return Redirect::back()->withInput()
+                                        ->with('alert-danger', 'Failed to create goal.');
 			}
-		} else {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => $this->goalValidator->getErrors()
-			));
+
+                        return Redirect::action('GoalsController@getIndex')
+                                ->with('alert-success', 'Congratulations ! Goal created.');
 		}
 	}
 
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function putUpdate($id)
+	public function getEdit($id)
 	{
-                $goal = Goal::curUser()->find($id);
-                if (!$goal)
+		$goal = Goal::curUser()->find($id);
+
+		if (!$goal)
 		{
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Oops ! Goal not found.'
-			));
+			return Redirect::action('GoalsController@getIndex')
+				->with('alert-danger', 'Goal not found.');
+		}
+
+		$categories_list = array('' => 'Please select...') +
+			Category::curuser()->orderBy('title', 'ASC')
+			->lists('title', 'id');
+
+		/* Format start date */
+                $start_temp = date_create_from_format('Y-m-d H:i:s', $goal->start_date);
+                if (!$start_temp)
+                {
+                        $start_date = '';
                 }
+		else
+		{
+			$start_date = date_format($start_temp, explode('|', $this->dateformat)[0]);
+		}
 
-		$data = Input::get('goal');
+		/* Format due date */
+                $due_temp = date_create_from_format('Y-m-d H:i:s', $goal->due_date);
+                if (!$due_temp)
+                {
+			$due_date = '';
+                }
+		else
+		{
+			$due_date = date_format($due_temp, explode('|', $this->dateformat)[0]);
+		}
 
-		unset($data['is_completed']);
-		unset($data['completion_date']);
-		unset($data['task_total']);
-		unset($data['task_completed']);
+		return View::make('goals.edit')
+			->with('goal', $goal)
+			->with('start_date', $start_date)
+			->with('due_date', $due_date)
+			->with('categories_list', $categories_list)
+			->with('dateformat', $this->dateformat);
+	}
 
-		$this->goalValidator->with($data);
+	public function postEdit($id)
+	{
+		$goal = Goal::curUser()->find($id);
 
-		if ($this->goalValidator->passes())
+		if (!$goal)
+		{
+			return Redirect::action('GoalsController@getIndex')
+				->with('alert-danger', 'Goal not found.');
+		}
+
+		$input = Input::all();
+
+		/* Format start date */
+                $start_temp = date_create_from_format(
+                        explode('|', $this->dateformat)[0] . ' H:i:s',
+                        $input['start_date'] . ' 00:00:00'
+                );
+                if (!$start_temp)
+                {
+                        return Redirect::back()->withInput()
+                                ->with('alert-danger', 'Invalid start date.');
+                }
+                $start_date = date_format($start_temp, 'Y-m-d H:i:s');
+
+		/* Format due date */
+                $due_temp = date_create_from_format(
+                        explode('|', $this->dateformat)[0] . ' H:i:s',
+                        $input['due_date'] . ' 00:00:00'
+                );
+                if (!$due_temp)
+                {
+                        return Redirect::back()->withInput()
+                                ->with('alert-danger', 'Invalid due date.');
+                }
+                $due_date = date_format($due_temp, 'Y-m-d H:i:s');
+
+		/* Check if start date if before due date */
+		if ($start_temp > $due_temp)
+		{
+                        return Redirect::back()->withInput()
+                                ->with('alert-danger', 'Start date cannot be after due date.');
+		}
+
+		$input['start_date'] = $start_date;
+		$input['due_date'] = $due_date;
+
+		/* Check for valid category */
+		if (!Category::curuser()->find($input['category']))
+		{
+                        return Redirect::back()->withInput()
+                                ->with('alert-danger', 'Invalid category selected.');
+		}
+
+		$this->goalValidator->with($input);
+
+		if ($this->goalValidator->fails())
+		{
+			return Redirect::back()->withInput()->withErrors($this->goalValidator->getErrors());
+		}
+		else
 		{
 			/* Update data */
-	                $goal->title = $data['title'];
-			$goal->category_id = $data['category_id'];
-	                $goal->start_date = $data['start_date'];
-	                $goal->due_date = $data['due_date'];
-	                $goal->difficulty = $data['difficulty'];
-	                $goal->priority = $data['priority'];
-	                $goal->reason = $data['reason'];
+	                $goal->title = $input['title'];
+			$goal->category_id = $input['category'];
+	                $goal->start_date = $input['start_date'];
+	                $goal->due_date = $input['due_date'];
+	                $goal->difficulty = $input['difficulty'];
+	                $goal->priority = $input['priority'];
+	                $goal->reason = $input['reason'];
 
-			if ($goal->save())
+			if (!$goal->save())
 			{
-				return Response::json(array(
-					'status' => 'success',
-					'message' => 'Goal updated.'
-				));
-			} else {
-				return Response::json(array(
-					'status' => 'error',
-					'message' => 'Oops ! Failed to update goal.'
-				));
+			        return Redirect::back()->withInput()
+                                        ->with('alert-danger', 'Failed to update goal.');
 			}
-		} else {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => $this->goalValidator->getErrors()
-			));
+
+                        return Redirect::action('GoalsController@getIndex')
+                                ->with('alert-success', 'Goal updated.');
 		}
 	}
 
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
 	public function deleteDestroy($id)
 	{
-                $goal = Goal::curUser()->find($id);
-                if (!$goal)
-		{
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Oops ! Goal not found.'
-			));
-                }
+		$goal = Goal::curUser()->find($id);
 
-                if ($goal->delete())
+		if (!$goal)
 		{
-			return Response::json(array(
-				'status' => 'success',
-				'message' => 'Goal deleted.'
-			));
-		} else {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Oops ! Failed to delete goal.'
-			));
+			return Redirect::action('GoalsController@getIndex')
+				->with('alert-danger', 'Goal not found.');
 		}
+
+                if (!$goal->delete())
+		{
+			return Redirect::action('GoalsController@getIndex')
+				->with('alert-danger', 'Oops ! Failed to delete goal.');
+		}
+
+		return Redirect::action('GoalsController@getIndex')
+			->with('alert-success', 'Goal deleted.');
 	}
 }

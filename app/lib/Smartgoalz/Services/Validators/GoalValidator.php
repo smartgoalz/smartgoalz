@@ -3,7 +3,7 @@
 class GoalValidator extends Validator {
 
         public static $rules = array(
-                'category_id' => 'required',
+                'category' => 'required',        /* category_id */
                 'title' => 'required|max:255',
                 'start_date' => 'required|date',
                 'due_date' => 'required|date',

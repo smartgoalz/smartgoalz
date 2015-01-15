@@ -37,6 +37,11 @@ class Goal extends Eloquent
 		});
 	}
 
+	public function category()
+	{
+		return $this->belongsTo('Category');
+	}
+
 	public function scopeCurUser($query)
 	{
 		return $query->where('user_id', '=', Auth::id());

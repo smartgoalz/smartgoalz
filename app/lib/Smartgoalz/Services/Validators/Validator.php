@@ -25,6 +25,18 @@ abstract class Validator {
                 return false;
         }
 
+        public function fails()
+        {
+                $validation = \Validator::make($this->input, static::$rules);
+
+                if ($validation->fails()) {
+                        $this->errors = $validation->messages();
+                        return true;
+                }
+
+                return false;
+        }
+
         public function getErrors()
         {
                 return $this->errors;

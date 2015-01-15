@@ -40,6 +40,8 @@
 
 Route::controller('users', 'UsersController');
 Route::controller('dashboard', 'DashboardController');
+Route::controller('goals', 'GoalsController');
+Route::controller('tasks', 'TasksController');
 
 Route::group(array('prefix' => 'api'), function()
 {

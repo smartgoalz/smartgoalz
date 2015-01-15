@@ -74,15 +74,9 @@ THE SOFTWARE.
 
         {{ HTML::style('css/style.css?' . $time) }}
         {{ HTML::style('css/dashboard.css?' . $time) }}
+
+	@yield('head')
 </head>
-
-<script type="text/javascript">
-
-$(document).ready(function() {
-
-});
-
-</script>
 
 <body>
 
@@ -105,9 +99,12 @@ $(document).ready(function() {
 	                        'Dashboard <i class="menu-icon fa fa-tachometer"></i>')) }}
 			</li>
 
-			<li class="sidebar-list">
-				<a href="#/goals" ng-click="clearAlerts()">Goals <span class="menu-icon fa fa-cubes"></span></a>
+	                <li class="sidebar-list">
+				{{ HTML::decode(HTML::linkAction(
+	                        'GoalsController@getIndex',
+	                        'Goals <i class="menu-icon fa fa-cubes"></i>')) }}
 			</li>
+
 			<li class="sidebar-list">
 				<a href="#/timewatches" ng-click="clearAlerts()">Timewatch <span class="menu-icon fa fa-clock-o"></span></a>
 			</li>
@@ -161,7 +158,9 @@ $(document).ready(function() {
 				<div class="col-xs-12">
 					<div class="user pull-right">
 						<div class="item">
-							<a href="user.html#/logout"><i class="fa fa-sign-out fa-fw"></i>Logout</a>
+							{{ HTML::decode(HTML::linkAction(
+				                        'UsersController@getLogout',
+				                        '<i class="fa fa-sign-out fa-fw"></i>Logout')) }}
 						</div>
 						<div class="item">
 							<a href="#/users/profile"><i class="fa fa-gears fa-fw"></i> Profile</a>
@@ -177,7 +176,7 @@ $(document).ready(function() {
 
                         <!-- Alerts -->
                         <div class="row">
-                                <div class="col-lg-12">
+                                <div class="col-xs-12">
                                         @if (Session::has('alert-success'))
                                                 <div class="alert alert-success alert-dismissable">
                                                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
@@ -196,9 +195,7 @@ $(document).ready(function() {
 
 			<div class="row">
 				<div class="col-xs-12">
-					<div>
-				@yield('content')
-					</div>
+					<div>@yield('content')</div>
 				</div>
 			</div>
 			<!-- End Main Content -->

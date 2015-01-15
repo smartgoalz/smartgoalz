@@ -35,6 +35,11 @@ class Category extends Eloquent
 		});
 	}
 
+	public function goals()
+	{
+		return $this->hasMany('Goal');
+	}
+
 	public function scopeCurUser($query)
 	{
 		return $query->where('user_id', '=', Auth::id());
