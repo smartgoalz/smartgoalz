@@ -22,6 +22,11 @@ class Task extends Eloquent
 
 	protected $guarded = array('id', 'timewatch_count');
 
+	public function goal()
+	{
+		return $this->belongsTo('Goal');
+	}
+
 	/* Recalculate weights for all task belonging to a goal */
 	public static function recalculateWeights($goal_id)
 	{

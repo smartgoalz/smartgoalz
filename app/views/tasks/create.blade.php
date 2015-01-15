@@ -46,19 +46,43 @@ $(document).ready(function() {
 		changeMonth: true,
 		changeYear: true,
         });
-});
+        $("input[name='completion_date']").datepicker({
+                dateFormat: "{{ explode('|', $dateformat)[1] }}",
+		changeMonth: true,
+		changeYear: true,
+        });
 
+        /* If Completed checkbox is unset hide completion date */
+        $("input[name='is_completed']").click(function() {
+                if ($(this).is(':checked')) {
+                        $("#completion_date").parent().show();
+                } else {
+                        $("#completion_date").parent().hide();
+                }
+        });
+        if ($("input[name='is_completed']").is(':checked')) {
+                $("#completion_date").parent().show();
+        } else {
+                $("#completion_date").parent().hide();
+        }
+});
 </script>
 
 @stop
 
-@section('page-title', 'Create a SMART Goal')
+@section('page-title', 'Create a SMART Task')
 
 @section('content')
 
+<div>
+	<span class="view-title">Goal : {{ $goal->title }}</span>
+</div>
+
+<br />
+
 {{ Form::open() }}
 
-{{ Form::openGroup('title', 'Title of the goal') }}
+{{ Form::openGroup('title', 'Title of the task') }}
         {{ Form::text('title') }}
 {{ Form::closeGroup() }}
 
@@ -70,24 +94,24 @@ $(document).ready(function() {
         {{ Form::text('due_date') }}
 {{ Form::closeGroup() }}
 
-{{ Form::openGroup('category', 'Category') }}
-        {{ Form::select('category', $categories_list) }}
+{{ Form::openGroup('after_id', 'After Task') }}
+        {{ Form::select('after_id', $tasks_list) }}
 {{ Form::closeGroup() }}
 
-{{ Form::openGroup('difficulty', 'Difficulty level') }}
-        {{ Form::select('difficulty', Constants::$difficulties) }}
+{{ Form::openGroup('is_completed') }}
+{{ Form::checkbox('is_completed', 1, 'Task is completed', FALSE) }}
 {{ Form::closeGroup() }}
 
-{{ Form::openGroup('priority', 'Priority') }}
-        {{ Form::select('priority', Constants::$priorities) }}
+{{ Form::openGroup('completion_date', 'Completion date') }}
+        {{ Form::text('completion_date') }}
 {{ Form::closeGroup() }}
 
-{{ Form::openGroup('reason', 'Reason why you want to achieve this goal') }}
-        {{ Form::textarea('reason', null, ['size' => '50x2']) }}
+{{ Form::openGroup('notes', 'Notes') }}
+        {{ Form::textarea('notes', null, ['size' => '50x2']) }}
 {{ Form::closeGroup() }}
 
 {{ Form::submit('Create') }}
-{{ HTML::linkAction('GoalsController@getIndex', 'Cancel') }}
+{{ HTML::linkAction('GoalsController@getShow', 'Cancel', array($goal->id)) }}
 
 {{ Form::close() }}
 

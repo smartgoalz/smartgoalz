@@ -67,8 +67,11 @@ class GoalsController extends BaseController
 				->with('alert-danger', 'Goal not found.');
 		}
 
+		$tasks = Task::where('goal_id', $id)->orderBy('weight', 'ASC')->get();
+
 		return View::make('goals.show')
 			->with('goal', $goal)
+			->with('tasks', $tasks)
 			->with('dateformat', $this->dateformat);
 	}
 

@@ -157,3 +157,7 @@ h3.modal-title-confirm {
 table.profile-info tr td {
 	padding: 10px 10px 10px 0;
 }
+
+.checkbox label {
+	font-weight: 700;
+}
