@@ -161,3 +161,22 @@ table.profile-info tr td {
 .checkbox label {
 	font-weight: 700;
 }
+
+.form-input {
+    background-color: #FFFFFF;
+    background-image: none;
+    border: 1px solid #CCCCCC;
+    border-radius: 4px 4px 4px 4px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+    color: #555555;
+    font-size: 14px;
+    height: 34px;
+    line-height: 1.42857;
+    padding: 6px 12px;
+    transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+}
+
+.search-title {
+	margin: 10px 0 10px 0;
+	font-size: 16px;
+}

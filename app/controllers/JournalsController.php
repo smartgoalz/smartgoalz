@@ -44,7 +44,19 @@ class JournalsController extends BaseController
 
 	public function getIndex()
 	{
-		$journals = Journal::curUser()->orderBy('created_at', 'DESC')->get();
+		$query = Journal::curUser()->orderBy('created_at', 'DESC');
+
+                /* Search */
+                $search = Input::get('search');
+                if ($search)
+                {
+			if (strlen($search) >= 1) {
+				$query->where('entry', 'LIKE', '%'.$search.'%')
+					->orWhere('title', 'LIKE', '%'.$search.'%');
+			}
+                }
+
+		$journals = $query->paginate(10);
 
 		if (!$journals)
 		{
@@ -54,7 +66,8 @@ class JournalsController extends BaseController
 
 		return View::make('journals.index')
 			->with('journals', $journals)
-			->with('dateformat', $this->dateformat);
+			->with('dateformat', $this->dateformat)
+			->with('search', $search);
 	}
 
 	public function getShow($id)

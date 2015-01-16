@@ -46,10 +46,23 @@ $(document).ready(function() {
 
 @section('content')
 
+<div class="pull-right">
+        <form name="searchform" method="GET">
+        <input name="search" id="search" class="form-input" value="{{ $search }}"/>
+        <input type="submit" class="btn btn-info" value="Search" />
+        </form>
+</div>
+
 <div class="header-button">
         {{ HTML::linkAction('JournalsController@getCreate', 'Add Entry', array(),
                 array('class' => 'btn btn-primary')) }}
 </div>
+
+@if ($search)
+<div class="search-title">
+        Showing search results for "{{ $search }}"
+</div>
+@endif
 
 @if ($journals->count() < 1)
 
@@ -70,11 +83,13 @@ $(document).ready(function() {
 		<tbody>
                 @foreach ($journals as $journal)
 		<tr>
-                        <td class="text-center">
+                        <td class="text-left">
                                 {{ date_format(date_create_from_format('Y-m-d H:i:s', $journal->date), explode('|', $dateformat)[0]) }}
                         </td>
 
-			<td>{{ HTML::linkAction('JournalsController@getShow', $journal->title, $journal->id) }}</td>
+			<td class="text-left">
+                                {{ HTML::linkAction('JournalsController@getShow', $journal->title, $journal->id) }}
+                        </td>
 
 			<td class="text-left">
                                 {{ HTML::decode(HTML::linkAction('JournalsController@getEdit',
@@ -94,6 +109,10 @@ $(document).ready(function() {
                 @endforeach
 		</tbody>
 	</table>
+</div>
+
+<div class="text-center paginator-padding">
+        {{ $journals->links() }}
 </div>
 
 @endif
