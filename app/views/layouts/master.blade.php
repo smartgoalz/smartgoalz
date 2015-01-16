@@ -114,11 +114,15 @@ THE SOFTWARE.
 			<li class="sidebar-list">
 				<a href="#/monitors" ng-click="clearAlerts()">Monitor <span class="menu-icon fa fa-signal"></span></a>
 			</li>
-			<li class="sidebar-list">
-				<a href="#/notes" ng-click="clearAlerts()">Notes <span class="menu-icon fa fa-edit"></span></a>
+	                <li class="sidebar-list">
+				{{ HTML::decode(HTML::linkAction(
+	                        'NotesController@getIndex',
+	                        'Notes <i class="menu-icon fa fa-edit"></i>')) }}
 			</li>
-			<li class="sidebar-list">
-				<a href="#/journals" ng-click="clearAlerts()">Journal <span class="menu-icon fa fa-list-alt"></span></a>
+	                <li class="sidebar-list">
+				{{ HTML::decode(HTML::linkAction(
+	                        'JournalsController@getIndex',
+	                        'Journal <i class="menu-icon fa fa-list-alt"></i>')) }}
 			</li>
 			<li class="sidebar-title separator"><span>QUICK LINKS</span></li>
 			<li class="sidebar-list">
