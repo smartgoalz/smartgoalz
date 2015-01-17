@@ -102,7 +102,7 @@ $(document).ready(function() {
                                         array(
                                                 'class' => '',
                                                 'data-method' => 'DELETE',
-                                                'data-confirm' => 'Are you sure you want to delete the journal entrys ?'
+                                                'data-confirm' => 'Are you sure you want to delete the journal entry ?'
                                         ))) }}
 			</td>
 		</tr>

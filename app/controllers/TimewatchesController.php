@@ -1,7 +1,6 @@
 <?php
 
 use Smartgoalz\Services\Validators\TimewatchValidator;
-use Smartgoalz\Services\Validators\TimewatchStopValidator;
 
 class TimewatchesController extends BaseController
 {
@@ -10,418 +9,415 @@ class TimewatchesController extends BaseController
 
 	protected $timewatchStopValidator;
 
-	public function __construct(TimewatchValidator $timewatchValidator,
-		TimewatchStopValidator $timewatchStopValidator)
+	public function __construct(TimewatchValidator $timewatchValidator)
 	{
 		$this->timewatchValidator = $timewatchValidator;
-		$this->timewatchStopValidator = $timewatchStopValidator;
+
+                $user = User::find(Auth::id());
+                $this->dateformat = $user->dateformat;
 	}
 
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return Response
-	 */
 	public function getIndex()
 	{
-		$data = Timewatch::curUser()->withTasks()->where('is_active', 0)
-			->orderBy('date', 'DESC')->get();
-
-		if ($data)
-		{
-			return Response::json(array(
-				'status' => 'success',
-				'data' => array('timewatches' => $data)
-			));
-		} else {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Timewatches not found.'
-			));
-		}
+		return Redirect::action('TimewatchesController@getStart');
 	}
 
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return Response
-	 */
-	public function getActive()
-	{
-		$data = Timewatch::curUser()->withTasks()->where('is_active', 1)
-			->orderBy('date', 'DESC')->get();
-
-		if ($data)
-		{
-			return Response::json(array(
-				'status' => 'success',
-				'data' => array('active_timewatches' => $data)
-			));
-		} else {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Active timewatches not found.'
-			));
-		}
-	}
-
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
 	public function getShow($id)
 	{
 		$timewatch = Timewatch::curUser()->find($id);
-		if (!$timewatch) {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Timewatch not found.'
-			));
+		if (!$timewatch)
+		{
+			return Redirect::action('TimewatchesController@getStart')
+				->with('alert-danger', 'Timewatch not found.');
 		}
 
 		$task = Task::find($timewatch->task_id);
-		if (!$task) {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Task not found.'
-			));
+		if (!$task)
+		{
+			return Redirect::action('TimewatchesController@getStart')
+				->with('alert-danger', 'Task not found.');
 		}
 
 		$goal = Goal::curUser()->find($task->goal_id);
-		if (!$goal) {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Goal not found.'
-			));
+		if (!$goal)
+		{
+			return Redirect::action('TimewatchesController@getStart')
+				->with('alert-danger', 'Goal not found.');
 		}
 
-		return Response::json(array(
-			'status' => 'success',
-			'data' => array(
-				'goal' => $goal,
-				'task' => $task,
-				'timewatch' => $timewatch,
-			)
-		));
+		return View::make('timewatches.show')
+			->with('goal', $goal)
+			->with('task', $task)
+			->with('timewatch', $timewatch)
+			->with('dateformat', $this->dateformat);
 	}
 
-	/**
-	 * Create a new resource in storage.
-	 *
-	 * @return Response
-	 */
+	public function getStart()
+	{
+		$goals = Goal::curUser()->orderBy('title', 'DESC')->get();
+
+		$timewatches = Timewatch::curUser()->withTasks()
+			->where('is_active', 0)
+			->orderBy('date', 'DESC')
+			->paginate(20);
+
+		$timewatches_active = Timewatch::curUser()->withTasks()
+			->where('is_active', 1)
+			->orderBy('date', 'DESC')
+			->get();
+
+		return View::make('timewatches.start')
+			->with('timewatches', $timewatches)
+			->with('timewatches_active', $timewatches_active)
+			->with('goals', $goals)
+			->with('dateformat', $this->dateformat);
+	}
+
 	public function postStart()
 	{
-		$data = Input::get('timewatch');
+		$input = Input::all();
 
-		if (empty($data['goal_id'])) {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Please select a goal.'
-			));
-		}
-		if (empty($data['task_id'])) {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Please select a task.'
-			));
-		}
-
-		$task = Task::find($data['task_id']);
-		if (!$task) {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Task not found.'
-			));
-		}
-
-		if ($data['goal_id'] != $task->goal_id) {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Task does not belong to the goal.'
-			));
-		}
-
-		$goal = Goal::curUser()->find($data['goal_id']);
-		if (!$goal) {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Goal not found.'
-			));
-		}
-		unset($data['goal_id']);
-
-		$data['stop_time'] = NULL;
-		$data['is_active'] = 1;
-
-		$this->timewatchValidator->with($data);
-
-		if ($this->timewatchValidator->passes())
+		$task = Task::find($input['task_id']);
+		if (!$task)
 		{
-			$timewatch = Timewatch::create($data);
-			if ($timewatch)
-			{
-				return Response::json(array(
-					'status' => 'success',
-					'message' => 'Timewatch added.',
-					'data' => array('id' => $timewatch->id)
-				));
-			} else {
-				return Response::json(array(
-					'status' => 'error',
-					'message' => 'Oops ! Failed to add timewatch.'
-				));
-			}
-		} else {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => $this->timewatchValidator->getErrors()
-			));
-		}
-	}
-
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function putStop($id)
-	{
-		$data = Input::get('timewatch');
-
-                $timewatch = Timewatch::curUser()->find($id);
-                if (!$timewatch)
-		{
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Oops ! Timewatch not found.'
-			));
-                }
-
-		$task = Task::find($timewatch->task_id);
-		if (!$task) {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Task not found.'
-			));
+                        return Redirect::back()->withInput()
+				->with('alert-danger', 'Please select a task.');
 		}
 
 		$goal = Goal::curUser()->find($task->goal_id);
-		if (!$goal) {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Goal not found.'
-			));
+		if (!$goal)
+		{
+                        return Redirect::back()->withInput()
+				->with('alert-danger', 'Goal not found.');
 		}
 
-		/* Need start time for validate */
-		$data['start_time'] = $timewatch->start_time;
+		$input['start_time'] = date('Y-m-d H:i:s', time());
+		$input['stop_time'] = NULL;
+		$input['is_active'] = 1;
 
-		$this->timewatchStopValidator->with($data);
+		$this->timewatchValidator->with($input);
 
-		if ($this->timewatchStopValidator->passes())
+		if ($this->timewatchValidator->fails())
 		{
-			$timewatch->stop_time = $data['stop_time'];
-			$timewatch->is_active = 0;
-
-			if ($timewatch->save())
+			return Redirect::back()->withInput()->withErrors($this->timewatchValidator->getErrors());
+		}
+		else
+		{
+			$timewatch = Timewatch::create($input);
+			if (!$timewatch)
 			{
-				return Response::json(array(
-					'status' => 'success',
-					'message' => 'Timewatch stopped.'
-				));
-			} else {
-				return Response::json(array(
-					'status' => 'error',
-					'message' => 'Oops ! Failed to stop timewatch.'
-				));
+			        return Redirect::back()->withInput()
+                                        ->with('alert-danger', 'Failed to create timewatch.');
 			}
-		} else {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => $this->timewatchStopValidator->getErrors()
-			));
+
+                        return Redirect::action('TimewatchesController@getStop', array($timewatch->id))
+                                ->with('alert-success', 'Timewatch created.');
 		}
 	}
 
-	/**
-	 * Create a new resource in storage.
-	 *
-	 * @return Response
-	 */
-	public function postCreate()
+	public function getStop($id)
 	{
-		$data = Input::get('timewatch');
-
-		if (empty($data['goal_id'])) {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Please select a goal.'
-			));
-		}
-		if (empty($data['task_id'])) {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Please select a task.'
-			));
-		}
-
-		$task = Task::find($data['task_id']);
-		if (!$task) {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Task not found.'
-			));
-		}
-
-		if ($data['goal_id'] != $task->goal_id) {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Task does not belong to the goal.'
-			));
-		}
-
-		$goal = Goal::curUser()->find($data['goal_id']);
-		if (!$goal) {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Goal not found.'
-			));
-		}
-		unset($data['goal_id']);
-
-		if ($data['is_active']) {
-			$data['is_active'] = 1;
-			$data['stop_time'] = NULL;
-		} else {
-			$data['is_active'] = 0;
-		}
-
-		$this->timewatchValidator->with($data);
-
-		if ($this->timewatchValidator->passes())
+		$timewatch = Timewatch::curUser()->find($id);
+		if (!$timewatch)
 		{
-			$timewatch = Timewatch::create($data);
-			if ($timewatch)
-			{
-				return Response::json(array(
-					'status' => 'success',
-					'message' => 'Timewatch added.'
-				));
-			} else {
-				return Response::json(array(
-					'status' => 'error',
-					'message' => 'Oops ! Failed to add timewatch.'
-				));
-			}
-		} else {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => $this->timewatchValidator->getErrors()
-			));
+			return Redirect::action('TimewatchesController@getStart')
+				->with('alert-danger', 'Timewatch not found.');
 		}
-	}
 
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function putUpdate($id)
-	{
-		$data = Input::get('timewatch');
-
-                $timewatch = Timewatch::curUser()->find($id);
-                if (!$timewatch)
+		if ($timewatch->is_active == 0)
 		{
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Oops ! Timewatch not found.'
-			));
-                }
+			return Redirect::action('TimewatchesController@getStart')
+				->with('alert-danger', 'Timewatch already stopped.');
+		}
 
 		$task = Task::find($timewatch->task_id);
-		if (!$task) {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Task not found.'
-			));
+		if (!$task)
+		{
+			return Redirect::action('TimewatchesController@getStart')
+				->with('alert-danger', 'Task not found.');
 		}
 
 		$goal = Goal::curUser()->find($task->goal_id);
-		if (!$goal) {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Goal not found.'
-			));
-		}
-
-		if ($data['is_active']) {
-			$data['is_active'] = 1;
-			$data['stop_time'] = NULL;
-		} else {
-			$data['is_active'] = 0;
-		}
-
-		$this->timewatchValidator->with($data);
-
-		if ($this->timewatchValidator->passes())
+		if (!$goal)
 		{
-			$timewatch->stop_time = $data['stop_time'];
-			$timewatch->is_active = $data['is_active'];
+			return Redirect::action('TimewatchesController@getStart')
+				->with('alert-danger', 'Goal not found.');
+		}
 
-			if ($timewatch->save())
+		return View::make('timewatches.stop')
+			->with('goal', $goal)
+			->with('task', $task)
+			->with('timewatch', $timewatch)
+			->with('dateformat', $this->dateformat);
+	}
+
+	public function postStop($id)
+	{
+		$timewatch = Timewatch::curUser()->find($id);
+		if (!$timewatch)
+		{
+			return Redirect::action('TimewatchesController@getStart')
+				->with('alert-danger', 'Timewatch not found.');
+		}
+
+		if ($timewatch->is_active == 0)
+		{
+			return Redirect::action('TimewatchesController@getStart')
+				->with('alert-danger', 'Timewatch already stopped.');
+		}
+
+		$task = Task::find($timewatch->task_id);
+		if (!$task)
+		{
+			return Redirect::action('TimewatchesController@getStart')
+				->with('alert-danger', 'Task not found.');
+		}
+
+		$goal = Goal::curUser()->find($task->goal_id);
+		if (!$goal)
+		{
+			return Redirect::action('TimewatchesController@getStart')
+				->with('alert-danger', 'Goal not found.');
+		}
+
+		$stop_time = date('Y-m-d H:i:s', time());
+
+		/* TODO : Validate start and stop time */
+
+		$timewatch->stop_time = $stop_time;
+		$timewatch->is_active = 0;
+
+		if (!$timewatch->save())
+		{
+		        return Redirect::back()->withInput()
+                                ->with('alert-danger', 'Failed to stop timewatch.');
+		}
+
+                return Redirect::action('TimewatchesController@getStart')
+                        ->with('alert-success', 'Timewatch stopped.');
+	}
+
+	public function getEdit($id = null)
+	{
+		$timewatch = null;
+		$task = null;
+		$start_time = '';
+		$stop_time = '';
+		$active = TRUE;
+
+		if ($id)
+		{
+			$timewatch = Timewatch::curUser()->find($id);
+			if (!$timewatch)
 			{
-				return Response::json(array(
-					'status' => 'success',
-					'message' => 'Timewatch updated.'
-				));
-			} else {
-				return Response::json(array(
-					'status' => 'error',
-					'message' => 'Oops ! Failed to update timewatch.'
-				));
+				return Redirect::action('TimewatchesController@getStart')
+					->with('alert-danger', 'Timewatch not found.');
 			}
-		} else {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => $this->timewatchValidator->getErrors()
-			));
+
+			$task = Task::find($timewatch->task_id);
+			if (!$task)
+			{
+				return Redirect::action('TimewatchesController@getStart')
+					->with('alert-danger', 'Task not found.');
+			}
+
+			$goal = Goal::curUser()->find($task->goal_id);
+			if (!$goal)
+			{
+				return Redirect::action('TimewatchesController@getStart')
+					->with('alert-danger', 'Goal not found.');
+			}
+
+			/* Format start time */
+	                $start_temp = date_create_from_format('Y-m-d H:i:s', $timewatch->start_time);
+	                if (!$start_temp)
+	                {
+	                        $start_time = '';
+	                }
+			else
+			{
+				$start_time = date_format($start_temp, explode('|', $this->dateformat)[0] . ' h:i A');
+			}
+
+			/* Format stop time */
+	                $stop_temp = date_create_from_format('Y-m-d H:i:s', $timewatch->stop_time);
+	                if (!$stop_temp)
+	                {
+				$stop_time = '';
+	                }
+			else
+			{
+				$stop_time = date_format($stop_temp, explode('|', $this->dateformat)[0] . ' h:i A');
+			}
+
+			if ($timewatch->is_active == 1)
+			{
+				$active = TRUE;
+				$stop_time = '';
+			}
+			else
+			{
+				$active = FALSE;
+			}
+		}
+
+		$goals = Goal::curUser()->orderBy('title', 'DESC')->get();
+
+		return View::make('timewatches.edit')
+			->with('goals', $goals)
+			->with('timewatch',  $timewatch)
+			->with('timewatch_task', $task)
+			->with('start_time', $start_time)
+			->with('stop_time', $stop_time)
+			->with('active', $active)
+			->with('dateformat', $this->dateformat);
+	}
+
+	public function postEdit($id = null)
+	{
+		$input = Input::all();
+
+		/* Check if timewatch is stopped */
+		if (empty($input['is_active']))
+		{
+			$input['is_active'] = 0;
+		}
+		else
+		{
+			$input['is_active'] = 1;
+		}
+
+		/* Format start time */
+                $start_temp = date_create_from_format(
+                        explode('|', $this->dateformat)[0] . ' h:i A',
+                        $input['start_time']
+                );
+                if (!$start_temp)
+                {
+                        return Redirect::back()->withInput()
+                                ->with('alert-danger', 'Invalid start time.');
+                }
+                $start_time = date_format($start_temp, 'Y-m-d H:i:s');
+
+		if ($input['is_active'] == 0)
+		{
+			/* Format stop time */
+	                $stop_temp = date_create_from_format(
+	                        explode('|', $this->dateformat)[0] . ' h:i A',
+	                        $input['stop_time']
+	                );
+	                if (!$stop_temp)
+	                {
+	                        return Redirect::back()->withInput()
+	                                ->with('alert-danger', 'Invalid stop time.');
+	                }
+	                $stop_time = date_format($stop_temp, 'Y-m-d H:i:s');
+
+			/* Check if start date if before due date */
+			if ($start_temp > $stop_temp)
+			{
+	                        return Redirect::back()->withInput()
+	                                ->with('alert-danger', 'Start time cannot be after stop time.');
+			}
+		}
+		else
+		{
+			$stop_time = NULL;
+		}
+
+		$input['start_time'] = $start_time;
+		$input['stop_time'] = $stop_time;
+
+		$this->timewatchValidator->with($input);
+
+		if ($this->timewatchValidator->fails())
+		{
+			return Redirect::back()->withInput()->withErrors($this->timewatchValidator->getErrors());
+		}
+		else
+		{
+			if ($id)
+			{
+
+				$timewatch = Timewatch::curUser()->find($id);
+				if (!$timewatch)
+				{
+					return Redirect::action('TimewatchesController@getStart')
+						->with('alert-danger', 'Timewatch not found.');
+				}
+
+				$task = Task::find($timewatch->task_id);
+				if (!$task)
+				{
+					return Redirect::action('TimewatchesController@getStart')
+						->with('alert-danger', 'Task not found.');
+				}
+
+				$goal = Goal::curUser()->find($task->goal_id);
+				if (!$goal)
+				{
+					return Redirect::action('TimewatchesController@getStart')
+						->with('alert-danger', 'Goal not found.');
+				}
+
+				$timewatch->start_time = $input['start_time'];
+				$timewatch->stop_time = $input['stop_time'];
+				$timewatch->is_active = $input['is_active'];
+
+				if (!$timewatch->save())
+				{
+				        return Redirect::back()->withInput()
+	                                        ->with('alert-danger', 'Failed to update timewatch.');
+				}
+
+				return Redirect::action('TimewatchesController@getStart')
+					->with('alert-success', 'Timewatch udpated.');
+			}
+			else
+			{
+				$task = Task::find($input['task_id']);
+				if (!$task)
+				{
+		                        return Redirect::back()->withInput()
+						->with('alert-danger', 'Please select a task.');
+				}
+
+				$goal = Goal::curUser()->find($task->goal_id);
+				if (!$goal)
+				{
+		                        return Redirect::back()->withInput()
+						->with('alert-danger', 'Goal not found.');
+				}
+
+				$timewatch = Timewatch::create($input);
+				if (!$timewatch)
+				{
+					return Redirect::back()->withInput()
+						->with('alert-danger', 'Failed to create timewatch.');
+				}
+
+				return Redirect::action('TimewatchesController@getStart')
+					->with('alert-success', 'Timewatch created.');
+			}
 		}
 	}
 
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
 	public function deleteDestroy($id)
 	{
                 $timewatch = Timewatch::curUser()->find($id);
-                if (!$timewatch)
+		if (!$timewatch)
 		{
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Oops ! Timewatch not found.'
-			));
-                }
-
-                if ($timewatch->delete())
-		{
-			return Response::json(array(
-				'status' => 'success',
-				'message' => 'Timewatch deleted.'
-			));
-		} else {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Oops ! Failed to delete timewatch.'
-			));
+			return Redirect::action('TimewatchesController@getStart')
+				->with('alert-danger', 'Timewatch not found.');
 		}
+
+                if (!$timewatch->delete())
+		{
+			return Redirect::action('TimewatchesController@getIndex')
+				->with('alert-danger', 'Oops ! Failed to delete timewatch.');
+		}
+
+		return Redirect::action('TimewatchesController@getStart')
+			->with('alert-success', 'Timewatch deleted.');
 	}
 }

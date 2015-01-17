@@ -38,24 +38,27 @@
 |
 */
 
+Route::get('/', 'UsersController@getLogin');
 Route::controller('users', 'UsersController');
 Route::controller('dashboard', 'DashboardController');
 Route::controller('goals', 'GoalsController');
 Route::controller('tasks', 'TasksController');
+Route::controller('timewatches', 'TimewatchesController');
+Route::controller('notes', 'NotesController');
 Route::controller('journals', 'JournalsController');
 
-Route::group(array('prefix' => 'api'), function()
-{
-	Route::controller('dashboard', 'DashboardController');
-	Route::controller('goals', 'GoalsController');
-	Route::controller('tasks', 'TasksController');
-	Route::controller('categories', 'CategoriesController');
-	Route::controller('timewatches', 'TimewatchesController');
-	Route::controller('timetables', 'TimetablesController');
-	Route::controller('activities', 'ActivitiesController');
-	Route::controller('monitors', 'MonitorsController');
-	Route::controller('monitorvalues', 'MonitorvaluesController');
-	Route::controller('notes', 'NotesController');
-	Route::controller('journals', 'JournalsController');
-	Route::controller('users', 'UsersController');
-});
+// Route::group(array('prefix' => 'api'), function()
+// {
+// 	Route::controller('dashboard', 'DashboardController');
+// 	Route::controller('goals', 'GoalsController');
+// 	Route::controller('tasks', 'TasksController');
+// 	Route::controller('categories', 'CategoriesController');
+// 	Route::controller('timewatches', 'TimewatchesController');
+// 	Route::controller('timetables', 'TimetablesController');
+// 	Route::controller('activities', 'ActivitiesController');
+// 	Route::controller('monitors', 'MonitorsController');
+// 	Route::controller('monitorvalues', 'MonitorvaluesController');
+// 	Route::controller('notes', 'NotesController');
+// 	Route::controller('journals', 'JournalsController');
+// 	Route::controller('users', 'UsersController');
+// });

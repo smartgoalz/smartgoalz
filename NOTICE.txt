@@ -29,8 +29,8 @@ notices and distributed according to the terms of their own licenses.
 	HOMEPAGE: http://www.datejs.com
 	LICENSE: The MIT License
 
-7. textAngular - Angular.js based Text-Editor
-	HOMEPAGE: http://textangular.com
+7. jQuery Chained - Chained Selects for jQuery
+	HOMEPAGE: https://github.com/tuupola/jquery_chained
 	LICENSE: The MIT License
 
 Whilst every effort has been made to ensure that information is correct, incase

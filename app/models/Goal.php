@@ -47,6 +47,11 @@ class Goal extends Eloquent
 		return $this->belongsTo('Category');
 	}
 
+	public function tasks()
+	{
+		return $this->hasMany('Task');
+	}
+
 	public function scopeCurUser($query)
 	{
 		return $query->where('user_id', '=', Auth::id());

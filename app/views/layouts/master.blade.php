@@ -48,8 +48,9 @@ THE SOFTWARE.
         {{ HTML::script('js/jquery-ui.min.js') }}
 
         <!-- jQuery Plugins -->
-        {{ HTML::script('js/jquery-ui-timepicker-addon.js') }}
         {{ HTML::style('css/jquery-ui-timepicker-addon.css') }}
+        {{ HTML::script('js/jquery-ui-timepicker-addon.js') }}
+	{{ HTML::script('js/jquery.chained.min.js') }}
 
         <!-- Bootstrap -->
         {{ HTML::style('css/bootstrap.min.css') }}
@@ -105,9 +106,12 @@ THE SOFTWARE.
 	                        'Goals <i class="menu-icon fa fa-cubes"></i>')) }}
 			</li>
 
-			<li class="sidebar-list">
-				<a href="#/timewatches" ng-click="clearAlerts()">Timewatch <span class="menu-icon fa fa-clock-o"></span></a>
+	                <li class="sidebar-list">
+				{{ HTML::decode(HTML::linkAction(
+	                        'TimewatchesController@getStart',
+	                        'Timewatch <i class="menu-icon fa fa-clock-o"></i>')) }}
 			</li>
+
 			<li class="sidebar-list">
 				<a href="#/timetables" ng-click="clearAlerts()">Daily Timetable <span class="menu-icon fa fa-coffee"></span></a>
 			</li>
