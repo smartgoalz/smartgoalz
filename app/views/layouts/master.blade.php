@@ -34,6 +34,8 @@ THE SOFTWARE.
 <head>
 	<meta charset="UTF-8">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
 	<title>SMARTGoalz</title>
 	<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
 
@@ -51,6 +53,7 @@ THE SOFTWARE.
         {{ HTML::style('css/jquery-ui-timepicker-addon.css') }}
         {{ HTML::script('js/jquery-ui-timepicker-addon.js') }}
 	{{ HTML::script('js/jquery.chained.min.js') }}
+	{{ HTML::script('js/jquery.cookie.js') }}
 
         <!-- Bootstrap -->
         {{ HTML::style('css/bootstrap.min.css') }}
@@ -70,11 +73,13 @@ THE SOFTWARE.
 	<!-- jQuery scripting adapter for links -->
         {{ HTML::script('js/rails.js') }}
 
+	<!-- rdash admin theme -->
+        {{ HTML::style('css/dashboard.css') }}
+	{{ HTML::script('js/dashboard.js') }}
+
         <!-- Custom CSS -->
         @define $time = rand(0, 1000)
-
         {{ HTML::style('css/style.css?' . $time) }}
-        {{ HTML::style('css/dashboard.css?' . $time) }}
 
 	@yield('head')
 </head>
@@ -82,15 +87,15 @@ THE SOFTWARE.
 <body>
 
 <!-- Page Wrapper -->
-<div id="page-wrapper">
+<div id="page-wrapper" class="active">
 
 	<!-- Sidebar -->
 	<div id="sidebar-wrapper">
 
 		<!-- Sidebar Navigation -->
 		<ul class="sidebar">
-			<li class="sidebar-main">
-				<a href="#" ng-click="toggleSidebar()">smartgoalz.org<span class="menu-icon glyphicon glyphicon-transfer"></span></a>
+			<li id="toggle-sidebar" class="sidebar-main">
+				<a href="#">smartgoalz.org<span class="menu-icon glyphicon glyphicon-transfer"></span></a>
 			</li>
 			<li class="sidebar-title"><span>NAVIGATION</span></li>
 

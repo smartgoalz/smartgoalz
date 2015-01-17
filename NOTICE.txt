@@ -33,5 +33,13 @@ notices and distributed according to the terms of their own licenses.
 	HOMEPAGE: https://github.com/tuupola/jquery_chained
 	LICENSE: The MIT License
 
+8. jQuery Cookie - jQuery Cookie Plugin
+	HOMEPAGE: https://github.com/carhartl/jquery-cookie
+	LICENSE: The MIT License
+
+9. rdash-jquery - RDash admin dashboard theme
+	HOMEPAGE: https://github.com/rdash/rdash-jquery
+	LICENSE: The MIT License
+
 Whilst every effort has been made to ensure that information is correct, incase
 of any discrepancies please contact the author(s) of this software.
