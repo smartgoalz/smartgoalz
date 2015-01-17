@@ -150,8 +150,7 @@ h3.modal-title-confirm {
 }
 
 .widget-item {
-	border-bottom: 1px solid #DDDDDD;
-	margin-bottom: 10px;
+
 }
 
 table.profile-info tr td {
@@ -179,4 +178,15 @@ table.profile-info tr td {
 .search-title {
 	margin: 10px 0 10px 0;
 	font-size: 16px;
+}
+
+.header {
+	padding-top: 10px;
+}
+
+.widget-item-title {
+	font-weight: bold;
+	border-bottom: 1px solid #DDDDDD;
+	padding-bottom: 10px;
+	margin-bottom: 10px;
 }

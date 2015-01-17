@@ -88,7 +88,7 @@ $(document).ready(function() {
 
 <div class="widget">
 
-<div class="widget-header">
+<div class="widget-title">
 	<i class="fa fa-clock-o"></i> Active timewatches
 	<div class="clearfix"></div>
 </div>
@@ -160,12 +160,12 @@ $(document).ready(function() {
 
 <div class="widget">
 
-<div class="widget-header">
+<div class="widget-title">
 	<i class="fa fa-clock-o"></i> All Timewatches
 	<div class="clearfix"></div>
 </div>
 
-<div>
+<div class="">
 	<table class="table table-hover">
 		<thead>
 			<tr>

@@ -116,7 +116,7 @@ $(document).ready(function() {
 
 			<div class="col-lg-6">
 				<div class="widget">
-					<div class="widget-header">
+					<div class="widget-title">
 						<i class="fa fa-info-circle"></i> Alerts
 						<div class="clearfix"></div>
 					</div>
@@ -129,7 +129,7 @@ $(document).ready(function() {
 			</div>
 			<div class="col-lg-6">
 				<div class="widget">
-					<div class="widget-header">
+					<div class="widget-title">
 						<i class="fa fa-edit"></i> Notes
 						<div class="clearfix"></div>
 					</div>
@@ -137,7 +137,7 @@ $(document).ready(function() {
 						<div class="message">
                                                         @foreach ($dashboard['notes_dashboard'] as $note)
 							<div class="widget-item">
-								<div class="widget-title">{{ $note->title }}</div>
+								<div class="widget-item-title">{{ $note->title }}</div>
 								<div>{{ $note->note }}</div>
 							</div>
                                                         @endforeach
