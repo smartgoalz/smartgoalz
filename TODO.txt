@@ -1,6 +1,6 @@
-Change all boolean to 1/0 in the angular js itself
-Pagination
 Dashboard
 User > use validator class
 Category > validation
 Timewatch -> time count
+Check all deletes
+Check all validations

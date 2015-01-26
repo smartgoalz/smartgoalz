@@ -64,6 +64,11 @@ class Monitor extends Eloquent
 		});
 	}
 
+	public function monitorvalues()
+	{
+		return $this->hasMany('Monitorvalue');
+	}
+
 	public function scopeCurUser($query)
 	{
 		return $query->where('user_id', '=', Auth::id());

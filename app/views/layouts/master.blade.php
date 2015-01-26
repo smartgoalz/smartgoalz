@@ -128,8 +128,10 @@ THE SOFTWARE.
 	                        'Daily Timetable <i class="menu-icon fa fa-coffee"></i>')) }}
 			</li>
 
-			<li class="sidebar-list">
-				<a href="#/monitors" ng-click="clearAlerts()">Monitor <span class="menu-icon fa fa-signal"></span></a>
+	                <li class="sidebar-list">
+				{{ HTML::decode(HTML::linkAction(
+	                        'MonitorsController@getIndex',
+	                        'Monitor <i class="menu-icon fa fa-signal"></i>')) }}
 			</li>
 
 	                <li class="sidebar-list">

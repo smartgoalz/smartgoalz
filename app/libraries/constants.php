@@ -47,4 +47,26 @@ class Constants {
                 '5' => 'Lowest',
         );
 
+	public static $monitor_types = array(
+                '' => 'Please select...',
+		'CHAR' => 'Character',
+		'INT' => 'Integer',
+		'FLOAT' => 'Decimal',
+		'BOOL' => 'True / False',
+	);
+
+	public static $monitor_frequencies = array(
+                '' => 'Please select...',
+		'DAILY' => 'Daily',
+		'WEEKLY' => 'Weekly',
+		'MONTHLY' => 'Monthly',
+		'QUATERLY' => 'Quaterly',
+                'YEARLY' => 'Yearly',
+	);
+
+	public static $monitor_better = array(
+                '' => 'Please select...',
+		'LOWER' => 'Lower is better',
+		'HIGHER' => 'Higher is better',
+	);
 }

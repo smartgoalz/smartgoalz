@@ -1,4 +1,31 @@
 <?php
+/**
+ * The MIT License (MIT)
+ *
+ * SMARTGoalz - SMART Goals made easier
+ *
+ * http://smartgoalz.github.io
+ *
+ * Copyright (c) 2015 Prashant Shah <pshah.smartgoalz@gmail.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 
 use Smartgoalz\Services\Validators\MonitorValidator;
 
@@ -10,171 +37,175 @@ class MonitorsController extends BaseController
 	public function __construct(MonitorValidator $monitorValidator)
 	{
 		$this->monitorValidator = $monitorValidator;
+
+                $user = User::find(Auth::id());
+                $this->dateformat = $user->dateformat;
 	}
 
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return Response
-	 */
 	public function getIndex()
 	{
-		$data = Monitor::curUser()->orderBy('title', 'DESC')->get();
+		$monitors = Monitor::curUser()->orderBy('title', 'DESC')->get();
 
-		if ($data)
+		if (!$monitors)
 		{
-			return Response::json(array(
-				'status' => 'success',
-				'data' => array('monitors' => $data)
-			));
-		} else {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Monitors not found.'
-			));
+			return Redirect::action('DashboardController@getIndex')
+				->with('alert-danger', 'Monitors not found.');
 		}
+
+		return View::make('monitors.index')
+			->with('monitors', $monitors)
+			->with('dateformat', $this->dateformat);
 	}
 
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
 	public function getShow($id)
 	{
-		$data = Monitor::curUser()->find($id);
+		$monitor = Monitor::curUser()->find($id);
 
-		if ($data)
+		if (!$monitor)
 		{
-			return Response::json(array(
-				'status' => 'success',
-				'data' => array('monitor' => $data)
-			));
-		} else {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Monitor not found.'
-			));
+			return Redirect::action('MonitorsController@getIndex')
+				->with('alert-danger', 'Monitor not found.');
 		}
+
+		$monitorvalues = Monitorvalue::where('monitor_id', '=', $monitor->id)
+			->orderBy('date')->paginate(20);
+
+		return View::make('monitors.show')
+			->with('monitor', $monitor)
+			->with('monitorvalues', $monitorvalues)
+			->with('dateformat', $this->dateformat);
 	}
 
-	/**
-	 * Create a new resource in storage.
-	 *
-	 * @return Response
-	 */
+	public function getCreate()
+	{
+		return View::make('monitors.create')
+			->with('dateformat', $this->dateformat);
+	}
+
 	public function postCreate()
 	{
-		$data = Input::get('monitor');
+		$input = Input::all();
 
-		$this->monitorValidator->with($data);
-
-		if ($this->monitorValidator->passes())
+		if ($input['is_lower_better'] == 'LOWER')
 		{
-			if (Monitor::create($data))
+			$input['is_lower_better'] = 1;
+		}
+		else
+		{
+			$input['is_lower_better'] = 0;
+		}
+
+		$this->monitorValidator->with($input);
+
+		if ($this->monitorValidator->fails())
+		{
+			return Redirect::back()->withInput()->withErrors($this->monitorValidator->getErrors());
+		}
+		else
+		{
+			if (!Monitor::create($input))
 			{
-				return Response::json(array(
-					'status' => 'success',
-					'message' => 'Monitor created.'
-				));
-			} else {
-				return Response::json(array(
-					'status' => 'error',
-					'message' => 'Oops ! Failed to create monitor.'
-				));
+			        return Redirect::back()->withInput()
+                                        ->with('alert-danger', 'Failed to create monitor.');
 			}
-		} else {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => $this->monitorValidator->getErrors()
-			));
+
+                        return Redirect::action('MonitorsController@getIndex')
+                                ->with('alert-success', 'Monitor created.');
 		}
 	}
 
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function putUpdate($id)
+	public function getEdit($id)
 	{
                 $monitor = Monitor::curUser()->find($id);
                 if (!$monitor)
 		{
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Oops ! Monitor not found.'
-			));
+			return Redirect::action('MonitorsController@getIndex')
+				->with('alert-danger', 'Monitor not found.');
                 }
 
-		$data = Input::get('monitor');
+		if ($monitor->is_lower_better == 1)
+		{
+			$is_lower_better = 'LOWER';
+		}
+		else
+		{
+			$is_lower_better = 'HIGHER';
+		}
 
-		$this->monitorValidator->with($data);
+		return View::make('monitors.edit')
+			->with('monitor', $monitor)
+			->with('is_lower_better', $is_lower_better)
+			->with('dateformat', $this->dateformat);
+	}
 
-		if ($this->monitorValidator->passes())
+	public function postEdit($id)
+	{
+                $monitor = Monitor::curUser()->find($id);
+                if (!$monitor)
+		{
+			return Redirect::action('MonitorsController@getIndex')
+				->with('alert-danger', 'Monitor not found.');
+                }
+
+		$input = Input::all();
+
+		if ($input['is_lower_better'] == 'LOWER')
+		{
+			$input['is_lower_better'] = 1;
+		}
+		else
+		{
+			$input['is_lower_better'] = 0;
+		}
+
+		$this->monitorValidator->with($input);
+
+		if ($this->monitorValidator->fails())
+		{
+			return Redirect::back()->withInput()->withErrors($this->monitorValidator->getErrors());
+		}
+		else
 		{
 			/* Update data */
-	                $monitor->title = $data['title'];
-	                $monitor->type = $data['type'];
-	                $monitor->minimum = $data['minimum'];
-	                $monitor->maximum = $data['maximum'];
-	                $monitor->minimum_threshold = $data['minimum_threshold'];
-	                $monitor->maximum_threshold = $data['maximum_threshold'];
-	                $monitor->is_lower_better = $data['is_lower_better'];
-	                $monitor->units = $data['units'];
-	                $monitor->frequency = $data['frequency'];
-	                $monitor->description = $data['description'];
+	                $monitor->title = $input['title'];
+	                $monitor->type = $input['type'];
+	                $monitor->minimum = $input['minimum'];
+	                $monitor->maximum = $input['maximum'];
+	                $monitor->minimum_threshold = $input['minimum_threshold'];
+	                $monitor->maximum_threshold = $input['maximum_threshold'];
+	                $monitor->is_lower_better = $input['is_lower_better'];
+	                $monitor->units = $input['units'];
+	                $monitor->frequency = $input['frequency'];
+	                $monitor->description = $input['description'];
 
-			if ($monitor->save())
+			if (!$monitor->save())
 			{
-				return Response::json(array(
-					'status' => 'success',
-					'message' => 'Monitor updated.'
-				));
-			} else {
-				return Response::json(array(
-					'status' => 'error',
-					'message' => 'Oops ! Failed to update monitor.'
-				));
+			        return Redirect::back()->withInput()
+                                        ->with('alert-danger', 'Failed to update monitor.');
 			}
-		} else {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => $this->monitorValidator->getErrors()
-			));
+
+                        return Redirect::action('MonitorsController@getIndex')
+                                ->with('alert-success', 'Monitor updated.');
 		}
 	}
 
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
 	public function deleteDestroy($id)
 	{
                 $monitor = Monitor::curUser()->find($id);
-                if (!$monitor)
-		{
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Oops ! Monitor not found.'
-			));
-                }
 
-                if ($monitor->delete())
+		if (!$monitor)
 		{
-			return Response::json(array(
-				'status' => 'success',
-				'message' => 'Monitor deleted.'
-			));
-		} else {
-			return Response::json(array(
-				'status' => 'error',
-				'message' => 'Oops ! Failed to delete monitor.'
-			));
+			return Redirect::action('MonitorsController@getIndex')
+				->with('alert-danger', 'Monitor not found.');
 		}
+
+                if (!$monitor->delete())
+		{
+			return Redirect::action('MonitorsController@getIndex')
+				->with('alert-danger', 'Oops ! Failed to delete monitor.');
+		}
+
+		return Redirect::action('MonitorsController@getIndex')
+			->with('alert-success', 'Monitor deleted.');
 	}
 }

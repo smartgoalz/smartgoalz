@@ -48,4 +48,8 @@ class Monitorvalue extends Eloquent
 
 	protected $guarded = array('id');
 
+	public function monitor()
+	{
+		return $this->belongsTo('Monitor');
+	}
 }
