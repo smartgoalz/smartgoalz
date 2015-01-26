@@ -38,7 +38,7 @@ class Activity extends Eloquent
 	public function scopeWithTimetable($query)
 	{
 		return $query->rightJoin('timetables', 'activities.id', '=', 'timetables.activity_id')
-			->select('timetables.*', 'activities.id as activity_id', 'activities.name as activity_name');
+			->select('timetables.*', 'activities.id as activities_id', 'activities.name as activities_name');
 	}
 
 	public function scopeCurUser($query)

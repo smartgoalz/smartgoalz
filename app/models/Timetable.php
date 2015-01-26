@@ -24,8 +24,17 @@ class Timetable extends Eloquent
 	 */
 	public $timestamps = false;
 
-	protected $fillable = array('activity_id', 'from_time', 'to_time', 'days');
+	protected $fillable = array('from_time', 'to_time', 'days');
 
-	protected $guarded = array('id');
+	protected $guarded = array('id', 'activity_id');
 
+	public function activity()
+	{
+		return $this->belongsTo('Activity');
+	}
+
+	public function scopeCurUser($query)
+	{
+		return $query->where('user_id', '=', Auth::id());
+	}
 }

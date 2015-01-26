@@ -41,5 +41,14 @@ notices and distributed according to the terms of their own licenses.
 	HOMEPAGE: https://github.com/rdash/rdash-jquery
 	LICENSE: The MIT License
 
+10. bootstrap-3-timepicker - Timepicker for Twitter Bootstrap 3
+	HOMEPAGE: https://github.com/rendom/bootstrap-3-timepicker
+	LICENSE: The MIT License
+
+11. Select2 - The jQuery replacement for select boxes
+	HOMEPAGE: http://select2.github.io
+	LICENSE: The MIT License
+
+https://github.com/rendom/bootstrap-3-timepicker
 Whilst every effort has been made to ensure that information is correct, incase
 of any discrepancies please contact the author(s) of this software.

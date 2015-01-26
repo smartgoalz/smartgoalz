@@ -64,6 +64,10 @@ THE SOFTWARE.
         {{ HTML::style('css/bootstrap-select.min.css') }}
         {{ HTML::script('js/bootstrap-select.min.js') }}
 
+	<!-- Bootstrap Timepicker -->
+        {{ HTML::style('css/bootstrap-timepicker.min.css') }}
+        {{ HTML::script('js/bootstrap-timepicker.min.js') }}
+
 	<!-- Chart.js -->
         {{ HTML::script('js/Chart.min.js') }}
 
@@ -97,6 +101,7 @@ THE SOFTWARE.
 			<li id="toggle-sidebar" class="sidebar-main">
 				<a href="#">smartgoalz.org<span class="menu-icon glyphicon glyphicon-transfer"></span></a>
 			</li>
+
 			<li class="sidebar-title"><span>NAVIGATION</span></li>
 
 	                <li class="sidebar-list">
@@ -117,29 +122,38 @@ THE SOFTWARE.
 	                        'Timewatch <i class="menu-icon fa fa-clock-o"></i>')) }}
 			</li>
 
-			<li class="sidebar-list">
-				<a href="#/timetables" ng-click="clearAlerts()">Daily Timetable <span class="menu-icon fa fa-coffee"></span></a>
+	                <li class="sidebar-list">
+				{{ HTML::decode(HTML::linkAction(
+	                        'TimetablesController@getIndex',
+	                        'Daily Timetable <i class="menu-icon fa fa-coffee"></i>')) }}
 			</li>
+
 			<li class="sidebar-list">
 				<a href="#/monitors" ng-click="clearAlerts()">Monitor <span class="menu-icon fa fa-signal"></span></a>
 			</li>
+
 	                <li class="sidebar-list">
 				{{ HTML::decode(HTML::linkAction(
 	                        'NotesController@getIndex',
 	                        'Notes <i class="menu-icon fa fa-edit"></i>')) }}
 			</li>
+
 	                <li class="sidebar-list">
 				{{ HTML::decode(HTML::linkAction(
 	                        'JournalsController@getIndex',
 	                        'Journal <i class="menu-icon fa fa-list-alt"></i>')) }}
 			</li>
+
 			<li class="sidebar-title separator"><span>QUICK LINKS</span></li>
+
 			<li class="sidebar-list">
 				<a href="#" ng-click="clearAlerts()">Upcoming Tasks <span class="menu-icon fa fa-info-circle"></span></a>
 			</li>
+
 			<li class="sidebar-list">
 				<a href="#/calendar" ng-click="clearAlerts()">Calendar <span class="menu-icon fa fa-calendar"></span></a>
 			</li>
+
 		</ul>
 		<!-- End Sidebar Navigation -->
 
