@@ -1,6 +1,5 @@
 Dashboard
-User > use validator class
-Category > validation
 Timewatch -> time count
 Check all validations
-Categories
+Categories mvc
+User backend

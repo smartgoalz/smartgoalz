@@ -103,22 +103,14 @@ class UsersController extends BaseController
 	{
                 $input = Input::all();
 
-                $rules = array(
-                        'username' => 'required|min:3|max:100|unique:users,username',
-			'email' => 'required|email|unique:users,email',
-			'password' => 'required|min:3',
-                );
+		$this->userValidator->with($input);
 
-                $validator = Validator::make($input, $rules);
-
-                if ($validator->fails())
-                {
-                        return Redirect::back()->withInput()->withErrors($validator);
-                }
+		if ($this->userValidator->fails())
+		{
+			return Redirect::back()->withInput()->withErrors($this->userValidator->getErrors());
+		}
 		else
 		{
-
-                        /* Create a symptom */
                         $user_data = array(
                                 'username' => $input['username'],
 				'password' => Hash::make($input['password']),
