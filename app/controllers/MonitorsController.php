@@ -199,6 +199,8 @@ class MonitorsController extends BaseController
 				->with('alert-danger', 'Monitor not found.');
 		}
 
+                $monitor->monitorvalues()->delete();
+
                 if (!$monitor->delete())
 		{
 			return Redirect::action('MonitorsController@getIndex')

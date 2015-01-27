@@ -2,5 +2,5 @@ Dashboard
 User > use validator class
 Category > validation
 Timewatch -> time count
-Check all deletes
 Check all validations
+Categories

@@ -54,6 +54,11 @@ class Task extends Eloquent
 		return $this->belongsTo('Goal');
 	}
 
+	public function timewatches()
+	{
+		return $this->hasMany('Timewatch');
+	}
+
 	/* Recalculate weights for all task belonging to a goal */
 	public static function recalculateWeights($goal_id)
 	{

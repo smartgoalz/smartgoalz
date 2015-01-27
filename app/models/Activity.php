@@ -62,6 +62,11 @@ class Activity extends Eloquent
 		});
 	}
 
+	public function timetables()
+	{
+		return $this->hasMany('Timetable');
+	}
+
 	public function scopeWithTimetable($query)
 	{
 		return $query->rightJoin('timetables', 'activities.id', '=', 'timetables.activity_id')

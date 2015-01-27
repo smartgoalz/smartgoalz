@@ -127,6 +127,8 @@ class ActivitiesController extends BaseController
 				->with('alert-danger', 'Activity not found.');
 		}
 
+                $activity->timetables()->delete();
+
                 if (!$activity->delete())
 		{
 			return Redirect::action('TimetablesController@getManage')

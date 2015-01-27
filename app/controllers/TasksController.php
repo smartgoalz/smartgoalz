@@ -403,6 +403,8 @@ class TasksController extends BaseController
 				->with('alert-danger', 'Goal not found.');
                 }
 
+		$task->timewatches()->delete();
+
                 if (!$task->delete())
 		{
 			return Redirect::action('GoalsController@getShow', array($goal->id))

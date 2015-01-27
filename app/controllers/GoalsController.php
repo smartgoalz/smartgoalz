@@ -294,6 +294,16 @@ class GoalsController extends BaseController
 				->with('alert-danger', 'Goal not found.');
 		}
 
+		foreach ($goal->tasks as $task)
+		{
+			$task->timewatches()->delete();
+			if (!$task->delete())
+			{
+				return Redirect::action('GoalsController@getIndex')
+					->with('alert-danger', 'Oops ! Failed to delete goal.');
+			}
+		}
+
                 if (!$goal->delete())
 		{
 			return Redirect::action('GoalsController@getIndex')
