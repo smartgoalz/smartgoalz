@@ -42,6 +42,8 @@ $(document).ready(function() {
 
 @stop
 
+@section('page-title', 'Reset Password')
+
 @section('content')
 
 <div class="container">
@@ -51,7 +53,7 @@ $(document).ready(function() {
 <div class="panel panel-info" >
 
         <div class="panel-heading">
-                <span class="panel-title">Forgot Password</span>
+                <span class="panel-title">Reset Password</span>
                 <span class="pull-right panel-link">
                         {{ HTML::linkAction('UsersController@getLogin', 'Sign In') }}
                 </span>
@@ -66,25 +68,34 @@ $(document).ready(function() {
 			<div class="alert alert-success">
 			{{ Session::get('alert-success') }}
 			</div>
-                @endif
+		@endif
                 @if (Session::has('alert-danger'))
 			<div class="alert alert-danger">
 			{{ Session::get('alert-danger') }}
 			</div>
-                @endif
+		@endif
 	</div>
         <!-- /.alerts -->
 
         <div>
                 {{ Form::open() }}
 
-                {{ Form::openGroup('input', 'Username or Email') }}
-                        {{ Form::text('userinput') }}
+                {{ Form::openGroup('password', 'New Password') }}
+                        {{ Form::password('password') }}
                 {{ Form::closeGroup() }}
+
+                {{ Form::hidden('u', $u) }}
+                {{ Form::hidden('k', $k) }}
 
                 {{ Form::submit('Submit') }}
 
                 {{ Form::close() }}
+
+                <div id="signup-link">
+                        Don't have an account ?
+                        {{ HTML::linkAction('UsersController@getRegister', 'Sign Up Here') }}
+                </div>
+
         </div>
 
         </div>

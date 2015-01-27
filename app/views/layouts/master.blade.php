@@ -189,10 +189,12 @@ THE SOFTWARE.
 						<div class="item">
 							{{ HTML::decode(HTML::linkAction(
 				                        'UsersController@getLogout',
-				                        '<i class="fa fa-sign-out fa-fw"></i>Logout')) }}
+				                        '<i class="fa fa-sign-out fa-fw"></i> Logout')) }}
 						</div>
 						<div class="item">
-							<a href="#/users/profile"><i class="fa fa-gears fa-fw"></i> Profile</a>
+							{{ HTML::decode(HTML::linkAction(
+				                        'UsersController@getProfile',
+				                        '<i class="fa fa-gears fa-fw"></i> Profile')) }}
 						</div>
 					</div>
 					<div class="meta">

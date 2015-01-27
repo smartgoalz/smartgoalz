@@ -201,3 +201,14 @@ table.profile-info tr td {
 .header .pull-right {
 	padding-top: 10px;
 }
+
+.borderless thead > tr > th,
+.borderless tbody > tr > td {
+        border:none;
+	padding: 5px 0 5px 0;
+}
+
+.borderless tbody > tr > td.colon {
+	padding-left: 1px;
+	padding-right: 1px;
+}
