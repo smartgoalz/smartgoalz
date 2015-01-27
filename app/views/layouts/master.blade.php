@@ -99,7 +99,7 @@ THE SOFTWARE.
 		<!-- Sidebar Navigation -->
 		<ul class="sidebar">
 			<li id="toggle-sidebar" class="sidebar-main">
-				<a href="#">smartgoalz.org<span class="menu-icon glyphicon glyphicon-transfer"></span></a>
+				<a href="#">SMARTGoalz<span class="menu-icon glyphicon glyphicon-transfer"></span></a>
 			</li>
 
 			<li class="sidebar-title"><span>NAVIGATION</span></li>
@@ -149,11 +149,11 @@ THE SOFTWARE.
 			<li class="sidebar-title separator"><span>QUICK LINKS</span></li>
 
 			<li class="sidebar-list">
-				<a href="#" ng-click="clearAlerts()">Upcoming Tasks <span class="menu-icon fa fa-info-circle"></span></a>
+				<a href="#">Upcoming Tasks <span class="menu-icon fa fa-info-circle"></span></a>
 			</li>
 
 			<li class="sidebar-list">
-				<a href="#/calendar" ng-click="clearAlerts()">Calendar <span class="menu-icon fa fa-calendar"></span></a>
+				<a href="#">Calendar <span class="menu-icon fa fa-calendar"></span></a>
 			</li>
 
 		</ul>

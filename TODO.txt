@@ -3,3 +3,4 @@ Timewatch -> time count
 Check all validations
 Categories mvc
 User backend
+Page titles

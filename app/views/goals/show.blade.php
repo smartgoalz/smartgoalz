@@ -93,7 +93,7 @@ $(document).ready(function() {
 		</thead>
 		<tbody>
                         @foreach ($tasks as $task)
-			<tr ng-repeat="task in tasks">
+			<tr>
 				<td class="text-left">{{ $task->id }}</td>
 				<td class="text-left">{{ $task->title }}</td>
 				<td class="text-center">

@@ -82,7 +82,6 @@ h3.modal-title-confirm {
 .row.header .user > .item {
 	display: inline-block;
 	float: right;
-	height: 60px;
 	text-align: center;
 	vertical-align: middle;
 	padding-right: 20px;
@@ -162,17 +161,17 @@ table.profile-info tr td {
 }
 
 .form-input {
-    background-color: #FFFFFF;
-    background-image: none;
-    border: 1px solid #CCCCCC;
-    border-radius: 4px 4px 4px 4px;
-    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
-    color: #555555;
-    font-size: 14px;
-    height: 34px;
-    line-height: 1.42857;
-    padding: 6px 12px;
-    transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+	background-color: #FFFFFF;
+	background-image: none;
+	border: 1px solid #CCCCCC;
+	border-radius: 4px 4px 4px 4px;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+	color: #555555;
+	font-size: 14px;
+	height: 34px;
+	line-height: 1.42857;
+	padding: 6px 12px;
+	transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
 }
 
 .search-title {
@@ -193,4 +192,12 @@ table.profile-info tr td {
 
 .timepicker-width {
 	width: 200px;
+}
+
+.header {
+	background-color: #FFF;
+}
+
+.header .pull-right {
+	padding-top: 10px;
 }
