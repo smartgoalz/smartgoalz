@@ -70,7 +70,9 @@ $(document).ready(function() {
 
 @stop
 
-@section('page-title', 'Create a SMART Task')
+@section('breadcrumb-title', 'Goals')
+
+@section('page-title', 'Create SMART Task')
 
 @section('content')
 

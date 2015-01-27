@@ -48,7 +48,9 @@ $(document).ready(function() {
 
 @stop
 
-@section('page-title', 'Update Monitor Value')
+@section('breadcrumb-title', 'Monitors')
+
+@section('page-title', 'Update Value')
 
 @section('content')
 

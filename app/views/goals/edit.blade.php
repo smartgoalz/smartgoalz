@@ -53,7 +53,9 @@ $(document).ready(function() {
 
 @stop
 
-@section('page-title', 'Edit a SMART Goal')
+@section('breadcrumb-title', 'Goals')
+
+@section('page-title', 'Edit SMART Goal')
 
 @section('content')
 

@@ -42,6 +42,8 @@ $(document).ready(function() {
 
 @stop
 
+@section('breadcrumb-title', 'Journals')
+
 @section('page-title', 'Journals')
 
 @section('content')

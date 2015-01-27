@@ -198,14 +198,21 @@ THE SOFTWARE.
 						</div>
 					</div>
 					<div class="meta">
-						<div class="page">@yield('page-title')</div>
-						<div class="breadcrumb-links">Home / @yield('page-title')</div>
+						<div class="page">@yield('breadcrumb-title')</div>
+						<div class="breadcrumb-links">Home / @yield('breadcrumb-title')</div>
 					</div>
 				</div>
 			</div>
 			<!-- End Header Bar -->
 
+			<div class="row">
+				<div class="col-xs-12">
+					<div class="page-title">@yield('page-title')</div>
+				</div>
+			</div>
+
                         <!-- Alerts -->
+			@if (Session::has('alert-success') || Session::has('alert-danger'))
                         <div class="row">
                                 <div class="col-xs-12">
                                         @if (Session::has('alert-success'))
@@ -222,6 +229,7 @@ THE SOFTWARE.
                                         @endif
                                 </div>
                         </div>
+			@endif
                         <!-- /.row -->
 
 			<div class="row">

@@ -113,7 +113,7 @@ class JournalsController extends BaseController
 
 		if ($this->journalValidator->fails())
 		{
-			return Redirect::back()->withInput()->withErrors($this->goalValidator->getErrors());
+			return Redirect::back()->withInput()->withErrors($this->journalValidator->getErrors());
 		}
 		else
 		{
@@ -185,7 +185,7 @@ class JournalsController extends BaseController
 
 		if ($this->journalValidator->fails())
 		{
-			return Redirect::back()->withInput()->withErrors($this->goalValidator->getErrors());
+			return Redirect::back()->withInput()->withErrors($this->journalValidator->getErrors());
 		}
 		else
 		{

@@ -47,7 +47,9 @@ $(document).ready(function() {
 
 @stop
 
-@section('page-title', 'Create a Journal Entry')
+@section('breadcrumb-title', 'Journals')
+
+@section('page-title', 'Create Journal Entry')
 
 @section('content')
 

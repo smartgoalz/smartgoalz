@@ -4,3 +4,5 @@ Check all validations
 Categories mvc
 User backend
 Page titles
+Manaul Error > Show in correct field
+Editor

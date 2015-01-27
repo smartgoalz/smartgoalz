@@ -42,6 +42,8 @@ $(document).ready(function() {
 
 @stop
 
+@section('breadcrumb-title', 'Monitors')
+
 @section('page-title', 'Monitors')
 
 @section('content')

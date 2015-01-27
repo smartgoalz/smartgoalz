@@ -42,10 +42,11 @@ $(document).ready(function() {
 
 @stop
 
-@section('page-title', 'Show Note')
+@section('breadcrumb-title', 'Notes')
+
+@section('page-title', 'Note')
 
 @section('content')
-
 
 <div>
 	<span class="view-title">{{ $note->title }}</span>

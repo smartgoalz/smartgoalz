@@ -42,7 +42,9 @@ $(document).ready(function() {
 
 @stop
 
-@section('page-title', 'Show Monitor')
+@section('breadcrumb-title', 'Monitors')
+
+@section('page-title', 'Monitor')
 
 @section('content')
 

@@ -42,6 +42,8 @@ $(document).ready(function() {
 
 @stop
 
+@section('breadcrumb-title', 'Dashboard')
+
 @section('page-title', 'Dashboard')
 
 @section('content')

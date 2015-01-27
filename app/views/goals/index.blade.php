@@ -42,7 +42,9 @@ $(document).ready(function() {
 
 @stop
 
-@section('page-title', 'Dashboard')
+@section('breadcrumb-title', 'Goals')
+
+@section('page-title', 'SMART Goals')
 
 @section('content')
 

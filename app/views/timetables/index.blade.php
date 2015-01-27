@@ -41,17 +41,17 @@ $(document).ready(function() {
 
 @stop
 
-@section('page-title', 'Timetable')
+@section('breadcrumb-title', 'Timetables')
+
+@section('page-title', 'Timetable for Today')
 
 @section('content')
 
 <div>
-	<span class="view-title">Timetable for Today</span>
-</div>
-
-<div>
 	<div>Current time : </div>
 </div>
+
+<br />
 
 <div class="header-button">
         {{ HTML::linkAction('TimetablesController@getManage', 'Manage Timetable', array(),

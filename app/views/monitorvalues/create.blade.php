@@ -48,7 +48,9 @@ $(document).ready(function() {
 
 @stop
 
-@section('page-title', 'Create a Value')
+@section('breadcrumb-title', 'Monitors')
+
+@section('page-title', 'Add Value')
 
 @section('content')
 

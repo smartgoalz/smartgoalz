@@ -42,12 +42,14 @@ $(document).ready(function() {
 
 @stop
 
-@section('page-title', 'Show Goal')
+@section('breadcrumb-title', 'Goals')
+
+@section('page-title', 'Goal')
 
 @section('content')
 
 <div>
-	<span class="view-title">Goal : {{ $goal->title }}</span>
+	<span class="view-title">{{ $goal->title }}</span>
 </div>
 
 <div class="details">

@@ -70,7 +70,9 @@ $(document).ready(function() {
 
 @stop
 
-@section('page-title', 'Edit Timewatches')
+@section('breadcrumb-title', 'Timewatches')
+
+@section('page-title', 'Edit Timewatch')
 
 @section('content')
 

@@ -42,6 +42,8 @@ $(document).ready(function() {
 
 @stop
 
+@section('breadcrumb-title', 'Timetables')
+
 @section('page-title', 'Edit Activity')
 
 @section('content')

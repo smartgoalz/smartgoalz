@@ -49,7 +49,9 @@ $(document).ready(function() {
 
 @stop
 
-@section('page-title', 'Create Schedule')
+@section('breadcrumb-title', 'Timetables')
+
+@section('page-title', 'Update Activity Schedule')
 
 @section('content')
 

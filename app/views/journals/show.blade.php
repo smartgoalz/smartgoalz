@@ -42,10 +42,11 @@ $(document).ready(function() {
 
 @stop
 
-@section('page-title', 'Show Journal Entry')
+@section('breadcrumb-title', 'Journals')
+
+@section('page-title', 'Journal Entry')
 
 @section('content')
-
 
 <div>
 	<span class="view-title">{{ $journal->title }}</span>

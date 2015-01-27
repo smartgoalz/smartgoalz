@@ -42,7 +42,9 @@ $(document).ready(function() {
 
 @stop
 
-@section('page-title', 'Schedule')
+@section('breadcrumb-title', 'Timetables')
+
+@section('page-title', 'Activity Schedule')
 
 @section('content')
 

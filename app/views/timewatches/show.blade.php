@@ -42,7 +42,9 @@ $(document).ready(function() {
 
 @stop
 
-@section('page-title', 'Show Timewatch')
+@section('breadcrumb-title', 'Timewatches')
+
+@section('page-title', 'Timewatch')
 
 @section('content')
 

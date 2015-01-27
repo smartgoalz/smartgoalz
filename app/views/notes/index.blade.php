@@ -42,6 +42,8 @@ $(document).ready(function() {
 
 @stop
 
+@section('breadcrumb-title', 'Notes')
+
 @section('page-title', 'Notes')
 
 @section('content')
