@@ -130,6 +130,7 @@ class UsersController extends BaseController
 				'email_verified' => 0,
 				'admin_verified' => 0,
 				'retry_count' => 0,
+				'last_login' => NULL,
 				'reset_password_key' => NULL,
 				'reset_password_date' => NULL,
                         );
