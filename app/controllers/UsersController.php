@@ -46,6 +46,12 @@ class UsersController extends BaseController
 
 	public function getLogin()
 	{
+		/* If database name is set in database config, need to install application */
+		if (Config::get('database.connections.mysql.database') == '')
+		{
+			return Redirect::action('SetupController@getInstall');
+		}
+
 		return View::make('users.login');
 	}
 
