@@ -29,6 +29,15 @@
 
 class DashboardController extends BaseController
 {
+	public function __construct()
+	{
+		/* If database name is set in database config, need to install application */
+		if (Config::get('database.connections.mysql.database') == '')
+		{
+			return Redirect::action('SetupController@getInstall');
+		}
+	}
+
 	public function getIndex()
 	{
 		/* Active Goals */
