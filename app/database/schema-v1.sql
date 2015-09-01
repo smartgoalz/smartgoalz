@@ -157,7 +157,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `dateformat` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `admin_verified` tinyint(1) NOT NULL,
   `email_verified` tinyint(1) NOT NULL,
-  `email_token` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `email_token` varchar(255) COLLATE utf8_unicode_ci NULL DEFAULT NULL,
   `status` int(11) NOT NULL,
   `last_login` timestamp NULL DEFAULT NULL,
   `remember_token` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,

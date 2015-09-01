@@ -89,8 +89,11 @@ class SetupController extends BaseController
 			$password = Hash::make($input['password']);
 
 			$usersql = "INSERT INTO users(id, username, password, fullname, email, is_admin, timezone,
-				dateformat, admin_verified, email_verified, email_token, status)
-				VALUES (1, :username, :password, '', :email, 1, '', '', 1, 1, '', 1);";
+				dateformat, admin_verified, email_verified, email_token, status, last_login,
+				remember_token, reset_password_key, reset_password_date) VALUES
+				(1, :username, :password, '', :email, 1, '',
+				'd-M-Y|dd-M-yy', 1, 1, NULL, 1, NULL,
+				NULL, NULL, NULL);";
 
 			$userstmt = $conn->prepare($usersql);
 
