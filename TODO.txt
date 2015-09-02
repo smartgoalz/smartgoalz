@@ -6,3 +6,7 @@ User backend
 Page titles
 Manaul Error > Show in correct field
 Editor
+Remove triggers
+Check Date / Timestamp
+User profile
+Update > database version field
