@@ -36,8 +36,8 @@ class TasksController extends BaseController
 	{
 		$this->taskValidator = $taskValidator;
 
-                $user = User::find(Auth::id());
-                $this->dateformat = $user->dateformat;
+		$user = User::find(Auth::id());
+		$this->dateformat = $user->dateformat;
 	}
 
 	public function getIndex($goal_id)
@@ -90,34 +90,34 @@ class TasksController extends BaseController
 		}
 
 		/* Format start date */
-                $start_temp = date_create_from_format(
-                        explode('|', $this->dateformat)[0] . ' H:i:s',
-                        $input['start_date'] . ' 00:00:00'
-                );
-                if (!$start_temp)
-                {
-                        return Redirect::back()->withInput()
-                                ->with('alert-danger', 'Invalid start date.');
-                }
-                $start_date = date_format($start_temp, 'Y-m-d H:i:s');
+		$start_temp = date_create_from_format(
+			explode('|', $this->dateformat)[0] . ' H:i:s',
+			$input['start_date'] . ' 00:00:00'
+		);
+		if (!$start_temp)
+		{
+			return Redirect::back()->withInput()
+				->with('alert-danger', 'Invalid start date.');
+		}
+		$start_date = date_format($start_temp, 'Y-m-d H:i:s');
 
 		/* Format due date */
-                $due_temp = date_create_from_format(
-                        explode('|', $this->dateformat)[0] . ' H:i:s',
-                        $input['due_date'] . ' 00:00:00'
-                );
-                if (!$due_temp)
-                {
-                        return Redirect::back()->withInput()
-                                ->with('alert-danger', 'Invalid due date.');
-                }
-                $due_date = date_format($due_temp, 'Y-m-d H:i:s');
+		$due_temp = date_create_from_format(
+			explode('|', $this->dateformat)[0] . ' H:i:s',
+			$input['due_date'] . ' 00:00:00'
+		);
+		if (!$due_temp)
+		{
+			return Redirect::back()->withInput()
+				->with('alert-danger', 'Invalid due date.');
+		}
+		$due_date = date_format($due_temp, 'Y-m-d H:i:s');
 
 		/* Check if start date if before due date */
 		if ($start_temp > $due_temp)
 		{
-                        return Redirect::back()->withInput()
-                                ->with('alert-danger', 'Start date cannot be after due date.');
+			return Redirect::back()->withInput()
+				->with('alert-danger', 'Start date cannot be after due date.');
 		}
 
 		$input['start_date'] = $start_date;
@@ -126,22 +126,22 @@ class TasksController extends BaseController
 		/* Format completion date */
 		if (!is_null($input['completion_date']))
 		{
-	                $completion_temp = date_create_from_format(
-	                        explode('|', $this->dateformat)[0] . ' H:i:s',
-	                        $input['completion_date'] . ' 00:00:00'
-	                );
-	                if (!$completion_temp)
-	                {
-	                        return Redirect::back()->withInput()
-	                                ->with('alert-danger', 'Invalid completion date.');
-	                }
-	                $completion_date = date_format($completion_temp, 'Y-m-d H:i:s');
+			$completion_temp = date_create_from_format(
+				explode('|', $this->dateformat)[0] . ' H:i:s',
+				$input['completion_date'] . ' 00:00:00'
+			);
+			if (!$completion_temp)
+			{
+				return Redirect::back()->withInput()
+					->with('alert-danger', 'Invalid completion date.');
+			}
+			$completion_date = date_format($completion_temp, 'Y-m-d H:i:s');
 
 			/* Check if completion date if after start date */
 			if ($start_temp > $completion_temp)
 			{
-	                        return Redirect::back()->withInput()
-	                                ->with('alert-danger', 'Start date cannot be after completion date.');
+				return Redirect::back()->withInput()
+					->with('alert-danger', 'Start date cannot be after completion date.');
 			}
 
 			$input['completion_date'] = $completion_date;
@@ -171,13 +171,19 @@ class TasksController extends BaseController
 
 			if (!$task->save())
 			{
-			        return Redirect::back()->withInput()
-                                        ->with('alert-danger', 'Failed to create task.');
+				return Redirect::back()->withInput()
+					->with('alert-danger', 'Failed to create task.');
 			}
 
 			/* Recalculate weights of all the tasks if needed */
 			if ($recalculate) {
 				Task::recalculateWeights($goal->id);
+			}
+
+			if (!$this->updateGoalCompletion($goal))
+			{
+				return Redirect::action('GoalsController@getShow', array($goal->id))
+					->with('alert-danger', 'Failed to update goal completion status.');
 			}
 
 			return Redirect::action('GoalsController@getShow', array($goal->id))
@@ -188,19 +194,19 @@ class TasksController extends BaseController
 
 	public function getEdit($id)
 	{
-                $task = Task::find($id);
-                if (!$task)
+		$task = Task::find($id);
+		if (!$task)
 		{
 			return Redirect::action('GoalsController@getIndex')
 				->with('alert-danger', 'Task not found.');
-                }
+		}
 
-                $goal = Goal::curUser()->find($task->goal_id);
-                if (!$goal)
+		$goal = Goal::curUser()->find($task->goal_id);
+		if (!$goal)
 		{
 			return Redirect::action('GoalsController@getIndex')
 				->with('alert-danger', 'Goal not found.');
-                }
+		}
 
 		$tasks_list = array('0' => '(None)') +
 			Task::where('goal_id', '=', $goal->id)
@@ -208,22 +214,22 @@ class TasksController extends BaseController
 			->lists('title', 'id');
 
 		/* Format start date */
-                $start_temp = date_create_from_format('Y-m-d H:i:s', $task->start_date);
-                if (!$start_temp)
-                {
-                        $start_date = '';
-                }
+		$start_temp = date_create_from_format('Y-m-d H:i:s', $task->start_date);
+		if (!$start_temp)
+		{
+			$start_date = '';
+		}
 		else
 		{
 			$start_date = date_format($start_temp, explode('|', $this->dateformat)[0]);
 		}
 
 		/* Format due date */
-                $due_temp = date_create_from_format('Y-m-d H:i:s', $task->due_date);
-                if (!$due_temp)
-                {
+		$due_temp = date_create_from_format('Y-m-d H:i:s', $task->due_date);
+		if (!$due_temp)
+		{
 			$due_date = '';
-                }
+		}
 		else
 		{
 			$due_date = date_format($due_temp, explode('|', $this->dateformat)[0]);
@@ -232,11 +238,11 @@ class TasksController extends BaseController
 		/* Format completion date */
 		if (!is_null($task->completion_date))
 		{
-	                $completion_temp = date_create_from_format('Y-m-d H:i:s', $task->completion_date);
-	                if (!$completion_temp)
-	                {
+			$completion_temp = date_create_from_format('Y-m-d H:i:s', $task->completion_date);
+			if (!$completion_temp)
+			{
 				$completion_date = '';
-	                }
+			}
 			else
 			{
 				$completion_date = date_format($completion_temp, explode('|', $this->dateformat)[0]);
@@ -259,19 +265,19 @@ class TasksController extends BaseController
 
 	public function postEdit($id)
 	{
-                $task = Task::find($id);
-                if (!$task)
+		$task = Task::find($id);
+		if (!$task)
 		{
 			return Redirect::action('GoalsController@getIndex')
 				->with('alert-danger', 'Task not found.');
-                }
+		}
 
-                $goal = Goal::curUser()->find($task->goal_id);
-                if (!$goal)
+		$goal = Goal::curUser()->find($task->goal_id);
+		if (!$goal)
 		{
 			return Redirect::action('GoalsController@getIndex')
 				->with('alert-danger', 'Goal not found.');
-                }
+		}
 
 		$input = Input::all();
 
@@ -287,34 +293,34 @@ class TasksController extends BaseController
 		}
 
 		/* Format start date */
-                $start_temp = date_create_from_format(
-                        explode('|', $this->dateformat)[0] . ' H:i:s',
-                        $input['start_date'] . ' 00:00:00'
-                );
-                if (!$start_temp)
-                {
-                        return Redirect::back()->withInput()
-                                ->with('alert-danger', 'Invalid start date.');
-                }
-                $start_date = date_format($start_temp, 'Y-m-d H:i:s');
+		$start_temp = date_create_from_format(
+			explode('|', $this->dateformat)[0] . ' H:i:s',
+			$input['start_date'] . ' 00:00:00'
+		);
+		if (!$start_temp)
+		{
+			return Redirect::back()->withInput()
+				->with('alert-danger', 'Invalid start date.');
+		}
+		$start_date = date_format($start_temp, 'Y-m-d H:i:s');
 
 		/* Format due date */
-                $due_temp = date_create_from_format(
-                        explode('|', $this->dateformat)[0] . ' H:i:s',
-                        $input['due_date'] . ' 00:00:00'
-                );
-                if (!$due_temp)
-                {
-                        return Redirect::back()->withInput()
-                                ->with('alert-danger', 'Invalid due date.');
-                }
-                $due_date = date_format($due_temp, 'Y-m-d H:i:s');
+		$due_temp = date_create_from_format(
+			explode('|', $this->dateformat)[0] . ' H:i:s',
+			$input['due_date'] . ' 00:00:00'
+		);
+		if (!$due_temp)
+		{
+			return Redirect::back()->withInput()
+				->with('alert-danger', 'Invalid due date.');
+		}
+		$due_date = date_format($due_temp, 'Y-m-d H:i:s');
 
 		/* Check if start date if before due date */
 		if ($start_temp > $due_temp)
 		{
-                        return Redirect::back()->withInput()
-                                ->with('alert-danger', 'Start date cannot be after due date.');
+			return Redirect::back()->withInput()
+				->with('alert-danger', 'Start date cannot be after due date.');
 		}
 
 		$input['start_date'] = $start_date;
@@ -323,22 +329,22 @@ class TasksController extends BaseController
 		/* Format completion date */
 		if (!is_null($input['completion_date']))
 		{
-	                $completion_temp = date_create_from_format(
-	                        explode('|', $this->dateformat)[0] . ' H:i:s',
-	                        $input['completion_date'] . ' 00:00:00'
-	                );
-	                if (!$completion_temp)
-	                {
-	                        return Redirect::back()->withInput()
-	                                ->with('alert-danger', 'Invalid completion date.');
-	                }
-	                $completion_date = date_format($completion_temp, 'Y-m-d H:i:s');
+			$completion_temp = date_create_from_format(
+				explode('|', $this->dateformat)[0] . ' H:i:s',
+				$input['completion_date'] . ' 00:00:00'
+			);
+			if (!$completion_temp)
+			{
+				return Redirect::back()->withInput()
+					->with('alert-danger', 'Invalid completion date.');
+			}
+			$completion_date = date_format($completion_temp, 'Y-m-d H:i:s');
 
 			/* Check if completion date if after start date */
 			if ($start_temp > $completion_temp)
 			{
-	                        return Redirect::back()->withInput()
-	                                ->with('alert-danger', 'Start date cannot be after completion date.');
+				return Redirect::back()->withInput()
+					->with('alert-danger', 'Start date cannot be after completion date.');
 			}
 
 			$input['completion_date'] = $completion_date;
@@ -373,13 +379,19 @@ class TasksController extends BaseController
 
 			if (!$task->save())
 			{
-			        return Redirect::back()->withInput()
-                                        ->with('alert-danger', 'Failed to update task.');
+				return Redirect::back()->withInput()
+					->with('alert-danger', 'Failed to update task.');
 			}
 
 			/* Recalculate weights of all the tasks if needed */
 			if ($recalculate) {
 				Task::recalculateWeights($goal->id);
+			}
+
+			if (!$this->updateGoalCompletion($goal))
+			{
+				return Redirect::action('GoalsController@getShow', array($goal->id))
+					->with('alert-danger', 'Failed to update goal completion status.');
 			}
 
 			return Redirect::action('GoalsController@getShow', array($goal->id))
@@ -389,26 +401,32 @@ class TasksController extends BaseController
 
 	public function deleteDestroy($id)
 	{
-                $task = Task::find($id);
-                if (!$task)
+		$task = Task::find($id);
+		if (!$task)
 		{
 			return Redirect::action('GoalsController@getIndex')
 				->with('alert-danger', 'Task not found.');
-                }
+		}
 
-                $goal = Goal::curUser()->find($task->goal_id);
-                if (!$goal)
+		$goal = Goal::curUser()->find($task->goal_id);
+		if (!$goal)
 		{
 			return Redirect::action('GoalsController@getIndex')
 				->with('alert-danger', 'Goal not found.');
-                }
+		}
 
 		$task->timewatches()->delete();
 
-                if (!$task->delete())
+		if (!$task->delete())
 		{
 			return Redirect::action('GoalsController@getShow', array($goal->id))
 				->with('alert-danger', 'Failed to delete task.');
+		}
+
+		if (!$this->updateGoalCompletion($goal))
+		{
+			return Redirect::action('GoalsController@getShow', array($goal->id))
+				->with('alert-danger', 'Failed to update goal completion status.');
 		}
 
 		return Redirect::action('GoalsController@getShow', array($goal->id))
@@ -423,27 +441,33 @@ class TasksController extends BaseController
 	 */
 	public function postDone($id)
 	{
-                $task = Task::find($id);
-                if (!$task)
+		$task = Task::find($id);
+		if (!$task)
 		{
 			return Redirect::action('GoalsController@getIndex')
 				->with('alert-danger', 'Task not found.');
-                }
+		}
 
-                $goal = Goal::curUser()->find($task->goal_id);
-                if (!$goal)
+		$goal = Goal::curUser()->find($task->goal_id);
+		if (!$goal)
 		{
 			return Redirect::action('GoalsController@getIndex')
 				->with('alert-danger', 'Goal not found.');
-                }
+		}
 
 		$task->is_completed = 1;
 		$task->completion_date = date('Y-m-d H:i:s', time());
 
-                if (!$task->save())
+		if (!$task->save())
 		{
 			return Redirect::action('GoalsController@getShow', array($goal->id))
 				->with('alert-danger', 'Failed to mark task as completed.');
+		}
+
+		if (!$this->updateGoalCompletion($goal))
+		{
+			return Redirect::action('GoalsController@getShow', array($goal->id))
+				->with('alert-danger', 'Failed to update goal completion status.');
 		}
 
 		return Redirect::action('GoalsController@getShow', array($goal->id))
@@ -463,11 +487,11 @@ class TasksController extends BaseController
 		$step_size = 100000;
 		$recalculate = false;
 
-                $tasks = Task::where('goal_id', $goal_id)->orderBy('weight', 'ASC')->get();
-                if (!$tasks)
+		$tasks = Task::where('goal_id', $goal_id)->orderBy('weight', 'ASC')->get();
+		if (!$tasks)
 		{
 			return array($step_size, $recalculate);
-                }
+		}
 
 		/* if edit action, then cur_task_id is set, remove the task from the list */
 		if ($cur_task_id) {
@@ -493,7 +517,7 @@ class TasksController extends BaseController
 				/* If no other task found then the weight is the step_size */
 				return array($step_size, false);
 			} else {
-				$next_weight = $tasks[0]->weight;
+				$next_weight = $tasks->first()->weight;
 			}
 		} else {
 			foreach ($tasks as $task) {
@@ -521,5 +545,60 @@ class TasksController extends BaseController
 		$weight = $prev_weight + (($next_weight - $prev_weight) / 2);
 
 		return array($weight, $recalculate);
+	}
+
+	/**
+	 * Calculate the goal completed status and number of task completed.
+	 *
+	 * @param object $goal - Goal
+	 * @return boolean - Return whether goal was successfully updated with task completion ratios
+	 */
+	public function updateGoalCompletion($goal)
+	{
+		/* Initialize counters */
+		$count_total = 0;
+		$count_completed = 0;
+		$count_notcompleted = 0;
+
+		/* Count the number of completed and uncompleted tasks */
+		$tasks = Task::where('goal_id', $goal->id)->get();
+		foreach ($tasks as $task)
+		{
+			$count_total++;
+			if ($task->is_completed == 1)
+			{
+				$count_completed++;
+			}
+			else
+			{
+				$count_notcompleted++;
+			}
+		}
+
+		/* Update number of completed and uncompleted tasks in a goal */
+		$goal->task_total = $count_total;
+		$goal->task_completed = $count_completed;
+
+		/* Check if goal is completed, if all tasks are completed */
+		if ($count_total == $count_completed)
+		{
+			$goal->is_completed = 1;
+			$goal->completion_date = date('Y-m-d H:i:s', time());
+		}
+		else
+		{
+			$goal->is_completed = 0;
+			$goal->completion_date = '0000-00-00 00:00:00';
+		}
+
+		/* Update goal */
+		if ($goal->save())
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 }

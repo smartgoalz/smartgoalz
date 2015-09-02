@@ -101,7 +101,7 @@ $(document).ready(function() {
 {{ Form::closeGroup() }}
 
 {{ Form::openGroup('is_completed') }}
-{{ Form::checkbox('is_completed', 1, 'Task is completed') }}
+{{ Form::checkbox('is_completed', 1, FALSE, ['label' => 'Task is completed']) }}
 {{ Form::closeGroup() }}
 
 {{ Form::openGroup('completion_date', 'Completion date') }}
