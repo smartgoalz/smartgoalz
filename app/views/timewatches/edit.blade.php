@@ -113,7 +113,7 @@ $(document).ready(function() {
 {{ Form::closeGroup() }}
 
 {{ Form::openGroup('is_active') }}
-{{ Form::checkbox('is_active', 1, 'Active', $active) }}
+{{ Form::checkbox('is_active', 1, $active, ['label' => 'Active']) }}
 {{ Form::closeGroup() }}
 
 {{ Form::openGroup('stop_time', 'Stop Time') }}

@@ -64,11 +64,11 @@ $(document).ready(function() {
 {{ Form::closeGroup() }}
 
 {{ Form::openGroup('pin_dashboard') }}
-{{ Form::checkbox('pin_dashboard', 1, 'Pin to dashboard', FALSE) }}
+{{ Form::checkbox('pin_dashboard', 1, FALSE, ['label' => 'Pin to dashboard']) }}
 {{ Form::closeGroup() }}
 
 {{ Form::openGroup('pin_top') }}
-{{ Form::checkbox('pin_top', 1, 'Pin to top', FALSE) }}
+{{ Form::checkbox('pin_top', 1, FALSE, ['label' => 'Pin to top']) }}
 {{ Form::closeGroup() }}
 
 {{ Form::submit('Create') }}
