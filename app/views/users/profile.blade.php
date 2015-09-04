@@ -48,6 +48,8 @@ $(document).ready(function() {
 
 {{ HTML::linkAction('UsersController@getEditprofile', 'Edit Profile', array(), array('class' => 'btn btn-primary')) }}
 
+{{ HTML::linkAction('UsersController@getChangepass', 'Change Password', array(), array('class' => 'btn btn-primary')) }}
+
 <br />
 <br />
 
@@ -102,7 +104,5 @@ $(document).ready(function() {
         <td>Created On</td><td class="colon">:</td><td>{{ date_format(date_create_from_format('Y-m-d H:i:s', $user->created_at), explode('|', $user->dateformat)[0]) }}</td>
 </tr>
 </table>
-
-{{ HTML::linkAction('UsersController@getChangepass', 'Change Password', array()) }}
 
 @stop

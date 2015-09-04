@@ -152,6 +152,8 @@ CREATE TABLE IF NOT EXISTS `users` (
   `password` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `fullname` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `email` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `gender` char(1) COLLATE utf8_unicode_ci NOT NULL,
+  `dob` date NOT NULL,
   `is_admin` tinyint(1) NOT NULL,
   `timezone` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `dateformat` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
