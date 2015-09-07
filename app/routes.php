@@ -52,5 +52,11 @@ Route::group(array('before' => 'auth'), function() {
 	Route::controller('journals', 'JournalsController');
 });
 
+Route::group(['prefix' => 'admin', 'before' => 'admin'], function()
+{
+	Route::controller('users', 'AdminUsersController');
+});
+
+
 Route::controller('users', 'UsersController');
 Route::controller('setup', 'SetupController');

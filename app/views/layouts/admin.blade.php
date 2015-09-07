@@ -90,91 +90,8 @@ THE SOFTWARE.
 
 <body>
 
-<!-- Page Wrapper -->
-<div id="page-wrapper" class="active">
-
-	<!-- Sidebar -->
-	<div id="sidebar-wrapper">
-
-		<!-- Sidebar Navigation -->
-		<ul class="sidebar">
-			<li id="toggle-sidebar" class="sidebar-main">
-				<a href="#">SMARTGoalz<span class="menu-icon glyphicon glyphicon-transfer"></span></a>
-			</li>
-
-			<li class="sidebar-title"><span>NAVIGATION</span></li>
-
-	                <li class="sidebar-list">
-				{{ HTML::decode(HTML::linkAction(
-	                        'DashboardController@getIndex',
-	                        'Dashboard <i class="menu-icon fa fa-tachometer"></i>')) }}
-			</li>
-
-	                <li class="sidebar-list">
-				{{ HTML::decode(HTML::linkAction(
-	                        'GoalsController@getIndex',
-	                        'Goals <i class="menu-icon fa fa-cubes"></i>')) }}
-			</li>
-
-	                <li class="sidebar-list">
-				{{ HTML::decode(HTML::linkAction(
-	                        'TimewatchesController@getStart',
-	                        'Timewatch <i class="menu-icon fa fa-clock-o"></i>')) }}
-			</li>
-
-	                <li class="sidebar-list">
-				{{ HTML::decode(HTML::linkAction(
-	                        'TimetablesController@getIndex',
-	                        'Daily Timetable <i class="menu-icon fa fa-coffee"></i>')) }}
-			</li>
-
-	                <li class="sidebar-list">
-				{{ HTML::decode(HTML::linkAction(
-	                        'MonitorsController@getIndex',
-	                        'Monitor <i class="menu-icon fa fa-signal"></i>')) }}
-			</li>
-
-	                <li class="sidebar-list">
-				{{ HTML::decode(HTML::linkAction(
-	                        'NotesController@getIndex',
-	                        'Notes <i class="menu-icon fa fa-edit"></i>')) }}
-			</li>
-
-	                <li class="sidebar-list">
-				{{ HTML::decode(HTML::linkAction(
-	                        'JournalsController@getIndex',
-	                        'Journal <i class="menu-icon fa fa-list-alt"></i>')) }}
-			</li>
-
-			<li class="sidebar-title separator"><span>QUICK LINKS</span></li>
-
-			<li class="sidebar-list">
-				<a href="#">Upcoming Tasks <span class="menu-icon fa fa-info-circle"></span></a>
-			</li>
-
-			<li class="sidebar-list">
-				<a href="#">Calendar <span class="menu-icon fa fa-calendar"></span></a>
-			</li>
-
-		</ul>
-		<!-- End Sidebar Navigation -->
-
-		<!-- Sidebar Footer -->
-		<div class="sidebar-footer">
-			<div class="col-xs-4">
-				<a href="https://smartgoalz.github.io" target="_blank">Home</a>
-			</div>
-			<div class="col-xs-4">
-				<a href="https://github.com/smartgoalz/smartgoalz" target="_blank">Github</a>
-			</div>
-			<div class="col-xs-4">
-				<a href="https://github.com/smartgoalz/smartgoalz/issues">Support</a>
-			</div>
-		</div>
-		<!-- End Sidebar Footer -->
-
-	</div>
-	<!-- End Sidebar -->
+<!-- Admin Page Wrapper -->
+<div id="admin-page-wrapper" class="active">
 
 	<!-- Content Wrapper -->
 	<div id="content-wrapper">
@@ -185,6 +102,11 @@ THE SOFTWARE.
 			<!-- Header Bar -->
 			<div class="row header">
 				<div class="col-xs-12">
+					<div class="user pull-left">
+						<div class="item">
+							<h4>Administration Section</h4>
+						</div>
+					</div>
 					<div class="user pull-right">
 						<div class="item">
 							{{ HTML::decode(HTML::linkAction(
@@ -193,20 +115,9 @@ THE SOFTWARE.
 						</div>
 						<div class="item">
 							{{ HTML::decode(HTML::linkAction(
-				                        'UsersController@getProfile',
-				                        '<i class="fa fa-gears fa-fw"></i> Profile')) }}
+				                        'DashboardController@getIndex',
+				                        '<i class="fa fa-tachometer fa-fw"></i> Back to Dashboard')) }}
 						</div>
-						@if (Auth::user()->is_admin == 1)
-						<div class="item">
-							{{ HTML::decode(HTML::linkAction(
-				                        'AdminUsersController@getIndex',
-				                        '<i class="fa fa-wrench fa-fw"></i> Administration')) }}
-						</div>
-						@endif
-					</div>
-					<div class="meta">
-						<div class="page">@yield('breadcrumb-title')</div>
-						<div class="breadcrumb-links">Home / @yield('breadcrumb-title')</div>
 					</div>
 				</div>
 			</div>
@@ -253,7 +164,7 @@ THE SOFTWARE.
 	<!-- End Content Wrapper -->
 
 </div>
-<!-- End Page Wrapper -->
+<!-- End Admin Page Wrapper -->
 
 </body>
 

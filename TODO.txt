@@ -2,11 +2,10 @@ Dashboard
 Timewatch -> time count
 Check all validations
 Categories mvc
-User backend
 Page titles
-Manaul Error > Show in correct field
+Manual Error > Show in correct field
 Editor
-Remove triggers
 Check Date / Timestamp
-User profile
 Update > database version field
+Start and stop time validate and calculate time spent
+Dependency deletion
