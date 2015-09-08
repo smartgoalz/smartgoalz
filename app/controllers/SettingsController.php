@@ -27,32 +27,13 @@
  * THE SOFTWARE.
  */
 
-use Illuminate\Auth\UserTrait;
-use Illuminate\Auth\UserInterface;
-use Illuminate\Auth\Reminders\RemindableTrait;
-use Illuminate\Auth\Reminders\RemindableInterface;
+use Smartgoalz\Services\Validators\UserValidator;
 
-class User extends Eloquent implements UserInterface, RemindableInterface {
+class SettingsController extends BaseController
+{
+	public function getIndex()
+	{
+		return View::make('settings.index');
+	}
 
-	use UserTrait, RemindableTrait;
-
-	use SoftDeletingTrait;
-
-	/**
-	 * The database table used by the model.
-	 *
-	 * @var string
-	 */
-	protected $table = 'users';
-
-	/**
-	 * The attributes excluded from the model's JSON form.
-	 *
-	 * @var array
-	 */
-	protected $hidden = array('remember_token');
-
-	protected $fillable = array('username', 'password', 'fullname', 'email', 'gender', 'dob', 'timezone', 'dateformat');
-
-	protected $guarded = array('id', 'is_admin', 'admin_verified', 'email_verified', 'status');
 }

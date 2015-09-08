@@ -217,3 +217,9 @@ table.profile-info tr td {
         font-size: 20px;
 	padding-top: 10px;
 }
+
+.help-text {
+	padding-top: 5px;
+	font-size: 80%;
+	color: #AAAAAA;
+}

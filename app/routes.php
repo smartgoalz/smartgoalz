@@ -50,6 +50,8 @@ Route::group(array('before' => 'auth'), function() {
 	Route::controller('monitorvalues', 'MonitorvaluesController');
 	Route::controller('notes', 'NotesController');
 	Route::controller('journals', 'JournalsController');
+	Route::controller('settings', 'SettingsController');
+	Route::controller('categories', 'CategoriesController');
 });
 
 Route::group(['prefix' => 'admin', 'before' => 'admin'], function()

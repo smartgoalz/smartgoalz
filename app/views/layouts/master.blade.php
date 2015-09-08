@@ -156,6 +156,11 @@ THE SOFTWARE.
 				<a href="#">Calendar <span class="menu-icon fa fa-calendar"></span></a>
 			</li>
 
+	                <li class="sidebar-list">
+				{{ HTML::decode(HTML::linkAction(
+	                        'SettingsController@getIndex',
+	                        'Settings <i class="menu-icon fa fa-wrench"></i>')) }}
+			</li>
 		</ul>
 		<!-- End Sidebar Navigation -->
 

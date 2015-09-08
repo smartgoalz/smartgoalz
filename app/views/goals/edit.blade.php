@@ -75,6 +75,7 @@ $(document).ready(function() {
 
 {{ Form::openGroup('category', 'Category') }}
         {{ Form::select('category', $categories_list, $goal->category_id) }}
+	<div class="help-text">Note : Go to Settings > Categories to manage goal categories</div>
 {{ Form::closeGroup() }}
 
 {{ Form::openGroup('difficulty', 'Difficulty level') }}

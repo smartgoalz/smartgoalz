@@ -35,62 +35,27 @@ THE SOFTWARE.
 <script type="text/javascript">
 
 $(document).ready(function() {
-        /* Date picker */
-        $("input[name='start_date']").datepicker({
-                dateFormat: "{{ explode('|', $dateformat)[1] }}",
-		changeMonth: true,
-		changeYear: true,
-        });
-        $("input[name='due_date']").datepicker({
-                dateFormat: "{{ explode('|', $dateformat)[1] }}",
-		changeMonth: true,
-		changeYear: true,
-        });
+
 });
 
 </script>
 
 @stop
 
-@section('breadcrumb-title', 'Goals')
+@section('breadcrumb-title', 'Goal Cateroies')
 
-@section('page-title', 'Create SMART Goal')
+@section('page-title', 'Create Goal Cateroies')
 
 @section('content')
 
 {{ Form::open() }}
 
-{{ Form::openGroup('title', 'Title of the goal') }}
+{{ Form::openGroup('title', 'Title') }}
         {{ Form::text('title') }}
 {{ Form::closeGroup() }}
 
-{{ Form::openGroup('start_date', 'Start date') }}
-        {{ Form::text('start_date') }}
-{{ Form::closeGroup() }}
-
-{{ Form::openGroup('due_date', 'Due date') }}
-        {{ Form::text('due_date') }}
-{{ Form::closeGroup() }}
-
-{{ Form::openGroup('category', 'Category') }}
-        {{ Form::select('category', $categories_list) }}
-	<div class="help-text">Note : Go to Settings > Categories to manage goal categories</div>
-{{ Form::closeGroup() }}
-
-{{ Form::openGroup('difficulty', 'Difficulty level') }}
-        {{ Form::select('difficulty', Constants::$difficulties) }}
-{{ Form::closeGroup() }}
-
-{{ Form::openGroup('priority', 'Priority') }}
-        {{ Form::select('priority', Constants::$priorities) }}
-{{ Form::closeGroup() }}
-
-{{ Form::openGroup('reason', 'Reason why you want to achieve this goal') }}
-        {{ Form::textarea('reason', null, ['size' => '50x2']) }}
-{{ Form::closeGroup() }}
-
 {{ Form::submit('Create') }}
-{{ HTML::linkAction('GoalsController@getIndex', 'Cancel') }}
+{{ HTML::linkAction('CategoriesController@getIndex', 'Cancel') }}
 
 {{ Form::close() }}
 
