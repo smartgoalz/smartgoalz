@@ -1,11 +1,10 @@
 Dashboard
 Timewatch -> time count
 Check all validations
-Categories mvc
 Page titles
 Manual Error > Show in correct field
 Editor
 Check Date / Timestamp
 Update > database version field
 Start and stop time validate and calculate time spent
-Dependency deletion
+Check model for has and belongs to relations

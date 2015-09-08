@@ -48,6 +48,8 @@ class Timewatch extends Eloquent
 
 	protected $guarded = array('id', 'user_id', 'date', 'minutes_count');
 
+	use SoftDeletingTrait;
+
 	public static function boot()
 	{
 		parent::boot();
