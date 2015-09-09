@@ -51,7 +51,7 @@ $(document).ready(function() {
 
 @section('breadcrumb-title', 'Timetables')
 
-@section('page-title', 'Update Activity Schedule')
+@section('page-title', 'Edit Activity Schedule')
 
 @section('content')
 

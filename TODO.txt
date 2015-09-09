@@ -1,9 +1,8 @@
 Dashboard
 Timewatch -> time count
 Check all validations
-Page titles
 Manual Error > Show in correct field
 Editor
 Check Date / Timestamp
-Update > database version field
 Start and stop time validate and calculate time spent
+Initial categories for user

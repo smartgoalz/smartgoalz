@@ -44,7 +44,7 @@ $(document).ready(function() {
 
 @section('breadcrumb-title', 'Goal Cateroies')
 
-@section('page-title', 'Create Goal Cateroies')
+@section('page-title', 'Create Goal Category')
 
 @section('content')
 

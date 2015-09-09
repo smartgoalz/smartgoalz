@@ -50,7 +50,7 @@ $(document).ready(function() {
 
 @section('breadcrumb-title', 'Monitors')
 
-@section('page-title', 'Update Value')
+@section('page-title', 'Edit Value')
 
 @section('content')
 

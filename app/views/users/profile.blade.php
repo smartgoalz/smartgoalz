@@ -42,6 +42,8 @@ $(document).ready(function() {
 
 @stop
 
+@section('breadcrumb-title', 'User Profile')
+
 @section('page-title', 'Profile')
 
 @section('content')

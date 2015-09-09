@@ -44,7 +44,7 @@ $(document).ready(function() {
 
 @section('breadcrumb-title', 'Goal Categories')
 
-@section('page-title', 'Edit Goal Categories')
+@section('page-title', 'Edit Goal Category')
 
 @section('content')
 
