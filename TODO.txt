@@ -7,4 +7,3 @@ Editor
 Check Date / Timestamp
 Update > database version field
 Start and stop time validate and calculate time spent
-Check model for has and belongs to relations

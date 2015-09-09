@@ -52,18 +52,6 @@ class Goal extends Eloquent
 
 	use SoftDeletingTrait;
 
-	public static function boot()
-	{
-		parent::boot();
-
-		/* Hook into save event, setup event bindings */
-		Goal::saving(function($content)
-		{
-			/* Set user id on save */
-			$content->user_id = Auth::id();
-		});
-	}
-
 	public function user()
 	{
 		return $this->belongsTo('User');
@@ -77,6 +65,18 @@ class Goal extends Eloquent
 	public function tasks()
 	{
 		return $this->hasMany('Task');
+	}
+
+	public static function boot()
+	{
+		parent::boot();
+
+		/* Hook into save event, setup event bindings */
+		Goal::saving(function($content)
+		{
+			/* Set user id on save */
+			$content->user_id = Auth::id();
+		});
 	}
 
 	public function scopeCurUser($query)

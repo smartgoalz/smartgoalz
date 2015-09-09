@@ -50,6 +50,16 @@ class Timewatch extends Eloquent
 
 	use SoftDeletingTrait;
 
+	public function user()
+	{
+		return $this->belongsTo('User');
+	}
+
+	public function task()
+	{
+		return $this->belongsTo('Task');
+	}
+
 	public static function boot()
 	{
 		parent::boot();

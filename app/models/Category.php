@@ -50,6 +50,16 @@ class Category extends Eloquent
 
 	use SoftDeletingTrait;
 
+	public function user()
+	{
+		return $this->belongsTo('User');
+	}
+
+	public function goals()
+	{
+		return $this->hasMany('Goal');
+	}
+
 	public static function boot()
 	{
 		parent::boot();
@@ -60,11 +70,6 @@ class Category extends Eloquent
 			/* Set user id on save */
 			$content->user_id = Auth::id();
 		});
-	}
-
-	public function goals()
-	{
-		return $this->hasMany('Goal');
 	}
 
 	public function scopeCurUser($query)

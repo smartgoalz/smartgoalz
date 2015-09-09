@@ -52,6 +52,16 @@ class Monitor extends Eloquent
 
 	use SoftDeletingTrait;
 
+	public function user()
+	{
+		return $this->belongsTo('User');
+	}
+
+	public function monitorvalues()
+	{
+		return $this->hasMany('Monitorvalue');
+	}
+
 	public static function boot()
 	{
 		parent::boot();
@@ -62,11 +72,6 @@ class Monitor extends Eloquent
 			/* Set user id on save */
 			$content->user_id = Auth::id();
 		});
-	}
-
-	public function monitorvalues()
-	{
-		return $this->hasMany('Monitorvalue');
 	}
 
 	public function scopeCurUser($query)

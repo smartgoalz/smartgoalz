@@ -50,6 +50,16 @@ class Activity extends Eloquent
 
 	use SoftDeletingTrait;
 
+	public function user()
+	{
+		return $this->belongsTo('User');
+	}
+
+	public function timetables()
+	{
+		return $this->hasMany('Timetable');
+	}
+
 	public static function boot()
 	{
 		parent::boot();
@@ -60,11 +70,6 @@ class Activity extends Eloquent
 			/* Set user id on save */
 			$content->user_id = Auth::id();
 		});
-	}
-
-	public function timetables()
-	{
-		return $this->hasMany('Timetable');
 	}
 
 	public function scopeWithTimetable($query)

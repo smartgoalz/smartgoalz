@@ -50,10 +50,10 @@ class Note extends Eloquent
 
 	use SoftDeletingTrait;
 
-	// public function user()
-	// {
-	// 	return $this->belongsTo('User');
-	// }
+	public function user()
+	{
+		return $this->belongsTo('User');
+	}
 
 	public static function boot()
 	{

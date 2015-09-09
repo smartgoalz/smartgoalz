@@ -55,4 +55,39 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	protected $fillable = array('username', 'password', 'fullname', 'email', 'gender', 'dob', 'timezone', 'dateformat');
 
 	protected $guarded = array('id', 'is_admin', 'admin_verified', 'email_verified', 'status');
+
+	public function activities()
+	{
+		return $this->hasMany('Activity');
+	}
+
+	public function categories()
+	{
+		return $this->hasMany('Category');
+	}
+
+	public function goals()
+	{
+		return $this->hasMany('Goal');
+	}
+
+	public function journals()
+	{
+		return $this->hasMany('Journal');
+	}
+
+	public function monitors()
+	{
+		return $this->hasMany('Monitor');
+	}
+
+	public function notes()
+	{
+		return $this->hasMany('Note');
+	}
+
+	public function timewatches()
+	{
+		return $this->hasMany('Timewatch');
+	}
 }
