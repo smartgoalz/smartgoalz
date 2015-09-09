@@ -109,6 +109,21 @@ class SetupController extends BaseController
 				->with('alert-danger', 'Failed to add administrator user: ' . $e->getMessage());
 		}
 
+		/* Insert initial data */
+		$database_version = 1;
+		try {
+			$initsql = "INSERT INTO settings(id, database_version) VALUES (1, :database_version);";
+
+			$initstmt = $conn->prepare($initsql);
+
+			$initstmt->bindParam(':database_version', $database_version, PDO::PARAM_STR);
+
+			$initstmt->execute();
+		} catch(PDOException $e) {
+			return Redirect::back()->withInput()
+				->with('alert-danger', 'Failed to add initial data: ' . $e->getMessage());
+		}
+
 		/* Close database connection */
 		$conn = null;
 
