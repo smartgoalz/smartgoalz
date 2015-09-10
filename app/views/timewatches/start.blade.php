@@ -203,7 +203,7 @@ $(document).ready(function() {
                         </td>
 
                         <td class="text-left">
-                                {{ $timewatch->minutes_count }} minutes
+                                {{ toDHM($timewatch->minutes_count) }}
                         </td>
 
 			<td class="text-left">

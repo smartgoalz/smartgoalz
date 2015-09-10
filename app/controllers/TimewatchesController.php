@@ -91,7 +91,12 @@ class TimewatchesController extends BaseController
 				->with('alert-danger', 'Goal not found.');
 		}
 
-		$input['start_time'] = date('Y-m-d H:i:s', time());
+		$start_time = date('Y-m-d H:i:s', time());
+
+		/* Convert to php time */
+		$start_ts = strtotime($start_time);
+
+		$input['start_time'] = $start_time;
 		$input['stop_time'] = NULL;
 		$input['is_active'] = 1;
 
@@ -109,6 +114,10 @@ class TimewatchesController extends BaseController
 			        return Redirect::back()->withInput()
                                         ->with('alert-danger', 'Failed to create timewatch.');
 			}
+
+			/* Update timewatch date */
+			$timewatch->date = date('Y-m-d', $start_ts);
+			$timewatch->save();
 
                         return Redirect::action('TimewatchesController@getStop', array($timewatch->id))
                                 ->with('alert-success', 'Timewatch created.');
@@ -180,12 +189,27 @@ class TimewatchesController extends BaseController
 				->with('alert-danger', 'Goal not found.');
 		}
 
+		$start_time = $timewatch->start_time;
 		$stop_time = date('Y-m-d H:i:s', time());
 
-		/* TODO : Validate start and stop time */
+		/* Convert to php time */
+		$start_ts = strtotime($start_time);
+		$stop_ts = strtotime($stop_time);
+
+		/* Validate start and stop time */
+		if ($start_ts > $stop_ts)
+		{
+		        return Redirect::back()->withInput()
+                                ->with('alert-danger', 'Stop time cannot be before start time.');
+		}
+
+		/* Calculate difference between stop and start time in minutes */
+		$minutes_count = abs($stop_ts - $start_ts) / 60;
+		$minutes_count = round($minutes_count, 0);
 
 		$timewatch->stop_time = $stop_time;
 		$timewatch->is_active = 0;
+		$timewatch->minutes_count = $minutes_count;
 
 		if (!$timewatch->save())
 		{
@@ -299,6 +323,10 @@ class TimewatchesController extends BaseController
                 }
                 $start_time = date_format($start_temp, 'Y-m-d H:i:s');
 
+		/* Convert to php time */
+		$start_ts = strtotime($start_time);
+
+		$minutes_count = 0;
 		if ($input['is_active'] == 0)
 		{
 			/* Format stop time */
@@ -313,20 +341,29 @@ class TimewatchesController extends BaseController
 	                }
 	                $stop_time = date_format($stop_temp, 'Y-m-d H:i:s');
 
-			/* Check if start date if before due date */
-			if ($start_temp > $stop_temp)
+			/* Convert to php time */
+			$stop_ts = strtotime($stop_time);
+
+			/* Validate start and stop time */
+			if ($start_ts > $stop_ts)
 			{
-	                        return Redirect::back()->withInput()
-	                                ->with('alert-danger', 'Start time cannot be after stop time.');
+				return Redirect::back()->withInput()
+					->with('alert-danger', 'Stop time cannot be before start time.');
 			}
+
+			/* Calculate difference between stop and start time in minutes */
+			$minutes_count = abs($stop_ts - $start_ts) / 60;
+			$minutes_count = round($minutes_count, 0);
 		}
 		else
 		{
 			$stop_time = NULL;
+			$minutes_count = 0;
 		}
 
 		$input['start_time'] = $start_time;
 		$input['stop_time'] = $stop_time;
+		$input['minutes_count'] = $minutes_count;
 
 		$this->timewatchValidator->with($input);
 
@@ -362,7 +399,9 @@ class TimewatchesController extends BaseController
 
 				$timewatch->start_time = $input['start_time'];
 				$timewatch->stop_time = $input['stop_time'];
+				$timewatch->minutes_count = $minutes_count;
 				$timewatch->is_active = $input['is_active'];
+				$timewatch->date = date('Y-m-d', $start_ts);
 
 				if (!$timewatch->save())
 				{
@@ -395,6 +434,10 @@ class TimewatchesController extends BaseController
 					return Redirect::back()->withInput()
 						->with('alert-danger', 'Failed to create timewatch.');
 				}
+
+				/* Update timewatch date */
+				$timewatch->date = date('Y-m-d', $start_ts);
+				$timewatch->save();
 
 				return Redirect::action('TimewatchesController@getStart')
 					->with('alert-success', 'Timewatch created.');
