@@ -55,6 +55,10 @@ THE SOFTWARE.
 	{{ HTML::script('js/jquery.chained.min.js') }}
 	{{ HTML::script('js/jquery.cookie.js') }}
 
+	<!-- jQuery Text Editor -->
+        {{ HTML::style('css/jquery-te-1.4.0.css') }}
+        {{ HTML::script('js/jquery-te-1.4.0.min.js') }}
+
         <!-- Bootstrap -->
         {{ HTML::style('css/bootstrap.min.css') }}
         {{ HTML::style('css/bootstrap-theme.min.css') }}
