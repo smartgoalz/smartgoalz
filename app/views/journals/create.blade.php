@@ -40,7 +40,10 @@ $(document).ready(function() {
                 dateFormat: "{{ explode('|', $dateformat)[1] }}",
 		changeMonth: true,
 		changeYear: true,
-        });
+	});
+
+	/* Enable text editor */
+	$("#entry").jqte();
 });
 
 </script>

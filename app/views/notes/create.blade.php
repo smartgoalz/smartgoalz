@@ -41,6 +41,9 @@ $(document).ready(function() {
 		changeMonth: true,
 		changeYear: true,
         });
+
+	/* Enable text editor */
+	$("#note").jqte();
 });
 
 </script>
