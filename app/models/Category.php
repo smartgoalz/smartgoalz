@@ -67,8 +67,24 @@ class Category extends Eloquent
 		/* Hook into save event, setup event bindings */
 		Category::saving(function($content)
 		{
-			/* Set user id on save */
-			$content->user_id = Auth::id();
+			/**
+			 * Don't override the user_id if override_user_id is false, used in creating
+			 * default categories when user is registered or created by admin.
+			 */
+			if (isset($content->override_user_id) && $content->override_user_id == false && $content->user_id != NULL)
+			{
+				/* Dont override the default user id */
+			}
+			else
+			{
+				$content->user_id = Auth::id();
+			}
+
+			/* Unset the override_user_id field since it does not exists in database */
+			if (isset($content->override_user_id))
+			{
+				unset($content->override_user_id);
+			}
 		});
 	}
 

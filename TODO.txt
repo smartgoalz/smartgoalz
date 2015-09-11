@@ -1,8 +1,6 @@
 Dashboard
-Timewatch -> time count
 Check all validations
 Manual Error > Show in correct field
 Editor
 Check Date / Timestamp
-Start and stop time validate and calculate time spent
-Initial categories for user
+Calculate time spent on task

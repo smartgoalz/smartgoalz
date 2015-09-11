@@ -141,6 +141,28 @@ class UsersController extends BaseController
                                         ->with('alert-danger', 'Failed to create user.');
 			}
 
+			/* Insert initial categories */
+			$category1 = new Category;
+			$category1->title = 'Personal';
+			$category1->user_id = $user->id;
+			$category1->override_user_id = false;
+			$category1->save();
+			$category2 = new Category;
+			$category2->title = 'Learning';
+			$category2->user_id = $user->id;
+			$category2->override_user_id = false;
+			$category2->save();
+			$category3 = new Category;
+			$category3->title = 'Professional';
+			$category3->user_id = $user->id;
+			$category3->override_user_id = false;
+			$category3->save();
+			$category4 = new Category;
+			$category4->title = 'Health';
+			$category4->user_id = $user->id;
+			$category4->override_user_id = false;
+			$category4->save();
+
 			/* Send email on successful registration */
 			try
 			{
