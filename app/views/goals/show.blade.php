@@ -89,6 +89,7 @@ $(document).ready(function() {
 				<th class="text-left">Task</th>
 				<th class="text-center">Start date</th>
 				<th class="text-center">Due date</th>
+				<th class="text-center">Timewatch</th>
 				<th class="text-center">Completed</th>
 				<th class="text-center">Actions</th>
 			</tr>
@@ -103,6 +104,9 @@ $(document).ready(function() {
 				</td>
 				<td class="text-center">
 					{{ date_format(date_create_from_format('Y-m-d H:i:s', $task->due_date), explode('|', $dateformat)[0]) }}
+				</td>
+				<td class="text-center">
+					{{ toDHM($task->total_minutes($task->id)) }}
 				</td>
 				<td class="text-center">
 				@if ($task->is_completed == 1)

@@ -3,4 +3,3 @@ Check all validations
 Manual Error > Show in correct field
 Editor
 Check Date / Timestamp
-Calculate time spent on task

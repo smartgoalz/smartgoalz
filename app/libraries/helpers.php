@@ -32,6 +32,11 @@
  */
 function toDHM($minutes)
 {
+	if ($minutes <= 0)
+	{
+		return '';
+	}
+
 	$dhm = '';
 
 	$balance = $minutes;

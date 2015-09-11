@@ -80,4 +80,18 @@ class Task extends Eloquent
 			->where('goals.user_id', '=', Auth::id())
 			->select('tasks.*', 'goals.id as goal_id', 'goals.user_id as goals_user_id');
 	}
+
+	public function total_minutes($id)
+	{
+		$total_minutes = 0;
+
+		$tasks = Timewatch::where('task_id', $id)->get();
+
+		foreach ($tasks as $task)
+		{
+			$total_minutes += $task->minutes_count;
+		}
+
+		return $total_minutes;
+	}
 }
