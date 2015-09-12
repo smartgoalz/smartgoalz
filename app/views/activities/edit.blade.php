@@ -50,8 +50,8 @@ $(document).ready(function() {
 
 {{ Form::model($activity) }}
 
-{{ Form::openGroup('name', 'Name') }}
-        {{ Form::text('name') }}
+{{ Form::openGroup('title', 'Title') }}
+        {{ Form::text('title') }}
 {{ Form::closeGroup() }}
 
 {{ Form::submit('Update') }}

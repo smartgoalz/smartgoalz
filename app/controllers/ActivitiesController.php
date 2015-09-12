@@ -51,13 +51,13 @@ class ActivitiesController extends BaseController
 	{
 		$input = Input::all();
 
-		/* Check if activity name is unique for a user */
-		$activities = Activity::curUser()->like('name', $input['name']);
+		/* Check if activity title is unique for a user */
+		$activities = Activity::curUser()->like('title', $input['title']);
 
 		if ($activities->count() >= 1)
 		{
 			return Redirect::back()->withInput()
-				->with('alert-danger', 'Activity with same name already exists.');
+				->with('alert-danger', 'Activity with same title already exists.');
 		}
 
 		$this->activityValidator->with($input);
@@ -104,14 +104,14 @@ class ActivitiesController extends BaseController
 
 		$input = Input::all();
 
-		/* Check if activity name is unique for a user */
-		$activities = Activity::curUser()->like('name', $input['name'])
+		/* Check if activity title is unique for a user */
+		$activities = Activity::curUser()->like('title', $input['title'])
 			->where('id', '!=', $id);
 
 		if ($activities->count() >= 1)
 		{
 			return Redirect::back()->withInput()
-				->with('alert-danger', 'Activity with same name already exists.');
+				->with('alert-danger', 'Activity with same title already exists.');
 		}
 
 		$this->activityValidator->with($input);
@@ -123,7 +123,7 @@ class ActivitiesController extends BaseController
 		else
 		{
 			/* Update data */
-	                $activity->name = $input['name'];
+	                $activity->title = $input['title'];
 
 			if (!$activity->save())
 			{

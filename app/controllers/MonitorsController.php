@@ -92,7 +92,7 @@ class MonitorsController extends BaseController
 		if ($monitors->count() >= 1)
 		{
 			return Redirect::back()->withInput()
-				->with('alert-danger', 'Monitor with same name already exists.');
+				->with('alert-danger', 'Monitor with same title already exists.');
 		}
 
 		if ($input['is_lower_better'] == 'LOWER')
@@ -165,7 +165,7 @@ class MonitorsController extends BaseController
 		if ($monitors->count() >= 1)
 		{
 			return Redirect::back()->withInput()
-				->with('alert-danger', 'Monitor with same name already exists.');
+				->with('alert-danger', 'Monitor with same title already exists.');
 		}
 
 		if ($input['is_lower_better'] == 'LOWER')

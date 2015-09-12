@@ -50,8 +50,8 @@ $(document).ready(function() {
 
 {{ Form::open() }}
 
-{{ Form::openGroup('name', 'Name') }}
-        {{ Form::text('name') }}
+{{ Form::openGroup('title', 'Title') }}
+        {{ Form::text('title') }}
 {{ Form::closeGroup() }}
 
 {{ Form::submit('Create') }}

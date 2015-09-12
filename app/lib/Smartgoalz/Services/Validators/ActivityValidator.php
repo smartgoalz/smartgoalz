@@ -32,7 +32,7 @@ namespace Smartgoalz\Services\Validators;
 class ActivityValidator extends Validator {
 
         public static $rules = array(
-                'name' => 'required|max:255'
+                'title' => 'required|max:255'
         );
 
 }

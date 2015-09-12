@@ -68,7 +68,7 @@ class CategoriesController extends BaseController
 		if ($categories->count() >= 1)
 		{
 			return Redirect::back()->withInput()
-				->with('alert-danger', 'Category with same name already exists.');
+				->with('alert-danger', 'Category with same title already exists.');
 		}
 
 		$this->categoryValidator->with($input);
@@ -123,7 +123,7 @@ class CategoriesController extends BaseController
 		if ($categories->count() >= 1)
 		{
 			return Redirect::back()->withInput()
-				->with('alert-danger', 'Category with same name already exists.');
+				->with('alert-danger', 'Category with same title already exists.');
 		}
 
 		$this->categoryValidator->with($input);

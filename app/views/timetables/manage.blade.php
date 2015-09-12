@@ -89,7 +89,7 @@ $(document).ready(function() {
                         @foreach ($activities as $activity)
 			<tr>
 				<td class="text-left">{{ $c }}</td>
-				<td>{{ $activity->name }}</td>
+				<td>{{ $activity->title }}</td>
 				<td class="text-left">
                                         {{ HTML::linkAction('TimetablesController@getSchedule', 'Schedule', array($activity->id)) }}
 					<span class="small-margin"></span>
@@ -136,7 +136,7 @@ $(document).ready(function() {
                         @foreach ($timetable[$weekday] as $activity)
 			<tr>
 				<td class="text-left">{{ $c }}</td>
-				<td>{{ $activity['name'] }}</td>
+				<td>{{ $activity['title'] }}</td>
                                 <td>{{ date_format(date_create_from_format('H:i:s', $activity['from_time']), 'H:i A') }}</td>
                                 <td>{{ date_format(date_create_from_format('H:i:s', $activity['to_time']), 'H:i A') }}</td>
 			</tr>

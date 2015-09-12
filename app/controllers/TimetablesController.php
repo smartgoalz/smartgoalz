@@ -66,7 +66,7 @@ class TimetablesController extends BaseController
 
 	public function getManage()
 	{
-		$activities = Activity::curUser()->orderBy('name', 'DESC')->get();
+		$activities = Activity::curUser()->orderBy('title', 'DESC')->get();
 
 		if (!$activities)
 		{
@@ -85,7 +85,7 @@ class TimetablesController extends BaseController
 				$timetable['SUNDAY'][] = array(
 					'id' => $item->id,
 					'activity_id' => $item->activities_id,
-					'name' => $item->activities_name,
+					'title' => $item->activities_title,
 					'from_time' => $item->from_time,
 					'to_time' => $item->to_time,
 				);
@@ -95,7 +95,7 @@ class TimetablesController extends BaseController
 				$timetable['MONDAY'][] = array(
 					'id' => $item->id,
 					'activity_id' => $item->activities_id,
-					'name' => $item->activities_name,
+					'title' => $item->activities_title,
 					'from_time' => $item->from_time,
 					'to_time' => $item->to_time,
 				);
@@ -105,7 +105,7 @@ class TimetablesController extends BaseController
 				$timetable['TUESDAY'][] = array(
 					'id' => $item->id,
 					'activity_id' => $item->activities_id,
-					'name' => $item->activities_name,
+					'title' => $item->activities_title,
 					'from_time' => $item->from_time,
 					'to_time' => $item->to_time,
 				);
@@ -115,7 +115,7 @@ class TimetablesController extends BaseController
 				$timetable['WEDNESDAY'][] = array(
 					'id' => $item->id,
 					'activity_id' => $item->activities_id,
-					'name' => $item->activities_name,
+					'title' => $item->activities_title,
 					'from_time' => $item->from_time,
 					'to_time' => $item->to_time,
 				);
@@ -125,7 +125,7 @@ class TimetablesController extends BaseController
 				$timetable['THURSDAY'][] = array(
 					'id' => $item->id,
 					'activity_id' => $item->activities_id,
-					'name' => $item->activities_name,
+					'title' => $item->activities_title,
 					'from_time' => $item->from_time,
 					'to_time' => $item->to_time,
 				);
@@ -135,7 +135,7 @@ class TimetablesController extends BaseController
 				$timetable['FRIDAY'][] = array(
 					'id' => $item->id,
 					'activity_id' => $item->activities_id,
-					'name' => $item->activities_name,
+					'title' => $item->activities_title,
 					'from_time' => $item->from_time,
 					'to_time' => $item->to_time,
 				);
@@ -145,7 +145,7 @@ class TimetablesController extends BaseController
 				$timetable['SATURDAY'][] = array(
 					'id' => $item->id,
 					'activity_id' => $item->activities_id,
-					'name' => $item->activities_name,
+					'title' => $item->activities_title,
 					'from_time' => $item->from_time,
 					'to_time' => $item->to_time,
 				);

@@ -44,7 +44,7 @@ class Activity extends Eloquent
 	 */
         protected $hidden = ['user_id', 'created_at', 'updated_at', 'deleted_at'];
 
-	protected $fillable = array('name');
+	protected $fillable = array('title');
 
 	protected $guarded = array('id', 'user_id');
 
@@ -75,7 +75,7 @@ class Activity extends Eloquent
 	public function scopeWithTimetable($query)
 	{
 		return $query->rightJoin('timetables', 'activities.id', '=', 'timetables.activity_id')
-			->select('timetables.*', 'activities.id as activities_id', 'activities.name as activities_name');
+			->select('timetables.*', 'activities.id as activities_id', 'activities.title as activities_title');
 	}
 
 	public function scopeCurUser($query)
