@@ -82,4 +82,9 @@ class Activity extends Eloquent
 	{
 		return $query->where('user_id', '=', Auth::id());
 	}
+
+	public  function scopeLike($query, $field, $value)
+	{
+		return $query->where($field, 'LIKE', "%$value%");
+	}
 }

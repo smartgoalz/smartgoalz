@@ -86,6 +86,15 @@ class MonitorsController extends BaseController
 	{
 		$input = Input::all();
 
+		/* Check if monitor title is unique for a user */
+		$monitors = Monitor::curUser()->like('title', $input['title']);
+
+		if ($monitors->count() >= 1)
+		{
+			return Redirect::back()->withInput()
+				->with('alert-danger', 'Monitor with same name already exists.');
+		}
+
 		if ($input['is_lower_better'] == 'LOWER')
 		{
 			$input['is_lower_better'] = 1;
@@ -148,6 +157,16 @@ class MonitorsController extends BaseController
                 }
 
 		$input = Input::all();
+
+		/* Check if monitor title is unique for a user */
+		$monitors = Monitor::curUser()->like('title', $input['title'])
+			->where('id', '!=', $id);
+
+		if ($monitors->count() >= 1)
+		{
+			return Redirect::back()->withInput()
+				->with('alert-danger', 'Monitor with same name already exists.');
+		}
 
 		if ($input['is_lower_better'] == 'LOWER')
 		{
