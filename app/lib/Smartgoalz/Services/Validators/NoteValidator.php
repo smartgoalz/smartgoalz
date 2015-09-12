@@ -35,7 +35,7 @@ class NoteValidator extends Validator {
                 'title' => 'required|max:255',
                 'pin_dashboard' => 'required',
                 'pin_top' => 'required',
-                'note' => ''
+                'note' => 'required'
         );
 
 }

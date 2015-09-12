@@ -111,7 +111,6 @@ CREATE TABLE IF NOT EXISTS `tasks` (
   `due_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `is_completed` int(1) NOT NULL,
   `completion_date` timestamp NULL DEFAULT NULL,
-  `timewatch_count` int(11) NOT NULL,
   `notes` text COLLATE utf8_unicode_ci NOT NULL,
   `weight` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',

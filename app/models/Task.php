@@ -47,7 +47,7 @@ class Task extends Eloquent
 	protected $fillable = array('title', 'goal_id', 'start_date', 'due_date', 'is_completed',
 		'completion_date', 'notes', 'weight');
 
-	protected $guarded = array('id', 'timewatch_count');
+	protected $guarded = array('id');
 
 	public function goal()
 	{
