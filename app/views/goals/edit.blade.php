@@ -73,8 +73,8 @@ $(document).ready(function() {
         {{ Form::text('due_date', $due_date) }}
 {{ Form::closeGroup() }}
 
-{{ Form::openGroup('category', 'Category') }}
-        {{ Form::select('category', $categories_list, $goal->category_id) }}
+{{ Form::openGroup('category_id', 'Category') }}
+        {{ Form::select('category_id', $categories_list, $goal->category_id) }}
 	<div class="help-text">Note : Go to Settings > Categories to manage goal categories</div>
 {{ Form::closeGroup() }}
 

@@ -125,7 +125,7 @@ class GoalsController extends BaseController
 		$input['due_date'] = $due_date;
 
 		/* Check for valid category */
-		if (!Category::curuser()->find($input['category']))
+		if (!Category::curuser()->find($input['category_id']))
 		{
                         return Redirect::back()->withInput()
                                 ->with('alert-danger', 'Invalid category selected.');
@@ -139,8 +139,6 @@ class GoalsController extends BaseController
 		}
 		else
 		{
-			$input['category_id'] = $input['category'];
-
 			/* Set default values for a new goal */
 			$input['is_completed'] = 0;
 			$input['completion_date'] = NULL;
@@ -250,7 +248,7 @@ class GoalsController extends BaseController
 		$input['due_date'] = $due_date;
 
 		/* Check for valid category */
-		if (!Category::curuser()->find($input['category']))
+		if (!Category::curuser()->find($input['category_id']))
 		{
                         return Redirect::back()->withInput()
                                 ->with('alert-danger', 'Invalid category selected.');
@@ -266,7 +264,7 @@ class GoalsController extends BaseController
 		{
 			/* Update data */
 	                $goal->title = $input['title'];
-			$goal->category_id = $input['category'];
+			$goal->category_id = $input['category_id'];
 	                $goal->start_date = $input['start_date'];
 	                $goal->due_date = $input['due_date'];
 	                $goal->difficulty = $input['difficulty'];

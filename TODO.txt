@@ -1,4 +1,3 @@
 Dashboard
 Check all validations
-Manual Error > Show in correct field
 Check Date / Timestamp
