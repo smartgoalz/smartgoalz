@@ -126,7 +126,7 @@ return array(
 		'McCool\LaravelAutoPresenter\LaravelAutoPresenterServiceProvider',
 		'Smartgoalz\ServiceProviders\ValidationServiceProvider',
 		'Manavo\BootstrapForms\BootstrapFormsServiceProvider',
-		'Barryvdh\Debugbar\ServiceProvider',
+		// 'Barryvdh\Debugbar\ServiceProvider',
 
 	),
 

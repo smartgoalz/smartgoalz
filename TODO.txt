@@ -1,3 +1,4 @@
 Dashboard
-Check all validations
+User validations rules
 Check Date / Timestamp
+Email

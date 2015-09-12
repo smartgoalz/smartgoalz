@@ -10,8 +10,7 @@
 		"raveren/kint": "dev-master",
 		"mccool/laravel-auto-presenter": "~2.2",
 		"mockery/mockery": "dev-master",
-		"manavo/laravel-bootstrap-forms": "~0.0",
-		"barryvdh/laravel-debugbar": "~1.8"
+		"manavo/laravel-bootstrap-forms": "~0.0"
 	},
 	"autoload": {
 		"classmap": [
