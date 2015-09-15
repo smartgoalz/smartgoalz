@@ -76,7 +76,7 @@ $(document).ready(function() {
 	<table class="table table-hover">
 		<thead>
 		<tr>
-			<th class="col-sm-1 text-left">Date</th>
+			<th class="col-sm-2 text-left">Date</th>
 			<th class="text-left">Entry</th>
 			<th class="col-sm-1 text-left">Actions</th>
 		</tr>
@@ -86,7 +86,7 @@ $(document).ready(function() {
                 @foreach ($journals as $journal)
 		<tr>
                         <td class="text-left">
-                                {{ date_format(date_create_from_format('Y-m-d H:i:s', $journal->date), explode('|', $dateformat)[0]) }}
+                                {{ date_format(date_create_from_format('Y-m-d H:i:s', $journal->date), explode('|', $dateformat)[0] . ' H:i A') }}
                         </td>
 
 			<td class="text-left">

@@ -97,8 +97,8 @@ class JournalsController extends BaseController
 
 		/* Format date */
                 $date_temp = date_create_from_format(
-                        explode('|', $this->dateformat)[0] . ' H:i:s',
-                        $input['date'] . ' 00:00:00'
+                        explode('|', $this->dateformat)[0] . ' h:i A',
+                        $input['date']
                 );
                 if (!$date_temp)
                 {
@@ -169,8 +169,8 @@ class JournalsController extends BaseController
 
 		/* Format date */
                 $date_temp = date_create_from_format(
-                        explode('|', $this->dateformat)[0] . ' H:i:s',
-                        $input['date'] . ' 00:00:00'
+                        explode('|', $this->dateformat)[0] . ' h:i A',
+                        $input['date']
                 );
                 if (!$date_temp)
                 {

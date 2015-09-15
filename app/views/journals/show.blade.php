@@ -50,7 +50,7 @@ $(document).ready(function() {
 
 <div>
 	<span class="view-title">{{ $journal->title }}</span>
-        <div class="small-text">{{ date_format(date_create_from_format('Y-m-d H:i:s', $journal->date), explode('|', $dateformat)[0]) }}</div>
+        <div class="small-text">{{ date_format(date_create_from_format('Y-m-d H:i:s', $journal->date), explode('|', $dateformat)[0] . ' H:i A') }}</div>
 </div>
 
 <div class="view-content">
