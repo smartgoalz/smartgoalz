@@ -36,6 +36,55 @@ THE SOFTWARE.
 
 $(document).ready(function() {
         $("#task_id").chained("#goals");
+
+	/* Get current datetime */
+	var js_start_time =Date.parse("{{ $timewatch->start_time }}");
+	/* Convert datetime string to unix timestamp */
+	var js_start_ts = (js_start_time.getTime() / 1000) - (js_start_time.getTimezoneOffset() * 60);
+
+	/* Set current date and time */
+	$("[name=current_datetime]").val(Date.now().toString("yyyy-MM-dd HH:mm:ss"));
+
+	/* Update clock every 1 second */
+	setInterval(function() {
+		/* Get current datetime in unix timestamp format */
+		js_current_ts = (Date.now().getTime() / 1000) - (Date.now().getTimezoneOffset() * 60);
+
+		/* Covnert timestamp in seconds to minutes */
+		diff_ts = Math.floor((js_current_ts - js_start_ts) / 60);
+
+		$("#timespent").text(js_toDHM(diff_ts));
+
+		$("[name=current_datetime]").val(Date.now().toString("yyyy-MM-dd HH:mm:ss"));
+	}, 1000);
+
+	/* Convert to time difference in human readable format */
+	function js_toDHM(minutes) {
+		if (minutes <= 0) {
+			return '';
+		}
+
+		dhm = '';
+
+		var balance = minutes;
+
+		/* Calculate days */
+		if (minutes > 1440) {
+			dhm = Math.floor(balance / 1440) + 'd ';
+			balance = Math.balance % 1440;
+		}
+
+		/* Calculate hours */
+		if (minutes > 60) {
+			dhm += Math.floor(balance / 60) + 'h ';
+			balance = balance % 60;
+		}
+
+		/* Calculate minutes */
+		dhm += Math.floor(balance) + 'm';
+
+		return dhm;
+	}
 });
 
 </script>
@@ -67,8 +116,10 @@ $(document).ready(function() {
 {{ Form::closeGroup() }}
 
 <div class="form-group">
-        <label>Time Elapsed : TODO Hours</label>
+        <label>Time Elapsed : <span id="timespent"></span></label>
 </div>
+
+{{ Form::hidden('current_datetime') }}
 
 {{ Form::submit('Stop Timer', array('class' => 'btn btn-danger btn-lg')) }}
 <span class="small-margin"></span>

@@ -91,7 +91,7 @@ class TimewatchesController extends BaseController
 				->with('alert-danger', 'Goal not found.');
 		}
 
-		$start_time = date('Y-m-d H:i:s', time());
+		$start_time = $input['current_datetime'];
 
 		/* Convert to php time */
 		$start_ts = strtotime($start_time);
@@ -162,6 +162,8 @@ class TimewatchesController extends BaseController
 
 	public function postStop($id)
 	{
+		$input = Input::all();
+
 		$timewatch = Timewatch::curUser()->find($id);
 		if (!$timewatch)
 		{
@@ -190,7 +192,7 @@ class TimewatchesController extends BaseController
 		}
 
 		$start_time = $timewatch->start_time;
-		$stop_time = date('Y-m-d H:i:s', time());
+		$stop_time = $input['current_datetime'];
 
 		/* Convert to php time */
 		$start_ts = strtotime($start_time);

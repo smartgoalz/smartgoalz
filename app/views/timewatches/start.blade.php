@@ -35,7 +35,17 @@ THE SOFTWARE.
 <script type="text/javascript">
 
 $(document).ready(function() {
-        $("#task_id").chained("#goals");
+	$("#task_id").chained("#goals");
+
+	/* Set current date and time */
+	$("#cur_datetime").text(Date.now().toString("{{ explode('|', $dateformat)[2]; }} hh:mm:ss tt"));
+	$("[name=current_datetime]").val(Date.now().toString("yyyy-MM-dd HH:mm:ss"));
+
+	/* Update clock every 1 second */
+	setInterval(function() {
+		$("#cur_datetime").text(Date.now().toString("dd-MM-yyyy hh:mm:ss tt"));
+		$("[name=current_datetime]").val(Date.now().toString("yyyy-MM-dd HH:mm:ss"));
+	}, 1000);
 });
 
 </script>
@@ -72,6 +82,12 @@ $(document).ready(function() {
 </select>
 </div>
 
+<br />
+
+<label>Current time : <span id="cur_datetime"></span></label>
+{{ Form::hidden('current_datetime') }}
+
+<br />
 <br />
 
 {{ Form::submit('Start Timer', array('class' => 'btn btn-success btn-lg')) }}
