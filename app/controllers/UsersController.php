@@ -37,6 +37,9 @@ class UsersController extends BaseController
 	public function __construct(UserValidator $userValidator)
 	{
 		$this->userValidator = $userValidator;
+
+		$this->beforeFilter('auth', array('only' => array('getProfile', 'getEditprofile',
+			'postEditprofile', 'getChangepass', 'postChangepass')));
 	}
 
 	public function getIndex()

@@ -50,7 +50,7 @@ Route::filter('auth', function()
 
 Route::filter('admin', function()
 {
-	if (Auth::user() && Auth::user()->is_admin != 1)
+	if (!Auth::user() || Auth::user()->is_admin != 1)
 	{
 		if (Request::ajax())
 		{
