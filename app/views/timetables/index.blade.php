@@ -35,56 +35,10 @@ THE SOFTWARE.
 <script type="text/javascript">
 
 $(document).ready(function() {
-
+	js_current_ts = (Date.now().getTime() / 1000) - (Date.now().getTimezoneOffset() * 60);
+	js_current_ts = Math.floor(js_current_ts);
+	window.location = "show/" + js_current_ts;
 });
 </script>
-
-@stop
-
-@section('breadcrumb-title', 'Timetables')
-
-@section('page-title', 'Timetable for Today')
-
-@section('content')
-
-<div>
-	<div>Current time : </div>
-</div>
-
-<br />
-
-<div class="header-button">
-        {{ HTML::linkAction('TimetablesController@getManage', 'Manage Timetable', array(),
-                array('class' => 'btn btn-primary')) }}
-</div>
-
-<div>
-        @if ($schedules->count() < 1)
-                <div>No schedule found. Please add one to get started.</div>
-        @else
-	<table class="table table-hover">
-	<thead>
-		<tr>
-			<th>#</th>
-			<th>Activity</th>
-                        <th>From time</th>
-                        <th>To time</th>
-		</tr>
-	</thead>
-	<tbody>
-                @define $c = 1
-		@foreach ($schedules as $schedule)
-		<tr>
-			<td class="text-left">{{ $c }}</td>
-			<td>{{ $schedule->activities_title }}</td>
-                        <td>{{ date_format(date_create_from_format('H:i:s', $schedule->from_time), 'H:i A') }}</td>
-                        <td>{{ date_format(date_create_from_format('H:i:s', $schedule->to_time), 'H:i A') }}</td>
-		</tr>
-                @define $c = $c + 1
-                @endforeach
-	</tbody>
-	</table>
-        @endif
-</div>
 
 @stop

@@ -61,6 +61,32 @@ class TimetablesController extends BaseController
 		}
 
 		return View::make('timetables.index')
+			->with('dateformat', $this->dateformat)
+			->with('schedules', $schedules);
+	}
+
+	public function getShow($timestamp)
+	{
+		if (!$timestamp)
+		{
+			return Redirect::action('TimetablesController@getIndex');
+		}
+
+		$weekday = strtoupper(date("l", $timestamp));
+
+		$schedules = Activity::curUser()->withTimetable()
+			->where('days', 'LIKE', '%' . $weekday . '%')
+			->orderBy('from_time')->get();
+
+		if (!$schedules)
+		{
+			return Redirect::action('DashboardController@getIndex')
+				->with('alert-danger', 'No schedule for today.');
+		}
+
+		return View::make('timetables.show')
+			->with('timestamp', $timestamp)
+			->with('dateformat', $this->dateformat)
 			->with('schedules', $schedules);
 	}
 

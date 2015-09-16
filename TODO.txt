@@ -2,3 +2,6 @@ Dashboard
 User validations rules
 Check Date / Timestamp
 Email
+Date format in database
+Change day for timetable
+
