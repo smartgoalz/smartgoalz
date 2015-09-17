@@ -34,6 +34,13 @@ THE SOFTWARE.
 
 <script type="text/javascript">
 
+/* Function to mark the task as completed */
+function taskDone(id) {
+	js_current_ts = (Date.now().getTime() / 1000) - (Date.now().getTimezoneOffset() * 60);
+	js_current_ts = Math.floor(js_current_ts);
+	window.location = "{{ action('TasksController@getDone') }}/" + id + "/" + js_current_ts;
+}
+
 $(document).ready(function() {
 
 });
@@ -112,12 +119,7 @@ $(document).ready(function() {
 				@if ($task->is_completed == 1)
 					<span class="glyphicon glyphicon-ok"></span>
 				@else
-					{{ HTML::decode(HTML::linkAction('TasksController@postDone',
-		                                'Done', array($task->id),
-						array(
-							'class' => 'btn-sm btn-default',
-							'data-method' => 'POST',
-						))) }}
+					{{ link_to("#", "Done", array("onclick" => "taskDone($task->id)", "class" => "btn-sm btn-default")) }}
 				@endif
 				</td>
 				<td class="text-center">

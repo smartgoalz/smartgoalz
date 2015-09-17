@@ -435,7 +435,7 @@ class TasksController extends BaseController
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function postDone($id)
+	public function getDone($id, $timestamp)
 	{
 		$task = Task::find($id);
 		if (!$task)
@@ -452,7 +452,7 @@ class TasksController extends BaseController
 		}
 
 		$task->is_completed = 1;
-		$task->completion_date = date('Y-m-d H:i:s', time());
+		$task->completion_date = date('Y-m-d H:i:s', $timestamp);
 
 		if (!$task->save())
 		{
@@ -556,6 +556,9 @@ class TasksController extends BaseController
 		$count_completed = 0;
 		$count_notcompleted = 0;
 
+		$task_completion_ts = 0;
+		$last_completion_ts = 0;
+
 		/* Count the number of completed and uncompleted tasks */
 		$tasks = Task::where('goal_id', $goal->id)->get();
 		foreach ($tasks as $task)
@@ -569,6 +572,13 @@ class TasksController extends BaseController
 			{
 				$count_notcompleted++;
 			}
+
+			/* Calculate last completion date */
+			$task_completion_ts = strtotime($task->completion_date);
+			if ($task_completion_ts > $last_completion_ts)
+			{
+				$last_completion_ts = $task_completion_ts;
+			}
 		}
 
 		/* Update number of completed and uncompleted tasks in a goal */
@@ -579,7 +589,7 @@ class TasksController extends BaseController
 		if ($count_total == $count_completed)
 		{
 			$goal->is_completed = 1;
-			$goal->completion_date = date('Y-m-d H:i:s', time());
+			$goal->completion_date = date('Y-m-d H:i:s', $last_completion_ts);
 		}
 		else
 		{
