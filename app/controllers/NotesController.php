@@ -38,8 +38,10 @@ class NotesController extends BaseController
 	{
 		$this->noteValidator = $noteValidator;
 
-                $user = User::find(Auth::id());
-                $this->dateformat = $user->dateformat;
+		$user = User::find(Auth::id());
+		$this->dateformat_php = $user->dateformat_php;
+		$this->dateformat_cal = $user->dateformat_cal;
+		$this->dateformat_js = $user->dateformat_js;
 	}
 
 	public function getIndex()
@@ -66,7 +68,7 @@ class NotesController extends BaseController
 
 		return View::make('notes.index')
 			->with('notes', $notes)
-			->with('dateformat', $this->dateformat)
+			->with('dateformat_php', $this->dateformat_php)
 			->with('search', $search);
 	}
 
@@ -82,13 +84,12 @@ class NotesController extends BaseController
 
 		return View::make('notes.show')
 			->with('note', $note)
-			->with('dateformat', $this->dateformat);
+			->with('dateformat_php', $this->dateformat_php);
 	}
 
 	public function getCreate()
 	{
-		return View::make('notes.create')
-			->with('dateformat', $this->dateformat);
+		return View::make('notes.create');
 	}
 
 	public function postCreate()
@@ -143,8 +144,7 @@ class NotesController extends BaseController
 		}
 
 		return View::make('notes.edit')
-			->with('note', $note)
-			->with('dateformat', $this->dateformat);
+			->with('note', $note);
 	}
 
 	public function postEdit($id)

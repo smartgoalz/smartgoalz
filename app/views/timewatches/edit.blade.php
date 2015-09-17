@@ -40,12 +40,12 @@ $(document).ready(function() {
         /* Date picker */
         $("input[name='start_time']").datetimepicker({
                 timeFormat: "hh:mm TT",
-                dateFormat: "{{ explode('|', $dateformat)[1] }}",
+                dateFormat: "{{ $dateformat_cal }}",
 		changeMonth: true,
 		changeYear: true,
         });
         $("input[name='stop_time']").datetimepicker({
-                dateFormat: "{{ explode('|', $dateformat)[1] }}",
+                dateFormat: "{{ $dateformat_cal }}",
                 timeFormat: "hh:mm TT",
 		changeMonth: true,
 		changeYear: true,

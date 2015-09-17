@@ -38,8 +38,10 @@ class MonitorvaluesController extends BaseController
 	{
 		$this->monitorvalueValidator = $monitorvalueValidator;
 
-                $user = User::find(Auth::id());
-                $this->dateformat = $user->dateformat;
+		$user = User::find(Auth::id());
+		$this->dateformat_php = $user->dateformat_php;
+		$this->dateformat_cal = $user->dateformat_cal;
+		$this->dateformat_js = $user->dateformat_js;
 	}
 
 	public function getCreate($monitor_id)
@@ -53,7 +55,7 @@ class MonitorvaluesController extends BaseController
 
 		return View::make('monitorvalues.create')
 			->with('monitor', $monitor)
-			->with('dateformat', $this->dateformat);
+			->with('dateformat_cal', $this->dateformat_cal);
 	}
 
 	public function postCreate($monitor_id)
@@ -69,8 +71,7 @@ class MonitorvaluesController extends BaseController
 
 		/* Format date */
                 $date_temp = date_create_from_format(
-                        explode('|', $this->dateformat)[0] . ' h:i A',
-                        $input['date']
+                        $this->dateformat_php . ' h:i A', $input['date']
                 );
                 if (!$date_temp)
                 {
@@ -133,14 +134,14 @@ class MonitorvaluesController extends BaseController
                 }
 		else
 		{
-			$date = date_format($date_temp, explode('|', $this->dateformat)[0] .  ' h:i A');
+			$date = date_format($date_temp, $this->dateformat_php .  ' h:i A');
 		}
 
 		return View::make('monitorvalues.edit')
 			->with('monitor', $monitor)
 			->with('monitorvalue', $monitorvalue)
 			->with('date', $date)
-			->with('dateformat', $this->dateformat);
+			->with('dateformat_cal', $this->dateformat_cal);
 	}
 
 	public function postEdit($monitor_id, $id)
@@ -169,8 +170,7 @@ class MonitorvaluesController extends BaseController
 
 		/* Format date */
                 $date_temp = date_create_from_format(
-                        explode('|', $this->dateformat)[0] . ' h:i A',
-                        $input['date']
+			$this->dateformat_php . ' h:i A', $input['date']
                 );
                 if (!$date_temp)
                 {

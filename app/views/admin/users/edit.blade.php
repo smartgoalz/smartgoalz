@@ -86,7 +86,7 @@ $(document).ready(function() {
 {{ Form::closeGroup() }}
 
 {{ Form::openGroup('dateformat', 'Date format') }}
-        {{ Form::select('dateformat', $dateformat_options) }}
+        {{ Form::select('dateformat', $dateformat_options, $dateformat) }}
 {{ Form::closeGroup() }}
 
 {{ Form::openGroup('dob', 'Date of birth') }}

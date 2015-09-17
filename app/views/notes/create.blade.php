@@ -35,15 +35,10 @@ THE SOFTWARE.
 <script type="text/javascript">
 
 $(document).ready(function() {
-        /* Date picker */
-        $("input[name='date']").datepicker({
-                dateFormat: "{{ explode('|', $dateformat)[1] }}",
-		changeMonth: true,
-		changeYear: true,
-        });
 
 	/* Enable text editor */
 	$("#note").jqte();
+
 });
 
 </script>

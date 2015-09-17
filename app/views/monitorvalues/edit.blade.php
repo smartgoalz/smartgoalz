@@ -37,7 +37,7 @@ THE SOFTWARE.
 $(document).ready(function() {
         /* Date picker */
         $("input[name='date']").datetimepicker({
-                dateFormat: "{{ explode('|', $dateformat)[1] }}",
+                dateFormat: "{{ $dateformat_cal }}",
                 timeFormat: "hh:mm TT",
 		changeMonth: true,
 		changeYear: true,

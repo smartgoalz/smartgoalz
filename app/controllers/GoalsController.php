@@ -38,8 +38,10 @@ class GoalsController extends BaseController
 	{
 		$this->goalValidator = $goalValidator;
 
-                $user = User::find(Auth::id());
-                $this->dateformat = $user->dateformat;
+		$user = User::find(Auth::id());
+		$this->dateformat_php = $user->dateformat_php;
+		$this->dateformat_cal = $user->dateformat_cal;
+		$this->dateformat_js = $user->dateformat_js;
 	}
 
 	public function getIndex()
@@ -54,7 +56,7 @@ class GoalsController extends BaseController
 
 		return View::make('goals.index')
 			->with('goals', $goals)
-			->with('dateformat', $this->dateformat);
+			->with('dateformat_php', $this->dateformat_php);
 	}
 
 	public function getShow($id)
@@ -72,7 +74,7 @@ class GoalsController extends BaseController
 		return View::make('goals.show')
 			->with('goal', $goal)
 			->with('tasks', $tasks)
-			->with('dateformat', $this->dateformat);
+			->with('dateformat_php', $this->dateformat_php);
 	}
 
 	public function getCreate()
@@ -83,7 +85,8 @@ class GoalsController extends BaseController
 
 		return View::make('goals.create')
 			->with('categories_list', $categories_list)
-			->with('dateformat', $this->dateformat);
+			->with('dateformat_php', $this->dateformat_php)
+			->with('dateformat_cal', $this->dateformat_cal);
 	}
 
 	public function postCreate()
@@ -92,8 +95,7 @@ class GoalsController extends BaseController
 
 		/* Format start date */
                 $start_temp = date_create_from_format(
-                        explode('|', $this->dateformat)[0] . ' H:i:s',
-                        $input['start_date'] . ' 00:00:00'
+                        $this->dateformat_php . ' H:i:s', $input['start_date'] . ' 00:00:00'
                 );
                 if (!$start_temp)
                 {
@@ -104,8 +106,7 @@ class GoalsController extends BaseController
 
 		/* Format due date */
                 $due_temp = date_create_from_format(
-                        explode('|', $this->dateformat)[0] . ' H:i:s',
-                        $input['due_date'] . ' 00:00:00'
+                        $this->dateformat_php . ' H:i:s', $input['due_date'] . ' 00:00:00'
                 );
                 if (!$due_temp)
                 {
@@ -179,7 +180,7 @@ class GoalsController extends BaseController
                 }
 		else
 		{
-			$start_date = date_format($start_temp, explode('|', $this->dateformat)[0]);
+			$start_date = date_format($start_temp, $this->dateformat_php);
 		}
 
 		/* Format due date */
@@ -190,7 +191,7 @@ class GoalsController extends BaseController
                 }
 		else
 		{
-			$due_date = date_format($due_temp, explode('|', $this->dateformat)[0]);
+			$due_date = date_format($due_temp, $this->dateformat_php);
 		}
 
 		return View::make('goals.edit')
@@ -198,7 +199,7 @@ class GoalsController extends BaseController
 			->with('start_date', $start_date)
 			->with('due_date', $due_date)
 			->with('categories_list', $categories_list)
-			->with('dateformat', $this->dateformat);
+			->with('dateformat_cal', $this->dateformat_cal);
 	}
 
 	public function postEdit($id)
@@ -215,8 +216,7 @@ class GoalsController extends BaseController
 
 		/* Format start date */
                 $start_temp = date_create_from_format(
-                        explode('|', $this->dateformat)[0] . ' H:i:s',
-                        $input['start_date'] . ' 00:00:00'
+                        $this->dateformat_php . ' H:i:s', $input['start_date'] . ' 00:00:00'
                 );
                 if (!$start_temp)
                 {
@@ -227,8 +227,7 @@ class GoalsController extends BaseController
 
 		/* Format due date */
                 $due_temp = date_create_from_format(
-                        explode('|', $this->dateformat)[0] . ' H:i:s',
-                        $input['due_date'] . ' 00:00:00'
+                        $this->dateformat_php . ' H:i:s', $input['due_date'] . ' 00:00:00'
                 );
                 if (!$due_temp)
                 {

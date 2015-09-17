@@ -63,7 +63,7 @@ $(document).ready(function() {
                 date_format(date_create_from_format(
                         'Y-m-d H:i:s',
                         $timewatch->start_time
-                ), explode('|', $dateformat)[0] . ' H:i:s'), array('disabled')) }}
+                ), $dateformat_php . ' h:i:s A'), array('disabled')) }}
 {{ Form::closeGroup() }}
 
 @if ($timewatch->is_active == 0)
@@ -75,7 +75,7 @@ $(document).ready(function() {
                 date_format(date_create_from_format(
                         'Y-m-d H:i:s',
                         $timewatch->stop_time
-                ), explode('|', $dateformat)[0] . ' H:i:s'), array('disabled')) }}
+                ), $dateformat_php . ' h:i:s A'), array('disabled')) }}
 {{ Form::closeGroup() }}
 <div class="form-group">
         <label>Time Elapsed : TODO Hours</label>

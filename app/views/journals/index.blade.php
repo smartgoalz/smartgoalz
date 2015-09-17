@@ -86,7 +86,7 @@ $(document).ready(function() {
                 @foreach ($journals as $journal)
 		<tr>
                         <td class="text-left">
-                                {{ date_format(date_create_from_format('Y-m-d H:i:s', $journal->date), explode('|', $dateformat)[0] . ' H:i A') }}
+                                {{ date_format(date_create_from_format('Y-m-d H:i:s', $journal->date), $dateformat_php . ' h:i A') }}
                         </td>
 
 			<td class="text-left">

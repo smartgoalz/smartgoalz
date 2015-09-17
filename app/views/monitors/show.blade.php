@@ -102,7 +102,7 @@ $(document).ready(function() {
                         @foreach ($monitorvalues as $monitorvalue)
 			<tr>
 				<td class="text-left">
-					{{ date_format(date_create_from_format('Y-m-d H:i:s', $monitorvalue->date), explode('|', $dateformat)[0] . ' H:i A') }}
+					{{ date_format(date_create_from_format('Y-m-d H:i:s', $monitorvalue->date), $dateformat_php . ' H:i A') }}
 				</td>
 				<td class="text-center">{{ $monitorvalue->value }}</td>
 				<td class="text-center">

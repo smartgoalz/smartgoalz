@@ -82,11 +82,11 @@ $(document).ready(function() {
 <tr>
         <td>Date format</td><td class="colon">:</td>
         <td>
-                @if ($user->dateformat == 'd-M-Y|dd-M-yy')
+                @if ($user->dateformat_php == 'd-M-Y')
                         {{ 'Day-Month-Year' }}
-                @elseif ($user->dateformat == 'M-d-Y|M-dd-yy')
+                @elseif ($user->dateformat_php == 'M-d-Y')
                         {{ 'Month-Day-Year' }}
-                @elseif ($user->dateformat == 'Y-M-d|yy-M-dd')
+                @elseif ($user->dateformat_php == 'Y-M-d')
                         {{ 'Year-Month-Day' }}
                 @else
                         {{ 'ERROR' }}
@@ -100,10 +100,10 @@ $(document).ready(function() {
         <td>Timezone</td><td class="colon">:</td><td>{{ $timezone_options[$user->timezone] }}</td>
 </tr>
 <tr>
-        <td>Last Login</td><td class="colon">:</td><td>{{ date_format(date_create_from_format('Y-m-d H:i:s', $user->last_login), explode('|', $user->dateformat)[0] . ' h:i A') }}</td>
+        <td>Last Login</td><td class="colon">:</td><td>{{ date_format(date_create_from_format('Y-m-d H:i:s', $user->last_login), $user->dateformat_php . ' h:i A') }}</td>
 </tr>
 <tr>
-        <td>Created On</td><td class="colon">:</td><td>{{ date_format(date_create_from_format('Y-m-d H:i:s', $user->created_at), explode('|', $user->dateformat)[0]) }}</td>
+        <td>Created On</td><td class="colon">:</td><td>{{ date_format(date_create_from_format('Y-m-d H:i:s', $user->created_at), $user->dateformat_php . ' h:i A') }}</td>
 </tr>
 </table>
 

@@ -53,14 +53,14 @@ $(document).ready(function() {
 </div>
 
 <div class="details">
-	<div>Start date : {{ date_format(date_create_from_format('Y-m-d H:i:s', $goal->start_date), explode('|', $dateformat)[0]) }}
+	<div>Start date : {{ date_format(date_create_from_format('Y-m-d H:i:s', $goal->start_date), $dateformat_php) }}
 		<span class="pull-right">
                         {{ HTML::decode(HTML::linkAction('GoalsController@getEdit',
                                 'Edit Goal', $goal->id,
                                 array('class' => 'btn btn-success btn-xs'))) }}
 		</span>
 	</div>
-	<div>Due date : {{ date_format(date_create_from_format('Y-m-d H:i:s', $goal->due_date), explode('|', $dateformat)[0]) }}</div>
+	<div>Due date : {{ date_format(date_create_from_format('Y-m-d H:i:s', $goal->due_date), $dateformat_php) }}</div>
 	<div>Category : {{ $goal->category->title }}</div>
 	<div>Difficulty : {{ Constants::$difficulties[$goal->difficulty] }}</div>
 	<div>Priority : {{ Constants::$priorities[$goal->priority] }}</div>
@@ -100,10 +100,10 @@ $(document).ready(function() {
 				<td class="text-left">{{ $task->id }}</td>
 				<td class="text-left">{{ $task->title }}</td>
 				<td class="text-center">
-					{{ date_format(date_create_from_format('Y-m-d H:i:s', $task->start_date), explode('|', $dateformat)[0]) }}
+					{{ date_format(date_create_from_format('Y-m-d H:i:s', $task->start_date), $dateformat_php) }}
 				</td>
 				<td class="text-center">
-					{{ date_format(date_create_from_format('Y-m-d H:i:s', $task->due_date), explode('|', $dateformat)[0]) }}
+					{{ date_format(date_create_from_format('Y-m-d H:i:s', $task->due_date), $dateformat_php) }}
 				</td>
 				<td class="text-center">
 					{{ toDHM($task->total_minutes($task->id)) }}

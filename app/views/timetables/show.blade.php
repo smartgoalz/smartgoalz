@@ -36,7 +36,7 @@ THE SOFTWARE.
 
 $(document).ready(function() {
 	/* Set current date and time */
-	$("#cur_datetime").text(Date.now().toString("{{ explode('|', $dateformat)[2]; }} hh:mm:ss tt"));
+	$("#cur_datetime").text(Date.now().toString("{{ $dateformat_js }} hh:mm:ss tt"));
 
 	/* Update clock every 1 second */
 	setInterval(function() {
@@ -49,7 +49,7 @@ $(document).ready(function() {
 
 @section('breadcrumb-title', 'Timetables')
 
-@section('page-title', 'Timetable for ' . date(explode('|', $dateformat)[0], $timestamp))
+@section('page-title', 'Timetable for ' . date($dateformat_php, $timestamp))
 
 @section('content')
 

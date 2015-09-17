@@ -37,9 +37,6 @@ class ActivitiesController extends BaseController
 	public function __construct(ActivityValidator $activityValidator)
 	{
 		$this->activityValidator = $activityValidator;
-
-                $user = User::find(Auth::id());
-                $this->dateformat = $user->dateformat;
 	}
 
 	public function getCreate()

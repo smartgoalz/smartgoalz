@@ -50,7 +50,7 @@ $(document).ready(function() {
 
 <div>
 	<span class="view-title">{{ $note->title }}</span>
-        <div class="small-text">Created on {{ date_format(date_create_from_format('Y-m-d H:i:s', $note->created_at), explode('|', $dateformat)[0]) }}</div>
+        <div class="small-text">Created on {{ date_format(date_create_from_format('Y-m-d H:i:s', $note->created_at), $dateformat_php) }}</div>
 </div>
 
 <div class="view-content">

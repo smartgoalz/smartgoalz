@@ -95,7 +95,7 @@ $(document).ready(function() {
                                 {{ Constants::$priorities[$goal->priority] }}
                         </td>
                         <td class="text-center">
-                                {{ date_format(date_create_from_format('Y-m-d H:i:s', $goal->due_date), explode('|', $dateformat)[0]) }}
+                                {{ date_format(date_create_from_format('Y-m-d H:i:s', $goal->due_date), $dateformat_php) }}
                         </td>
 			<td class="text-left">
                                 {{ HTML::decode(HTML::linkAction('GoalsController@getEdit',

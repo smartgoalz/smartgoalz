@@ -38,8 +38,10 @@ class JournalsController extends BaseController
 	{
 		$this->journalValidator = $journalValidator;
 
-                $user = User::find(Auth::id());
-                $this->dateformat = $user->dateformat;
+		$user = User::find(Auth::id());
+		$this->dateformat_php = $user->dateformat_php;
+		$this->dateformat_cal = $user->dateformat_cal;
+		$this->dateformat_js = $user->dateformat_js;
 	}
 
 	public function getIndex()
@@ -66,7 +68,7 @@ class JournalsController extends BaseController
 
 		return View::make('journals.index')
 			->with('journals', $journals)
-			->with('dateformat', $this->dateformat)
+			->with('dateformat_php', $this->dateformat_php)
 			->with('search', $search);
 	}
 
@@ -82,13 +84,13 @@ class JournalsController extends BaseController
 
 		return View::make('journals.show')
 			->with('journal', $journal)
-			->with('dateformat', $this->dateformat);
+			->with('dateformat_php', $this->dateformat_php);
 	}
 
 	public function getCreate()
 	{
 		return View::make('journals.create')
-			->with('dateformat', $this->dateformat);
+			->with('dateformat_cal', $this->dateformat_cal);
 	}
 
 	public function postCreate()
@@ -97,8 +99,7 @@ class JournalsController extends BaseController
 
 		/* Format date */
                 $date_temp = date_create_from_format(
-                        explode('|', $this->dateformat)[0] . ' h:i A',
-                        $input['date']
+                        $this->dateformat_php . ' h:i A', $input['date']
                 );
                 if (!$date_temp)
                 {
@@ -146,13 +147,13 @@ class JournalsController extends BaseController
                 }
 		else
 		{
-			$date = date_format($date_temp, explode('|', $this->dateformat)[0]);
+			$date = date_format($date_temp, $this->dateformat_php . ' h:i A');
 		}
 
 		return View::make('journals.edit')
 			->with('journal', $journal)
 			->with('date', $date)
-			->with('dateformat', $this->dateformat);
+			->with('dateformat_cal', $this->dateformat_cal);
 	}
 
 	public function postEdit($id)
@@ -169,8 +170,7 @@ class JournalsController extends BaseController
 
 		/* Format date */
                 $date_temp = date_create_from_format(
-                        explode('|', $this->dateformat)[0] . ' h:i A',
-                        $input['date']
+                        $this->dateformat_php . ' h:i A', $input['date']
                 );
                 if (!$date_temp)
                 {

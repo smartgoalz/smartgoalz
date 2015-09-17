@@ -38,8 +38,10 @@ class MonitorsController extends BaseController
 	{
 		$this->monitorValidator = $monitorValidator;
 
-                $user = User::find(Auth::id());
-                $this->dateformat = $user->dateformat;
+		$user = User::find(Auth::id());
+		$this->dateformat_php = $user->dateformat_php;
+		$this->dateformat_cal = $user->dateformat_cal;
+		$this->dateformat_js = $user->dateformat_js;
 	}
 
 	public function getIndex()
@@ -53,8 +55,7 @@ class MonitorsController extends BaseController
 		}
 
 		return View::make('monitors.index')
-			->with('monitors', $monitors)
-			->with('dateformat', $this->dateformat);
+			->with('monitors', $monitors);
 	}
 
 	public function getShow($id)
@@ -73,13 +74,12 @@ class MonitorsController extends BaseController
 		return View::make('monitors.show')
 			->with('monitor', $monitor)
 			->with('monitorvalues', $monitorvalues)
-			->with('dateformat', $this->dateformat);
+			->with('dateformat_php', $this->dateformat_php);
 	}
 
 	public function getCreate()
 	{
-		return View::make('monitors.create')
-			->with('dateformat', $this->dateformat);
+		return View::make('monitors.create');
 	}
 
 	public function postCreate()
@@ -143,8 +143,7 @@ class MonitorsController extends BaseController
 
 		return View::make('monitors.edit')
 			->with('monitor', $monitor)
-			->with('is_lower_better', $is_lower_better)
-			->with('dateformat', $this->dateformat);
+			->with('is_lower_better', $is_lower_better);
 	}
 
 	public function postEdit($id)

@@ -38,7 +38,7 @@ $(document).ready(function() {
 	$("#task_id").chained("#goals");
 
 	/* Set current date and time */
-	$("#cur_datetime").text(Date.now().toString("{{ explode('|', $dateformat)[2]; }} hh:mm:ss tt"));
+	$("#cur_datetime").text(Date.now().toString("{{ $dateformat_js }} hh:mm:ss tt"));
 	$("[name=current_datetime]").val(Date.now().toString("yyyy-MM-dd HH:mm:ss"));
 
 	/* Update clock every 1 second */
@@ -129,7 +129,7 @@ $(document).ready(function() {
 		<tr>
                         <td>{{ $i }}</td>
                         <td class="text-left">
-                                {{ date_format(date_create_from_format('Y-m-d', $timewatch->date), explode('|', $dateformat)[0]) }}
+                                {{ date_format(date_create_from_format('Y-m-d', $timewatch->date), $dateformat_php) }}
                         </td>
 
 			<td class="text-left">
@@ -137,7 +137,7 @@ $(document).ready(function() {
                         </td>
 
                         <td class="text-left">
-                                {{ date_format(date_create_from_format('Y-m-d H:i:s', $timewatch->start_time), explode('|', $dateformat)[0] . ' h:i A') }}
+                                {{ date_format(date_create_from_format('Y-m-d H:i:s', $timewatch->start_time), $dateformat_php . ' h:i A') }}
                         </td>
 
 			<td class="text-left">
@@ -203,7 +203,7 @@ $(document).ready(function() {
 		<tr>
                         <td>{{ $i }}</td>
                         <td class="text-left">
-                                {{ date_format(date_create_from_format('Y-m-d', $timewatch->date), explode('|', $dateformat)[0]) }}
+                                {{ date_format(date_create_from_format('Y-m-d', $timewatch->date), $dateformat_php) }}
                         </td>
 
 			<td class="text-left">
@@ -211,11 +211,11 @@ $(document).ready(function() {
                         </td>
 
                         <td class="text-left">
-                                {{ date_format(date_create_from_format('Y-m-d H:i:s', $timewatch->start_time), explode('|', $dateformat)[0] . ' h:i A') }}
+                                {{ date_format(date_create_from_format('Y-m-d H:i:s', $timewatch->start_time), $dateformat_php . ' h:i A') }}
                         </td>
 
                         <td class="text-left">
-                                {{ date_format(date_create_from_format('Y-m-d H:i:s', $timewatch->stop_time), explode('|', $dateformat)[0] . ' h:i A') }}
+                                {{ date_format(date_create_from_format('Y-m-d H:i:s', $timewatch->stop_time), $dateformat_php . ' h:i A') }}
                         </td>
 
                         <td class="text-left">

@@ -87,7 +87,7 @@ $(document).ready(function() {
 			<td class="text-left">
                                 {{ HTML::linkAction('NotesController@getShow', $note->title, $note->id) }}
                                 <span class="small-margin"></span>
-                                <span class="small-text">created on {{ date_format(date_create_from_format('Y-m-d H:i:s', $note->created_at), explode('|', $dateformat)[0]) }}</span>
+                                <span class="small-text">created on {{ date_format(date_create_from_format('Y-m-d H:i:s', $note->created_at), $dateformat_php) }}</span>
                         </td>
 			<td class="text-left">
                                 {{ HTML::decode(HTML::linkAction('NotesController@getEdit',

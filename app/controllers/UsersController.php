@@ -125,7 +125,9 @@ class UsersController extends BaseController
 				'password' => Hash::make($input['password']),
 				'fullname' => '',
 				'email' => $input['email'],
-				'dateformat' => 'd-M-Y|dd-M-yy',
+				'dateformat_php' => 'd-M-Y',
+				'dateformat_cal' => 'dd-M-yy',
+				'dateformat_js' => 'dd-MM-yyyy',
 				'timezone' => 'UTC',
 				'status' => 1,
 				'verification_key' =>
@@ -475,9 +477,7 @@ class UsersController extends BaseController
 		);
 		if ($temp)
 		{
-			$dob = date_format(
-				$temp, explode('|', $user->dateformat)[0]
-			);
+			$dob = date_format($temp, $user->dateformat_php);
 		}
 
 		return View::make('users.profile')
@@ -501,10 +501,12 @@ class UsersController extends BaseController
 
 		$dateformat_options = array(
 	                '' => 'Please select...',
-	                'd-M-Y|dd-M-yy' => 'Day-Month-Year',
-	                'M-d-Y|M-dd-yy' => 'Month-Day-Year',
-	                'Y-M-d|yy-M-dd' => 'Year-Month-Day',
+	                'd-M-Y|dd-M-yy|dd-MM-yyyy' => 'Day-Month-Year',
+	                'M-d-Y|M-dd-yy|MM-dd-yyyy' => 'Month-Day-Year',
+	                'Y-M-d|yy-M-dd|yyyy-MM-dd' => 'Year-Month-Day',
 		);
+
+		$dateformat = $user->dateformat_php . '|' . $user->dateformat_cal . '|' . $user->dateformat_js;
 
 		$dob = '';
                 $temp = date_create_from_format(
@@ -512,9 +514,7 @@ class UsersController extends BaseController
 		);
 		if ($temp)
 		{
-			$dob = date_format(
-				$temp, explode('|', $user->dateformat)[0]
-			);
+			$dob = date_format($temp, $user->dateformat_php);
 		}
 
 		return View::make('users.editprofile')
@@ -522,6 +522,7 @@ class UsersController extends BaseController
 			->with('timezone_options', $timezone_options)
 			->with('gender_options', $gender_options)
 			->with('dateformat_options', $dateformat_options)
+			->with('dateformat', $dateformat)
 			->with('user', $user);
 	}
 
@@ -531,8 +532,11 @@ class UsersController extends BaseController
 
                 $input = Input::all();
 
-		$php_dateformat = explode('|', $input['dateformat'])[0];
-                $temp = date_create_from_format($php_dateformat, $input['dob']);
+		$dateformat_php = explode('|', $input['dateformat'])[0];
+		$dateformat_cal = explode('|', $input['dateformat'])[1];
+		$dateformat_js = explode('|', $input['dateformat'])[2];
+
+		$temp = date_create_from_format($dateformat_php, $input['dob']);
 		if (!$temp)
 		{
 	                return Redirect::back()->withInput()
@@ -562,7 +566,9 @@ class UsersController extends BaseController
                         $user->email = $input['email'];
 			$user->dob = date_format($temp, 'Y-m-d');
                         $user->gender = $input['gender'];
-			$user->dateformat = $input['dateformat'];
+			$user->dateformat_php = $dateformat_php;
+			$user->dateformat_cal = $dateformat_cal;
+			$user->dateformat_js = $dateformat_js;
 			$user->timezone = $input['timezone'];
 
                         if (!$user->save())

@@ -37,17 +37,17 @@ THE SOFTWARE.
 $(document).ready(function() {
         /* Date picker */
         $("input[name='start_date']").datepicker({
-                dateFormat: "{{ explode('|', $dateformat)[1] }}",
+                dateFormat: "{{ $dateformat_cal }}",
 		changeMonth: true,
 		changeYear: true,
         });
         $("input[name='due_date']").datepicker({
-                dateFormat: "{{ explode('|', $dateformat)[1] }}",
+                dateFormat: "{{ $dateformat_cal }}",
 		changeMonth: true,
 		changeYear: true,
         });
         $("input[name='completion_date']").datepicker({
-                dateFormat: "{{ explode('|', $dateformat)[1] }}",
+                dateFormat: "{{ $dateformat_cal }}",
 		changeMonth: true,
 		changeYear: true,
         });

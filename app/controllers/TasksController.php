@@ -37,7 +37,9 @@ class TasksController extends BaseController
 		$this->taskValidator = $taskValidator;
 
 		$user = User::find(Auth::id());
-		$this->dateformat = $user->dateformat;
+		$this->dateformat_php = $user->dateformat_php;
+		$this->dateformat_cal = $user->dateformat_cal;
+		$this->dateformat_js = $user->dateformat_js;
 	}
 
 	public function getIndex($goal_id)
@@ -61,7 +63,7 @@ class TasksController extends BaseController
 			->lists('title', 'id');
 
 		return View::make('tasks.create')
-			->with('dateformat', $this->dateformat)
+			->with('dateformat_cal', $this->dateformat_cal)
 			->with('goal', $goal)
 			->with('tasks_list', $tasks_list);
 	}
@@ -91,8 +93,7 @@ class TasksController extends BaseController
 
 		/* Format start date */
 		$start_temp = date_create_from_format(
-			explode('|', $this->dateformat)[0] . ' H:i:s',
-			$input['start_date'] . ' 00:00:00'
+			$this->dateformat_php . ' H:i:s', $input['start_date'] . ' 00:00:00'
 		);
 		if (!$start_temp)
 		{
@@ -103,8 +104,7 @@ class TasksController extends BaseController
 
 		/* Format due date */
 		$due_temp = date_create_from_format(
-			explode('|', $this->dateformat)[0] . ' H:i:s',
-			$input['due_date'] . ' 00:00:00'
+			$this->dateformat_php . ' H:i:s', $input['due_date'] . ' 00:00:00'
 		);
 		if (!$due_temp)
 		{
@@ -127,8 +127,7 @@ class TasksController extends BaseController
 		if (!is_null($input['completion_date']))
 		{
 			$completion_temp = date_create_from_format(
-				explode('|', $this->dateformat)[0] . ' H:i:s',
-				$input['completion_date'] . ' 00:00:00'
+				$this->dateformat_php . ' H:i:s', $input['completion_date'] . ' 00:00:00'
 			);
 			if (!$completion_temp)
 			{
@@ -221,7 +220,7 @@ class TasksController extends BaseController
 		}
 		else
 		{
-			$start_date = date_format($start_temp, explode('|', $this->dateformat)[0]);
+			$start_date = date_format($start_temp, $this->dateformat_php);
 		}
 
 		/* Format due date */
@@ -232,7 +231,7 @@ class TasksController extends BaseController
 		}
 		else
 		{
-			$due_date = date_format($due_temp, explode('|', $this->dateformat)[0]);
+			$due_date = date_format($due_temp, $this->dateformat_php);
 		}
 
 		/* Format completion date */
@@ -245,7 +244,7 @@ class TasksController extends BaseController
 			}
 			else
 			{
-				$completion_date = date_format($completion_temp, explode('|', $this->dateformat)[0]);
+				$completion_date = date_format($completion_temp, $this->dateformat_php);
 			}
 		}
 		else
@@ -254,7 +253,7 @@ class TasksController extends BaseController
 		}
 
 		return View::make('tasks.edit')
-			->with('dateformat', $this->dateformat)
+			->with('dateformat_cal', $this->dateformat_cal)
 			->with('goal', $goal)
 			->with('task', $task)
 			->with('start_date', $start_date)
@@ -294,8 +293,7 @@ class TasksController extends BaseController
 
 		/* Format start date */
 		$start_temp = date_create_from_format(
-			explode('|', $this->dateformat)[0] . ' H:i:s',
-			$input['start_date'] . ' 00:00:00'
+			$this->dateformat_php . ' H:i:s', $input['start_date'] . ' 00:00:00'
 		);
 		if (!$start_temp)
 		{
@@ -306,8 +304,7 @@ class TasksController extends BaseController
 
 		/* Format due date */
 		$due_temp = date_create_from_format(
-			explode('|', $this->dateformat)[0] . ' H:i:s',
-			$input['due_date'] . ' 00:00:00'
+			$this->dateformat_php . ' H:i:s', $input['due_date'] . ' 00:00:00'
 		);
 		if (!$due_temp)
 		{
@@ -330,8 +327,7 @@ class TasksController extends BaseController
 		if (!is_null($input['completion_date']))
 		{
 			$completion_temp = date_create_from_format(
-				explode('|', $this->dateformat)[0] . ' H:i:s',
-				$input['completion_date'] . ' 00:00:00'
+				$this->dateformat_php . ' H:i:s', $input['completion_date'] . ' 00:00:00'
 			);
 			if (!$completion_temp)
 			{

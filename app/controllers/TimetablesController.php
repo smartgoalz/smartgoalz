@@ -38,31 +38,15 @@ class TimetablesController extends BaseController
 	{
 		$this->timetableValidator = $timetableValidator;
 
-                $user = User::find(Auth::id());
-                $this->dateformat = $user->dateformat;
+		$user = User::find(Auth::id());
+		$this->dateformat_php = $user->dateformat_php;
+		$this->dateformat_cal = $user->dateformat_cal;
+		$this->dateformat_js = $user->dateformat_js;
 	}
 
-	public function getIndex($timestamp = null)
+	public function getIndex()
 	{
-		if (!$timestamp)
-		{
-			$timestamp = time();
-		}
-		$weekday = strtoupper(date("l", $timestamp));
-
-		$schedules = Activity::curUser()->withTimetable()
-			->where('days', 'LIKE', '%' . $weekday . '%')
-			->orderBy('from_time')->get();
-
-		if (!$schedules)
-		{
-			return Redirect::action('DashboardController@getIndex')
-				->with('alert-danger', 'No schedule for today.');
-		}
-
-		return View::make('timetables.index')
-			->with('dateformat', $this->dateformat)
-			->with('schedules', $schedules);
+		return View::make('timetables.index');
 	}
 
 	public function getShow($timestamp)
@@ -86,7 +70,8 @@ class TimetablesController extends BaseController
 
 		return View::make('timetables.show')
 			->with('timestamp', $timestamp)
-			->with('dateformat', $this->dateformat)
+			->with('dateformat_php', $this->dateformat_php)
+			->with('dateformat_js', $this->dateformat_js)
 			->with('schedules', $schedules);
 	}
 
@@ -202,8 +187,7 @@ class TimetablesController extends BaseController
 
 		return View::make('timetables.schedule')
 			->with('schedules', $schedules)
-			->with('activity', $activity)
-			->with('dateformat', $this->dateformat);
+			->with('activity', $activity);
 	}
 
 	public function getCreate($activity_id)
@@ -227,8 +211,7 @@ class TimetablesController extends BaseController
 
 		return View::make('timetables.create')
 			->with('activity', $activity)
-			->with('days', $days)
-			->with('dateformat', $this->dateformat);
+			->with('days', $days);
 	}
 
 	public function postCreate($activity_id)
@@ -365,8 +348,7 @@ class TimetablesController extends BaseController
 			->with('days', $days)
 			->with('from_time', $from_time)
 			->with('to_time', $to_time)
-			->with('selected_days', $selected_days)
-			->with('dateformat', $this->dateformat);
+			->with('selected_days', $selected_days);
 	}
 
 	public function postEdit($activity_id, $id)

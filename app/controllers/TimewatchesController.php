@@ -13,8 +13,10 @@ class TimewatchesController extends BaseController
 	{
 		$this->timewatchValidator = $timewatchValidator;
 
-                $user = User::find(Auth::id());
-                $this->dateformat = $user->dateformat;
+		$user = User::find(Auth::id());
+		$this->dateformat_php = $user->dateformat_php;
+		$this->dateformat_cal = $user->dateformat_cal;
+		$this->dateformat_js = $user->dateformat_js;
 	}
 
 	public function getIndex()
@@ -49,7 +51,7 @@ class TimewatchesController extends BaseController
 			->with('goal', $goal)
 			->with('task', $task)
 			->with('timewatch', $timewatch)
-			->with('dateformat', $this->dateformat);
+			->with('dateformat_php', $this->dateformat_php);
 	}
 
 	public function getStart()
@@ -70,7 +72,8 @@ class TimewatchesController extends BaseController
 			->with('timewatches', $timewatches)
 			->with('timewatches_active', $timewatches_active)
 			->with('goals', $goals)
-			->with('dateformat', $this->dateformat);
+			->with('dateformat_php', $this->dateformat_php)
+			->with('dateformat_js', $this->dateformat_js);
 	}
 
 	public function postStart()
@@ -157,7 +160,7 @@ class TimewatchesController extends BaseController
 			->with('goal', $goal)
 			->with('task', $task)
 			->with('timewatch', $timewatch)
-			->with('dateformat', $this->dateformat);
+			->with('dateformat_php', $this->dateformat_php);
 	}
 
 	public function postStop($id)
@@ -262,7 +265,7 @@ class TimewatchesController extends BaseController
 	                }
 			else
 			{
-				$start_time = date_format($start_temp, explode('|', $this->dateformat)[0] . ' h:i A');
+				$start_time = date_format($start_temp, $this->dateformat_php . ' h:i A');
 			}
 
 			/* Format stop time */
@@ -273,7 +276,7 @@ class TimewatchesController extends BaseController
 	                }
 			else
 			{
-				$stop_time = date_format($stop_temp, explode('|', $this->dateformat)[0] . ' h:i A');
+				$stop_time = date_format($stop_temp, $this->dateformat_php . ' h:i A');
 			}
 
 			if ($timewatch->is_active == 1)
@@ -296,7 +299,7 @@ class TimewatchesController extends BaseController
 			->with('start_time', $start_time)
 			->with('stop_time', $stop_time)
 			->with('active', $active)
-			->with('dateformat', $this->dateformat);
+			->with('dateformat_cal', $this->dateformat_cal);
 	}
 
 	public function postEdit($id = null)
@@ -315,8 +318,7 @@ class TimewatchesController extends BaseController
 
 		/* Format start time */
                 $start_temp = date_create_from_format(
-                        explode('|', $this->dateformat)[0] . ' h:i A',
-                        $input['start_time']
+                        $this->dateformat_php . ' h:i A', $input['start_time']
                 );
                 if (!$start_temp)
                 {
@@ -333,8 +335,7 @@ class TimewatchesController extends BaseController
 		{
 			/* Format stop time */
 	                $stop_temp = date_create_from_format(
-	                        explode('|', $this->dateformat)[0] . ' h:i A',
-	                        $input['stop_time']
+	                        $this->dateformat_php . ' h:i A', $input['stop_time']
 	                );
 	                if (!$stop_temp)
 	                {
