@@ -34,7 +34,7 @@ class UserValidator extends Validator {
         public static $rules = array(
                 'username' => 'required|min:3|max:255|unique:users,username',
                 'password' => 'required',
-                'email' => 'required|email|unique:users,email',
+		'email' => 'required|email|unique:users,email',
         );
 
 }

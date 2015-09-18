@@ -1,4 +1,3 @@
 Dashboard
 Email
-User validations rules
 Change day for timetable

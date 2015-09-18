@@ -125,16 +125,18 @@ class UsersController extends BaseController
 				'password' => Hash::make($input['password']),
 				'fullname' => '',
 				'email' => $input['email'],
+				'gender' => 'U',
+				'dob' => '2000-01-01',
+				'is_admin' => 0,
+				'timezone' => 'UTC',
 				'dateformat_php' => 'd-M-Y',
 				'dateformat_cal' => 'dd-M-yy',
 				'dateformat_js' => 'dd-MM-yyyy',
-				'timezone' => 'UTC',
-				'status' => 1,
+				'admin_verified' => 0,
+				'email_verified' => 0,
 				'verification_key' =>
 					substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyz"), 0, 20),
-				'email_verified' => 0,
-				'admin_verified' => 0,
-				'retry_count' => 0,
+				'status' => 1,
 				'last_login' => NULL,
 				'reset_password_key' => NULL,
 				'reset_password_date' => NULL,
@@ -145,6 +147,9 @@ class UsersController extends BaseController
 			        return Redirect::back()->withInput()
                                         ->with('alert-danger', 'Failed to create user.');
 			}
+
+			$user->status = 1;
+			$user->save();
 
 			/* Insert initial categories */
 			$category1 = new Category;
