@@ -1,0 +1,4 @@
+SMARTGoalz version 1.0 - 18 September 2015
+------------------------------------------
+
+- First release
